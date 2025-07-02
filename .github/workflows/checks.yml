@@ -1,0 +1,123 @@
+name: Checks
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - deploy
+    tags:
+        - 'v*.*.*'
+  pull_request:
+    branches:
+      - main
+
+env:
+  NODE: 22
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  prep:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 10
+          run_install: false
+
+      - name: Use Node.js ${{ env.NODE }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE }}
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        id: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+
+      - name: Install
+        run: pnpm install
+
+  lint:
+    needs: prep
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 10
+          run_install: false
+
+      - name: Use Node.js ${{ env.NODE }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE }}
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        id: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+
+      - name: Install
+        run: pnpm install
+
+      - name: Lint
+        run: pnpm lint
+
+  build-staging:
+    environment: staging
+    needs:
+      - lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 10
+          run_install: false
+
+      - name: Use Node.js ${{ env.NODE }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE }}
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        id: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+
+      - name: Install
+        run: pnpm install
+
+      - name: Build
+        env:
+          VITE_API_HOST: ${{ vars.API_HOST }}
+        run: pnpm build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tnc-coral-bundle-staging
+          path: ./dist
+          retention-days: 1
