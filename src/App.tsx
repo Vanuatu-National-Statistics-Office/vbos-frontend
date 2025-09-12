@@ -1,4 +1,4 @@
-import { Box, Grid, GridItem } from "@chakra-ui/react";
+import { Box, Grid } from "@chakra-ui/react";
 import { Header } from "./components/Header";
 import Map from "./components/Map";
 import { MapRef } from "react-map-gl/maplibre";
