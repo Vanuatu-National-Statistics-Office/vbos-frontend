@@ -1,28 +1,29 @@
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import { Box, Grid, GridItem } from "@chakra-ui/react";
+import { Header } from "./components/Header";
+import Map from "./components/Map";
+import { MapRef } from "react-map-gl/maplibre";
+import { useRef } from "react";
+import { Sidebar } from "./components/Sidebar";
 
 function App() {
+  const mapRef = useRef<MapRef>(null);
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Grid h="100vh" maxH="100vh" templateRows="max-content 1fr">
+      <Header />
+      <Grid templateColumns="2fr 5fr 3fr" h="100vh" gap="2" maxH="100vh">
+        <Box>
+          <Sidebar>Baseline Indicators</Sidebar>
+        </Box>
+        <Box>
+          <Box position="relative" h="100%">
+            <Map ref={mapRef} />
+          </Box>
+        </Box>
+        <Box>
+          <Sidebar>Analysis</Sidebar>
+        </Box>
+      </Grid>
+    </Grid>
   );
 }
 
