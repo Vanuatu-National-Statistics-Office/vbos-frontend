@@ -3,8 +3,9 @@ import { Header } from "./components/Header";
 import Map from "./components/Map";
 import { MapRef } from "react-map-gl/maplibre";
 import { useRef } from "react";
-import { Sidebar } from "./components/Sidebar";
 import { useUrlSync } from "./hooks/useUrlSync";
+import { LeftSidebar } from "./components/LeftSidebar";
+import { RightSidebar } from "./components/RightSidebar";
 
 function App() {
   useUrlSync();
@@ -12,9 +13,9 @@ function App() {
   return (
     <Grid h="100vh" maxH="100vh" templateRows="max-content 1fr">
       <Header />
-      <Grid templateColumns="2fr 5fr 3fr" h="100vh" gap="2" maxH="100vh">
+      <Grid templateColumns="2fr 5fr 3fr" height="calc(100vh - 3rem)">
         <Box>
-          <Sidebar>Baseline Indicators</Sidebar>
+          <LeftSidebar />
         </Box>
         <Box>
           <Box position="relative" h="100%">
@@ -22,7 +23,7 @@ function App() {
           </Box>
         </Box>
         <Box>
-          <Sidebar>Analysis</Sidebar>
+          <RightSidebar />
         </Box>
       </Grid>
     </Grid>

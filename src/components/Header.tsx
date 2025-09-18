@@ -8,7 +8,7 @@ export const Header = () => {
       alignItems="center"
       gap="5"
       bg="white"
-      px="5"
+      px="4"
       py="3"
       shadow="base"
     >
