@@ -1,7 +1,7 @@
 import {
   forwardRef,
   Ref,
-  useEffect,
+  useCallback,
   useImperativeHandle,
   useState,
 } from "react";
@@ -9,22 +9,15 @@ import ReactMapGl, {
   type MapRef,
   type MapProps,
   ScaleControl,
+  ViewStateChangeEvent,
 } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { LngLatBoundsLike } from "maplibre-gl";
+import { useMapStore } from "@/store/map-store";
 
-type Props = MapProps & {
-  bounds?: LngLatBoundsLike;
-  boundsPadding?: number;
-  zoomDuration?: number;
-};
-
-function Map(
-  { bounds, boundsPadding = 30, zoomDuration = 0, ...props }: Props,
-  ref: Ref<MapRef | undefined>,
-) {
+function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
   const [map, setMap] = useState<MapRef>();
   const setMapRef = (m: MapRef) => setMap(m);
+  const { viewState, setViewState } = useMapStore();
 
   useImperativeHandle(ref, () => {
     if (map) {
@@ -32,20 +25,18 @@ function Map(
     }
   }, [map]);
 
-  useEffect(() => {
-    if (map && bounds) {
-      map.fitBounds(bounds, { padding: boundsPadding, duration: zoomDuration });
-    }
-  }, [map, bounds, boundsPadding, zoomDuration]);
+  const onMove = useCallback(
+    (evt: ViewStateChangeEvent) => {
+      setViewState(evt.viewState);
+    },
+    [setViewState],
+  );
 
   return (
     <ReactMapGl
+      {...viewState}
       ref={setMapRef}
-      initialViewState={{
-        longitude: 168.014,
-        latitude: -16.741,
-        zoom: 7,
-      }}
+      onMove={onMove}
       mapStyle="https://tiles.openfreemap.org/styles/positron"
       touchPitch={false}
       dragRotate={false}

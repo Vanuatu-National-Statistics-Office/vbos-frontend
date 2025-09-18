@@ -4,8 +4,10 @@ import Map from "./components/Map";
 import { MapRef } from "react-map-gl/maplibre";
 import { useRef } from "react";
 import { Sidebar } from "./components/Sidebar";
+import { useUrlSync } from "./hooks/useUrlSync";
 
 function App() {
+  useUrlSync();
   const mapRef = useRef<MapRef>(null);
   return (
     <Grid h="100vh" maxH="100vh" templateRows="max-content 1fr">
