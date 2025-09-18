@@ -1,6 +1,6 @@
 import { Accordion, IconButton, Span } from "@chakra-ui/react";
 import { LayerSwitch } from "./LayerSwitch";
-import { Tooltip } from "../ui/tooltip";
+import { Tooltip } from "../ui";
 import { HiOutlineInformationCircle } from "react-icons/hi";
 
 interface SectionItem {
