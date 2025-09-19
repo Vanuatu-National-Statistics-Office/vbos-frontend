@@ -4,8 +4,8 @@ export const config = defineConfig({
   theme: {
     tokens: {
       fonts: {
-        body: { value: "Work Sans" },
-        heading: { value: "Work Sans" },
+        body: { value: "Work Sans Variable" },
+        heading: { value: "Work Sans Variable" },
       },
       colors: {
         blue: {

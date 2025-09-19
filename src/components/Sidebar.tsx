@@ -9,9 +9,17 @@ type Props = {
 export const Sidebar = ({ title, children }: Props) => {
   return (
     <Box>
-      <Heading fontSize="0.8rem" textTransform="uppercase" bg="blue.50" px={4}>
-        {title}
-      </Heading>
+      <Box px={4} py={2} bg="blue.50">
+        <Heading
+          fontSize="xs"
+          fontWeight="bold"
+          textTransform="uppercase"
+          color="blue.800"
+          letterSpacing="wider"
+        >
+          {title}
+        </Heading>
+      </Box>
       {children}
     </Box>
   );

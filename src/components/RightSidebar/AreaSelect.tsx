@@ -15,7 +15,7 @@ const AreaSelect = () => {
   const { area, setArea } = useAreaStore();
   return (
     <>
-      <Heading flex="1" as="h3" fontWeight={600} fontSize="1rem">
+      <Heading flex="1" as="h3" fontWeight={600} fontSize="1rem" color="blue.800">
         Administrative Area
       </Heading>
       <NativeSelect.Root size="md">

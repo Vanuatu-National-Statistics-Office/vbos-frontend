@@ -6,7 +6,7 @@ type LayerSwitchProps = {
 
 const LayerSwitch = ({ title }: LayerSwitchProps) => {
   return (
-    <Switch.Root size="sm">
+    <Switch.Root size="sm" colorPalette="blue">
       <Switch.HiddenInput />
       <Switch.Control>
         <Switch.Thumb />
