@@ -1,7 +1,8 @@
-import { Accordion, Heading, IconButton, Span } from "@chakra-ui/react";
+import { Accordion, IconButton, Span } from "@chakra-ui/react";
 import { LayerSwitch } from "./LayerSwitch";
 import { Tooltip } from "../ui";
 import { LuInfo, LuMinus, LuPlus } from "react-icons/lu";
+import { SidebarSectionHeading } from "../SidebarSectionHeading";
 
 interface SectionItem {
   name: string;
@@ -30,16 +31,7 @@ const Indicators = ({ sections }: IndicatorsProps) => {
       {sections.map((section, i) => (
         <Accordion.Item key={section.title} value={`${i}`}>
           <Accordion.ItemTrigger cursor="pointer" px={4}>
-            <Heading
-              flex="1"
-              as="h3"
-              fontWeight={600}
-              fontSize="1rem"
-              m={0}
-              color="blue.800"
-            >
-              {section.title}
-            </Heading>
+            <SidebarSectionHeading>{section.title}</SidebarSectionHeading>
             <Accordion.ItemIndicator asChild color="fg">
               <Accordion.ItemContext>
                 {(context) => (context.expanded ? <LuMinus /> : <LuPlus />)}
