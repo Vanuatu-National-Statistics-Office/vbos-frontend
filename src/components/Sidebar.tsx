@@ -17,10 +17,11 @@ export const Sidebar = ({ title, direction, children }: Props) => {
         flexDir="column"
         w={{
           base: "full",
-          md: !sideBarVisible ? "0px" : isLeftSidebar ? "18rem" : "22rem",
+          md: !sideBarVisible ? "0px" : isLeftSidebar ? "19rem" : "26rem",
         }}
         opacity={sideBarVisible ? 1 : 0}
         transition="all 0.24s"
+        willChange="width, opacity"
         position="relative"
         zIndex="10"
       >
