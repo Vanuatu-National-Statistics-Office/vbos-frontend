@@ -25,7 +25,9 @@ const AreaSelect = () => {
           cursor="pointer"
         >
           {ADMIN_AREAS.map((i) => (
-            <option value={i}>{i}</option>
+            <option value={i} key={i}>
+              {i}
+            </option>
           ))}
         </NativeSelect.Field>
         <NativeSelect.Indicator />
