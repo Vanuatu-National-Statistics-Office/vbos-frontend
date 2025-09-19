@@ -50,13 +50,12 @@ export const useMapStore = create<MapState>((set, get) => ({
 
   syncToUrl: () => {
     const { viewState } = get();
-    const params = new URLSearchParams();
+    const params = new URLSearchParams(window.location.search);
 
     params.set("lng", Number(viewState.longitude).toFixed(4).toString());
     params.set("lat", Number(viewState.latitude).toFixed(4).toString());
     params.set("zoom", Number(viewState.zoom).toFixed(1).toString());
 
-    const newUrl = `${window.location.pathname}?${params.toString()}`;
-    window.history.replaceState(null, "", newUrl);
+    window.history.replaceState(null, "", `?${params.toString()}`);
   },
 }));
