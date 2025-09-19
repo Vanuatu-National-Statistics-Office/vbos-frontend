@@ -1,8 +1,7 @@
 import { Accordion, Heading, IconButton, Span } from "@chakra-ui/react";
 import { LayerSwitch } from "./LayerSwitch";
 import { Tooltip } from "../ui";
-import { HiOutlineInformationCircle } from "react-icons/hi";
-import { LuMinus, LuPlus } from "react-icons/lu";
+import { LuInfo, LuMinus, LuPlus } from "react-icons/lu";
 
 interface SectionItem {
   name: string;
@@ -70,10 +69,9 @@ const Indicators = ({ sections }: IndicatorsProps) => {
                             variant="plain"
                             color="gray.emphasized"
                             textAlign="right"
-                            onClick={(e) => e.preventDefault()}
                             ml="auto"
                           >
-                            <HiOutlineInformationCircle />
+                            <LuInfo />
                           </IconButton>
                         </Tooltip>
                       </Span>

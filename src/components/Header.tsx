@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  ButtonProps,
   Clipboard,
   CloseButton,
   Dialog,
@@ -52,7 +53,7 @@ export const Header = () => {
             Share
           </NavButton>
           <Link href="/admin">
-            <NavButton solid>
+            <NavButton solid colorPalette="blue">
               <LuLockKeyhole />
               Admin
             </NavButton>
@@ -67,19 +68,20 @@ export const Header = () => {
   );
 };
 
-type NavButtonProps = {
+interface  NavButtonProps extends ButtonProps {
   solid?: boolean;
   children: ReactNode;
   onClick?: () => void;
-};
+}
 
-const NavButton = ({ solid, onClick, children }: NavButtonProps) => (
+const NavButton = ({ solid, onClick, children, ...props }: NavButtonProps) => (
   <IconButton
     px="2"
     variant={solid ? "solid" : "outline"}
     fontWeight="600"
     size="sm"
     onClick={onClick}
+    {...props}
   >
     {children}
   </IconButton>
