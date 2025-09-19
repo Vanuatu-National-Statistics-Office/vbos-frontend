@@ -39,6 +39,43 @@ const SECTIONS = [
       },
     ],
   },
+  {
+    title: "Disaster Indicators",
+    items: [
+      {
+        title: "Business",
+        description: "Information about impact of disaster on businesses.",
+        datasets: [
+          {
+            name: "Shops affected",
+            datasetId: "shops",
+            type: "vector",
+          },
+        ],
+      },
+      {
+        title: "Education",
+        description: "Information about impact of disaster on education.",
+        datasets: [
+          {
+            name: "Prediction: Damages",
+            datasetId: "education_damages",
+            type: "vector",
+          },
+          {
+            name: "Immediate Response: Resources",
+            datasetId: "education_resources",
+            type: "vector",
+          },
+          {
+            name: "Financial Recovery: Assets",
+            datasetId: "education_recovery_assets",
+            type: "vector",
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 const LeftSidebar = () => {
