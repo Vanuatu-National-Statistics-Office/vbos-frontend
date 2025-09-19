@@ -45,9 +45,11 @@ const Indicators = ({ sections }: IndicatorsProps) => {
                         {item.title}
                         <Tooltip content={item.description} interactive>
                           <IconButton
+                            as="span"
                             aria-label="Dataset Information"
-                            variant="ghost"
+                            variant="plain"
                             color="gray.emphasized"
+                            textAlign="right"
                           >
                             <HiOutlineInformationCircle />
                           </IconButton>
