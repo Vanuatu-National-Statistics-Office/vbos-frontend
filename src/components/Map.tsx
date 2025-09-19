@@ -8,8 +8,8 @@ import {
 import ReactMapGl, {
   type MapRef,
   type MapProps,
-  ScaleControl,
   ViewStateChangeEvent,
+  NavigationControl,
 } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useMapStore } from "@/store/map-store";
@@ -42,8 +42,12 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
       dragRotate={false}
       {...props}
     >
+      <NavigationControl
+        position="bottom-left"
+        showZoom
+        style={{ marginBottom: "7rem" }}
+      />
       {props.children}
-      <ScaleControl />
     </ReactMapGl>
   );
 }
