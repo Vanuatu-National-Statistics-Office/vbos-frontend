@@ -14,6 +14,9 @@ importers:
       '@emotion/react':
         specifier: ^11.14.0
         version: 11.14.0(@types/react@19.1.8)(react@19.1.1)
+      '@fontsource-variable/work-sans':
+        specifier: ^5.2.8
+        version: 5.2.8
       '@fontsource/work-sans':
         specifier: ^5.2.6
         version: 5.2.6
@@ -422,6 +425,9 @@ packages:
 
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
+
+  '@fontsource-variable/work-sans@5.2.8':
+    resolution: {integrity: sha512-8uWtTt0/B5NxGie9xUVD5y5Ch4Q+Hy7kFYKtUpwYbzSAgJEoaMxT8rMnfnK7zfAYSLC8GnGO1/tXrFtKIYYQVQ==}
 
   '@fontsource/work-sans@5.2.6':
     resolution: {integrity: sha512-U0FOkIl84q01lIYWhGhiMjrQX0dT/gBthO8ahRzNrXHTBjjPjWmkwGeINNdv19x2IQhxAZT/2bVD9Izg9C+8gw==}
@@ -2601,6 +2607,8 @@ snapshots:
       '@floating-ui/utils': 0.2.10
 
   '@floating-ui/utils@0.2.10': {}
+
+  '@fontsource-variable/work-sans@5.2.8': {}
 
   '@fontsource/work-sans@5.2.6': {}
 
