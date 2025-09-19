@@ -2,7 +2,7 @@ import { Accordion, Heading, IconButton, Span } from "@chakra-ui/react";
 import { LayerSwitch } from "./LayerSwitch";
 import { Tooltip } from "../ui";
 import { HiOutlineInformationCircle } from "react-icons/hi";
-import { LuPlus } from "react-icons/lu";
+import { LuMinus, LuPlus } from "react-icons/lu";
 
 interface SectionItem {
   name: string;
@@ -27,7 +27,7 @@ type IndicatorsProps = {
 
 const Indicators = ({ sections }: IndicatorsProps) => {
   return (
-    <Accordion.Root multiple defaultValue={["0"]} variant="plain">
+    <Accordion.Root multiple defaultValue={["0"]}>
       {sections.map((section, i) => (
         <Accordion.Item key={section.title} value={`${i}`}>
           <Accordion.ItemTrigger cursor="pointer" px={4}>
@@ -41,8 +41,10 @@ const Indicators = ({ sections }: IndicatorsProps) => {
             >
               {section.title}
             </Heading>
-            <Accordion.ItemIndicator asChild>
-              <LuPlus fill="fg" color="fg" />
+            <Accordion.ItemIndicator asChild color="fg">
+              <Accordion.ItemContext>
+                {(context) => (context.expanded ? <LuMinus /> : <LuPlus />)}
+              </Accordion.ItemContext>
             </Accordion.ItemIndicator>
           </Accordion.ItemTrigger>
           <Accordion.ItemContent>

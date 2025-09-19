@@ -80,7 +80,7 @@ const SECTIONS = [
 
 const LeftSidebar = () => {
   return (
-    <Sidebar title="Data Layers">
+    <Sidebar direction="left" title="Data Layers">
       <Indicators sections={SECTIONS} />
     </Sidebar>
   );

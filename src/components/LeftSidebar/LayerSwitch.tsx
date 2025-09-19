@@ -11,7 +11,7 @@ const LayerSwitch = ({ title }: LayerSwitchProps) => {
       <Switch.Control>
         <Switch.Thumb />
       </Switch.Control>
-      <Switch.Label>{title}</Switch.Label>
+      <Switch.Label fontWeight="normal">{title}</Switch.Label>
     </Switch.Root>
   );
 };

@@ -4,7 +4,7 @@ import { AreaSelect } from "./AreaSelect";
 
 const RightSidebar = () => {
   return (
-    <Sidebar title="Analysis">
+    <Sidebar direction="right" title="Analysis">
       <Box px={4}>
         <AreaSelect />
       </Box>

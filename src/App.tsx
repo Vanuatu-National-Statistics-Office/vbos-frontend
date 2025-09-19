@@ -13,7 +13,7 @@ function App() {
   return (
     <Grid h="100vh" maxH="100vh" templateRows="max-content 1fr">
       <Header />
-      <Grid templateColumns="2fr 5fr 3fr" height="calc(100vh - 3rem)">
+      <Grid templateColumns="auto 5fr auto" height="calc(100vh - 3rem)">
         <Box>
           <LeftSidebar />
         </Box>

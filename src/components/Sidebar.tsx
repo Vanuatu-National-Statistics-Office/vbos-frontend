@@ -1,26 +1,62 @@
-import { Box, Heading } from "@chakra-ui/react";
-import { ReactNode } from "react";
+import { Box, Flex, Heading, IconButton } from "@chakra-ui/react";
+import { ReactNode, useState } from "react";
+import { LuPanelLeft, LuPanelRight } from "react-icons/lu";
 
 type Props = {
   title: string;
+  direction: "right" | "left";
   children?: ReactNode;
 };
 
-export const Sidebar = ({ title, children }: Props) => {
+export const Sidebar = ({ title, direction, children }: Props) => {
+  const [sideBarVisible, setSideBarVisible] = useState(true);
+  const isLeftSidebar = direction === "left";
   return (
-    <Box>
-      <Box px={4} py={2} bg="blue.50">
-        <Heading
-          fontSize="xs"
-          fontWeight="bold"
-          textTransform="uppercase"
-          color="blue.800"
-          letterSpacing="wider"
-        >
-          {title}
-        </Heading>
-      </Box>
-      {children}
+    <Box position="relative" height="full" shadow="xs">
+      <Flex
+        flexDir="column"
+        w={{
+          base: "full",
+          md: !sideBarVisible ? "0px" : isLeftSidebar ? "18rem" : "22rem",
+        }}
+        opacity={sideBarVisible ? 1 : 0}
+        transition="all 0.24s"
+        position="relative"
+        zIndex="10"
+      >
+        {sideBarVisible && (
+          <>
+            <Box px={4} py={3} h={10} bg="blue.50">
+              <Heading
+                fontSize="xs"
+                fontWeight="bold"
+                textTransform="uppercase"
+                color="blue.800"
+                letterSpacing="wider"
+                lineHeight="normal"
+              >
+                {title}
+              </Heading>
+            </Box>
+            {children}
+          </>
+        )}
+      </Flex>
+      <IconButton
+        size="xs"
+        variant="plain"
+        bg="white"
+        position="absolute"
+        top={10}
+        zIndex={10}
+        css={{
+          [isLeftSidebar ? "right" : "left"]: -8,
+          [isLeftSidebar ? "borderLeftRadius" : "borderRightRadius"]: 0,
+        }}
+        onClick={() => setSideBarVisible((prev) => !prev)}
+      >
+        {isLeftSidebar ? <LuPanelLeft /> : <LuPanelRight />}
+      </IconButton>
     </Box>
   );
 };
