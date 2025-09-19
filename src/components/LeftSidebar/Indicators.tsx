@@ -29,7 +29,7 @@ const Indicators = ({ sections }: IndicatorsProps) => {
     <Accordion.Root multiple defaultValue={["0"]} px={4}>
       {sections.map((section, i) => (
         <Accordion.Item key={section.title} value={`${i}`}>
-          <Accordion.ItemTrigger>
+          <Accordion.ItemTrigger cursor="pointer">
             <Span flex="1" as="h3" fontWeight={600} fontSize="1rem">
               {section.title}
             </Span>
@@ -40,7 +40,7 @@ const Indicators = ({ sections }: IndicatorsProps) => {
               <Accordion.Root multiple>
                 {section.items.map((item, n) => (
                   <Accordion.Item key={item.title} value={`${n}`}>
-                    <Accordion.ItemTrigger>
+                    <Accordion.ItemTrigger cursor="pointer">
                       <Span flex="1">
                         {item.title}
                         <Tooltip content={item.description} interactive>
