@@ -19,6 +19,9 @@ export const Sidebar = ({ title, direction, children }: Props) => {
           base: "full",
           md: !sideBarVisible ? "0px" : isLeftSidebar ? "19rem" : "26rem",
         }}
+        h="full"
+        maxH="calc(100vh - 3.75rem)"
+        overflow="hidden"
         opacity={sideBarVisible ? 1 : 0}
         transition="all 0.24s"
         willChange="width, opacity"

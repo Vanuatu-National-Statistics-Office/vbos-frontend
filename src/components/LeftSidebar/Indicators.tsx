@@ -27,7 +27,7 @@ type IndicatorsProps = {
 
 const Indicators = ({ sections }: IndicatorsProps) => {
   return (
-    <Accordion.Root multiple defaultValue={["0"]}>
+    <Accordion.Root multiple defaultValue={["0"]} overflowY="scroll">
       {sections.map((section, i) => (
         <Accordion.Item key={section.title} value={`${i}`}>
           <Accordion.ItemTrigger cursor="pointer" px={4}>
