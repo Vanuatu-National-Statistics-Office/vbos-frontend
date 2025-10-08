@@ -10,6 +10,8 @@ A Management Information System (MIS) for Climate Change and Natural Disasters i
 
 # Running a development server
 
+Copy `.env.example` to `.env.local` and set the environment variables. Then, run the development server.
+
 ```
   pnpm dev
 ```
@@ -19,4 +21,3 @@ A Management Information System (MIS) for Climate Change and Natural Disasters i
 ```
   pnpm build
 ```
-
