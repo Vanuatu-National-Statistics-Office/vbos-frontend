@@ -1,0 +1,47 @@
+import { DeviceOfflineError } from "@/errors";
+
+enum HttpMethod {
+  GET = "GET",
+  POST = "POST",
+  PATCH = "PATCH",
+  DELETE = "DELETE",
+}
+
+type RequestPayload = Record<string, unknown>;
+
+function request(
+  url: string,
+  method: HttpMethod,
+  payload?: RequestPayload,
+): Promise<Response> {
+  const headers = new Headers({
+    "Content-Type": "application/json",
+  });
+
+  return fetch(`${import.meta.env.VITE_API_HOST}${url}`, {
+    method,
+    headers,
+    body: payload ? JSON.stringify(payload) : undefined,
+  }).then((response) => {
+    if (response.status === 599) {
+      throw new DeviceOfflineError();
+    }
+    return response;
+  });
+}
+
+export function get(url: string): Promise<Response> {
+  return request(url, HttpMethod.GET);
+}
+
+export function post(url: string, payload: RequestPayload): Promise<Response> {
+  return request(url, HttpMethod.POST, payload);
+}
+
+export function patch(url: string, payload: RequestPayload): Promise<Response> {
+  return request(url, HttpMethod.PATCH, payload);
+}
+
+export function _delete(url: string): Promise<Response> {
+  return request(url, HttpMethod.DELETE);
+}
