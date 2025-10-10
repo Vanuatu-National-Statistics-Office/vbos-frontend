@@ -1,12 +1,21 @@
 import { useMemo } from "react";
+import { Box, Skeleton, Stack } from "@chakra-ui/react";
 import { Indicators } from "./Indicators";
 import { Sidebar } from "../Sidebar";
 import { useClusters, useDatasets } from "@/hooks/useClusterData";
 import type { ClusterWithDatasets, Dataset } from "@/types/api";
 
 const LeftSidebar = () => {
-  const { data: clusters, isPending: clustersLoading, error: clustersError } = useClusters();
-  const { data: datasets, isPending: datasetsLoading, error: datasetsError } = useDatasets();
+  const {
+    data: clusters,
+    isPending: clustersLoading,
+    error: clustersError,
+  } = useClusters();
+  const {
+    data: datasets,
+    isPending: datasetsLoading,
+    error: datasetsError,
+  } = useDatasets();
 
   // Transform API data into the structure expected by Indicators
   const sections = useMemo(() => {
@@ -50,7 +59,9 @@ const LeftSidebar = () => {
       return {
         title: cluster.name,
         items: Array.from(typeMap.entries()).map(([type, datasetsInType]) => ({
-          title: type.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
+          title: type
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, (l) => l.toUpperCase()),
           description: cluster.description || "",
           datasets: datasetsInType.map((dataset) => ({
             name: dataset.name,
@@ -63,11 +74,11 @@ const LeftSidebar = () => {
   }, [clusters, datasets, clustersLoading, datasetsLoading]);
 
   if (clustersError || datasetsError) {
-    console.error("Clusters error:", clustersError);
-    console.error("Datasets error:", datasetsError);
     return (
       <Sidebar direction="left" title="Data Layers">
-        <div>Error loading data: {String(clustersError || datasetsError)}</div>
+        <Box p={4} fontSize="sm" color="fg.warning">
+          Error loading data: {String(clustersError || datasetsError)}
+        </Box>
       </Sidebar>
     );
   }
@@ -75,7 +86,32 @@ const LeftSidebar = () => {
   if (clustersLoading || datasetsLoading) {
     return (
       <Sidebar direction="left" title="Data Layers">
-        <div>Loading...</div>
+        <Stack gap={4} py={2} overflowY="scroll">
+          {[1, 2, 3, 4].map((i) => (
+            <Stack key={i} gap={2}>
+              <Stack px={4}>
+                <Skeleton height={6} width="140px" />
+              </Stack>
+              <Stack gap={3} px={4}>
+                <Stack gap={1}>
+                  <Skeleton height={5} width="100px" />
+                  <Stack gap={1} pl={3}>
+                    <Skeleton height={3} width="80%" />
+                    <Skeleton height={3} width="95%" />
+                    <Skeleton height={3} width="90%" />
+                  </Stack>
+                </Stack>
+                <Stack gap={1}>
+                  <Skeleton height={5} width="120px" />
+                  <Stack gap={1} pl={3}>
+                    <Skeleton height={3} width="100%" />
+                    <Skeleton height={3} width="92%" />
+                  </Stack>
+                </Stack>
+              </Stack>
+            </Stack>
+          ))}
+        </Stack>
       </Sidebar>
     );
   }
