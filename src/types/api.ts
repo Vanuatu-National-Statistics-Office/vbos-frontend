@@ -5,7 +5,7 @@ export interface IListApiReponse<T> {
   results: T[];
 }
 
-export interface Cluster {
+export interface ICluster {
   id: number;
   name: string;
   description?: string;
@@ -17,7 +17,7 @@ export interface BaseDataset {
   created: string;
   updated: string;
   cluster: string; // Cluster name, not ID
-  type: string;
+  type: DatasetType;
   source: string | null;
   unit: string | null;
 }
@@ -30,11 +30,19 @@ export interface RasterDataset extends BaseDataset {
   dataType: "raster";
 }
 
-export type Dataset = TabularDataset | RasterDataset;
+export interface VectorDataset extends BaseDataset {
+  dataType: "vector";
+}
 
-export interface ClusterWithDatasets {
-  id: number;
-  name: string;
-  description?: string;
+export type Dataset = TabularDataset | RasterDataset | VectorDataset;
+
+export interface ClusterDatasets {
+  type: DatasetType;
   datasets: Dataset[];
 }
+
+export type DatasetType =
+  | "baseline"
+  | "estimated_damage"
+  | "aid_resources_needed"
+  | "estimate_financial_damage";

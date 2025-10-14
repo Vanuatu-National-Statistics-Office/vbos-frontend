@@ -5,6 +5,7 @@ function useAreaCouncils(province: string) {
   const { isPending, error, data } = useQuery({
     queryKey: ["observation", province],
     queryFn: () => API.getAreaCouncils(province),
+    enabled: !!province,
   });
 
   return {

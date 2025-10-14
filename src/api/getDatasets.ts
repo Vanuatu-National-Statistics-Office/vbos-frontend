@@ -1,5 +1,10 @@
 import * as HTTP from "./http";
-import { Dataset, BaseDataset, IListApiReponse } from "@/types/api";
+import {
+  Dataset,
+  BaseDataset,
+  IListApiReponse,
+  ClusterDatasets,
+} from "@/types/api";
 
 async function fetchAllDatasets(url: string): Promise<BaseDataset[]> {
   const allResults: BaseDataset[] = [];
@@ -13,24 +18,47 @@ async function fetchAllDatasets(url: string): Promise<BaseDataset[]> {
     allResults.push(...data.results);
 
     // Extract relative path from next URL if it exists
-    currentUrl = data.next ? new URL(data.next).pathname + new URL(data.next).search : null;
+    currentUrl = data.next
+      ? new URL(data.next).pathname + new URL(data.next).search
+      : null;
   }
 
   return allResults;
 }
 
-export async function getDatasets(): Promise<Dataset[]> {
+export async function getDatasets(cluster: string): Promise<ClusterDatasets[]> {
   // Fetch all pages for both tabular and raster datasets in parallel
-  const [tabularData, rasterData] = await Promise.all([
-    fetchAllDatasets("/api/v1/tabular/"),
-    fetchAllDatasets("/api/v1/raster/"),
+  const [tabularData, rasterData, vectorData] = await Promise.all([
+    fetchAllDatasets(`/api/v1/tabular/?cluster=${encodeURIComponent(cluster)}`),
+    fetchAllDatasets(`/api/v1/raster/?cluster=${encodeURIComponent(cluster)}`),
+    fetchAllDatasets(`/api/v1/vector/?cluster=${encodeURIComponent(cluster)}`),
   ]);
 
   // Add dataType discriminator
   const allDatasets: Dataset[] = [
     ...tabularData.map((d) => ({ ...d, dataType: "tabular" as const })),
     ...rasterData.map((d) => ({ ...d, dataType: "raster" as const })),
+    ...vectorData.map((d) => ({ ...d, dataType: "vector" as const })),
   ];
+  const groupedByType: ClusterDatasets[] = allDatasets.reduce(
+    (acc: ClusterDatasets[], item: Dataset) => {
+      const existingType: ClusterDatasets | undefined = acc.find(
+        (group: ClusterDatasets) => group.type === item.type,
+      );
 
-  return allDatasets;
+      if (existingType) {
+        existingType.datasets.push(item);
+      } else {
+        acc.push({
+          type: item.type,
+          datasets: [item],
+        });
+      }
+
+      return acc;
+    },
+    [],
+  );
+
+  return groupedByType;
 }

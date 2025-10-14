@@ -14,10 +14,10 @@ function useClusters() {
   };
 }
 
-function useDatasets() {
+function useClusterDatasets(cluster: string) {
   const { isPending, error, data } = useQuery({
-    queryKey: ["datasets"],
-    queryFn: () => API.getDatasets(),
+    queryKey: ["datasets", cluster],
+    queryFn: () => API.getDatasets(cluster),
   });
 
   return {
@@ -27,4 +27,4 @@ function useDatasets() {
   };
 }
 
-export { useClusters, useDatasets };
+export { useClusters, useClusterDatasets };
