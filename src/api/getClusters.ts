@@ -1,10 +1,10 @@
 import * as HTTP from "./http";
-import { Cluster, IListApiReponse } from "@/types/api";
+import { ICluster, IListApiReponse } from "@/types/api";
 
-export function getClusters(): Promise<Cluster[]> {
+export function getClusters(): Promise<ICluster[]> {
   return HTTP.get("/api/v1/cluster/?page_size=100").then(async (r) => {
     if (!r.ok) throw new Error("Unable to get clusters.");
-    const data: IListApiReponse<Cluster> = await r.json();
+    const data: IListApiReponse<ICluster> = await r.json();
     return data.results;
   });
 }
