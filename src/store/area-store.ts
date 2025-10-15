@@ -1,4 +1,3 @@
-// stores/areaStore.ts
 import { create } from "zustand";
 
 interface AreaState {
@@ -16,17 +15,21 @@ export const useAreaStore = create<AreaState>((set) => ({
   setAc: (ac: string) => {
     set({ ac: ac });
     const params = new URLSearchParams(window.location.search);
-    params.set("ac", ac);
+    if (ac) {
+      params.set("ac", ac);
+    } else {
+      params.delete("ac");
+    }
     window.history.replaceState(null, "", `?${params.toString()}`);
   },
   setProvince: (province: string) => {
     set({ province });
     const params = new URLSearchParams(window.location.search);
     params.delete("ac");
-    if (!province) {
-      params.delete("province");
-    } else {
+    if (province) {
       params.set("province", province);
+    } else {
+      params.delete("province");
     }
     window.history.replaceState(null, "", `?${params.toString()}`);
   },
