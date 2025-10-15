@@ -7,20 +7,28 @@ interface AreaState {
   province: string;
   setProvince: (province: string) => void;
   syncFromUrl: () => void;
-  syncToUrl: () => void;
 }
 
-export const useAreaStore = create<AreaState>((set, get) => ({
+export const useAreaStore = create<AreaState>((set) => ({
   ac: "",
   province: "",
 
   setAc: (ac: string) => {
-    set({ ac });
-    get().syncToUrl();
+    set({ ac: ac });
+    const params = new URLSearchParams(window.location.search);
+    params.set("ac", ac);
+    window.history.replaceState(null, "", `?${params.toString()}`);
   },
   setProvince: (province: string) => {
     set({ province });
-    get().syncToUrl();
+    const params = new URLSearchParams(window.location.search);
+    params.delete("ac");
+    if (!province) {
+      params.delete("province");
+    } else {
+      params.set("province", province);
+    }
+    window.history.replaceState(null, "", `?${params.toString()}`);
   },
 
   syncFromUrl: () => {
@@ -33,25 +41,5 @@ export const useAreaStore = create<AreaState>((set, get) => ({
     if (province) {
       set({ province });
     }
-  },
-
-  syncToUrl: () => {
-    const { ac, province } = get();
-    const params = new URLSearchParams(window.location.search);
-
-    if (ac) {
-      params.set("ac", ac);
-    } else {
-      params.delete("ac");
-    }
-    if (province) {
-      params.delete("ac");
-      params.set("province", province);
-    } else {
-      params.delete("province");
-      params.delete("ac");
-    }
-
-    window.history.replaceState(null, "", `?${params.toString()}`);
   },
 }));
