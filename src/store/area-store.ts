@@ -1,39 +1,48 @@
-// stores/areaStore.ts
 import { create } from "zustand";
 
 interface AreaState {
-  area: string;
-  setArea: (area: string) => void;
+  ac: string;
+  setAc: (area: string) => void;
+  province: string;
+  setProvince: (province: string) => void;
   syncFromUrl: () => void;
-  syncToUrl: () => void;
 }
 
-export const useAreaStore = create<AreaState>((set, get) => ({
-  area: "",
+export const useAreaStore = create<AreaState>((set) => ({
+  ac: "",
+  province: "",
 
-  setArea: (area: string) => {
-    set({ area });
-    get().syncToUrl();
+  setAc: (ac: string) => {
+    set({ ac: ac });
+    const params = new URLSearchParams(window.location.search);
+    if (ac) {
+      params.set("ac", ac);
+    } else {
+      params.delete("ac");
+    }
+    window.history.replaceState(null, "", `?${params.toString()}`);
+  },
+  setProvince: (province: string) => {
+    set({ province });
+    const params = new URLSearchParams(window.location.search);
+    params.delete("ac");
+    if (province) {
+      params.set("province", province);
+    } else {
+      params.delete("province");
+    }
+    window.history.replaceState(null, "", `?${params.toString()}`);
   },
 
   syncFromUrl: () => {
     const params = new URLSearchParams(window.location.search);
-    const area = params.get("area");
-    if (area) {
-      set({ area });
+    const ac = params.get("ac");
+    const province = params.get("province");
+    if (ac) {
+      set({ ac });
     }
-  },
-
-  syncToUrl: () => {
-    const { area } = get();
-    const params = new URLSearchParams(window.location.search);
-
-    if (area) {
-      params.set("area", area);
-    } else {
-      params.delete("area");
+    if (province) {
+      set({ province });
     }
-
-    window.history.replaceState(null, "", `?${params.toString()}`);
   },
 }));

@@ -1,87 +1,69 @@
-import { Indicators } from "./Indicators";
+import { Accordion, Box, Skeleton, Stack } from "@chakra-ui/react";
 import { Sidebar } from "../Sidebar";
-
-const SECTIONS = [
-  {
-    title: "Baseline Indicators",
-    items: [
-      {
-        title: "Business",
-        description: "Information about businesses",
-        datasets: [
-          {
-            name: "Shops",
-            datasetId: "shops",
-            type: "vector",
-          },
-        ],
-      },
-      {
-        title: "Education",
-        description: "Information about education",
-        datasets: [
-          {
-            name: "Number of students",
-            datasetId: "students",
-            type: "vector",
-          },
-          {
-            name: "Number of schools",
-            datasetId: "schools",
-            type: "vector",
-          },
-          {
-            name: "Number of teachers",
-            datasetId: "teachers",
-            type: "vector",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    title: "Disaster Indicators",
-    items: [
-      {
-        title: "Business",
-        description: "Information about impact of disaster on businesses.",
-        datasets: [
-          {
-            name: "Shops affected",
-            datasetId: "shops",
-            type: "vector",
-          },
-        ],
-      },
-      {
-        title: "Education",
-        description: "Information about impact of disaster on education.",
-        datasets: [
-          {
-            name: "Prediction: Damages",
-            datasetId: "education_damages",
-            type: "vector",
-          },
-          {
-            name: "Immediate Response: Resources",
-            datasetId: "education_resources",
-            type: "vector",
-          },
-          {
-            name: "Financial Recovery: Assets",
-            datasetId: "education_recovery_assets",
-            type: "vector",
-          },
-        ],
-      },
-    ],
-  },
-];
+import { useClusters } from "@/hooks/useClusters";
+import { Cluster } from "./Cluster";
 
 const LeftSidebar = () => {
+  const {
+    data: clusters,
+    isPending: clustersLoading,
+    error: clustersError,
+  } = useClusters();
+
+  if (clustersError) {
+    return (
+      <Sidebar direction="left" title="Data Layers">
+        <Box p={4} fontSize="sm" color="fg.warning">
+          Error loading data: {String(clustersError)}
+        </Box>
+      </Sidebar>
+    );
+  }
+
+  if (clustersLoading) {
+    return (
+      <Sidebar direction="left" title="Data Layers">
+        <Stack gap={4} py={2} overflowY="scroll">
+          {[1, 2, 3, 4].map((i) => (
+            <Stack key={i} gap={2}>
+              <Stack px={4}>
+                <Skeleton height={6} width="140px" />
+              </Stack>
+              <Stack gap={3} px={4}>
+                <Stack gap={1}>
+                  <Skeleton height={5} width="100px" />
+                  <Stack gap={1} pl={3}>
+                    <Skeleton height={3} width="80%" />
+                    <Skeleton height={3} width="95%" />
+                    <Skeleton height={3} width="90%" />
+                  </Stack>
+                </Stack>
+                <Stack gap={1}>
+                  <Skeleton height={5} width="120px" />
+                  <Stack gap={1} pl={3}>
+                    <Skeleton height={3} width="100%" />
+                    <Skeleton height={3} width="92%" />
+                  </Stack>
+                </Stack>
+              </Stack>
+            </Stack>
+          ))}
+        </Stack>
+      </Sidebar>
+    );
+  }
+
   return (
     <Sidebar direction="left" title="Data Layers">
-      <Indicators sections={SECTIONS} />
+      <Accordion.Root
+        multiple
+        defaultValue={[`${clusters ? clusters[0].id : null}`]}
+        overflowY="scroll"
+      >
+        {clusters?.map((cluster) => (
+          <Cluster name={cluster.name} id={cluster.id} key={cluster.id} />
+        ))}
+      </Accordion.Root>
     </Sidebar>
   );
 };
