@@ -1,8 +1,11 @@
+import { AreaCouncilGeoJSON } from "@/types/data";
 import { create } from "zustand";
 
 interface AreaState {
   ac: string;
+  acGeoJSON: AreaCouncilGeoJSON;
   setAc: (area: string) => void;
+  setAcGeoJSON: (acGeoJSON: AreaCouncilGeoJSON) => void;
   province: string;
   setProvince: (province: string) => void;
   syncFromUrl: () => void;
@@ -10,7 +13,10 @@ interface AreaState {
 
 export const useAreaStore = create<AreaState>((set) => ({
   ac: "",
+  acGeoJSON: { type: "FeatureCollection", features: [] },
   province: "",
+
+  setAcGeoJSON: (acGeoJSON: AreaCouncilGeoJSON) => set({ acGeoJSON }),
 
   setAc: (ac: string) => {
     set({ ac: ac });
@@ -22,6 +28,7 @@ export const useAreaStore = create<AreaState>((set) => ({
     }
     window.history.replaceState(null, "", `?${params.toString()}`);
   },
+
   setProvince: (province: string) => {
     set({ province });
     const params = new URLSearchParams(window.location.search);

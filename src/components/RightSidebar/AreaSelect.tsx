@@ -22,7 +22,7 @@ const PROVINCES = createListCollection({
 });
 
 const AreaSelect = () => {
-  const { ac, province, setAc, setProvince } = useAreaStore();
+  const { ac, province, setAc, setAcGeoJSON, setProvince } = useAreaStore();
   const { data: areaCouncils, isPending: areaCouncilsIsLoading } =
     useAreaCouncils(province);
 
@@ -35,6 +35,7 @@ const AreaSelect = () => {
     filter: contains,
   });
 
+  // update Select options
   useEffect(
     () =>
       set(
@@ -44,6 +45,13 @@ const AreaSelect = () => {
         })) || [],
       ),
     [areaCouncils, set],
+  );
+
+  // update AreaStore with the area councils geojson data
+  useEffect(
+    () =>
+      setAcGeoJSON(areaCouncils || { type: "FeatureCollection", features: [] }),
+    [areaCouncils, setAcGeoJSON],
   );
 
   return (

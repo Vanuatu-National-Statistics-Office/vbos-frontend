@@ -55,7 +55,12 @@ export function DatasetSection({ title, datasets }: DatasetSectionProps) {
       <Accordion.ItemContent>
         <Accordion.ItemBody px={4} pt={0}>
           {datasets.map((dataset) => (
-            <LayerSwitch key={dataset.id} title={dataset.name} />
+            <LayerSwitch
+              key={dataset.id}
+              dataType={dataset.dataType}
+              id={dataset.id}
+              title={dataset.name}
+            />
           ))}
         </Accordion.ItemBody>
       </Accordion.ItemContent>

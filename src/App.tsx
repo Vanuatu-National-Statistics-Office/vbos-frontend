@@ -6,6 +6,7 @@ import { useRef } from "react";
 import { useUrlSync } from "./hooks/useUrlSync";
 import { LeftSidebar } from "./components/LeftSidebar";
 import { RightSidebar } from "./components/RightSidebar";
+import { AdminAreaMapLayers } from "./components/AdminAreaMapLayers";
 
 function App() {
   useUrlSync();
@@ -19,7 +20,9 @@ function App() {
         </Box>
         <Box>
           <Box position="relative" h="100%">
-            <Map ref={mapRef} />
+            <Map ref={mapRef}>
+              <AdminAreaMapLayers />
+            </Map>
           </Box>
         </Box>
         <Box>

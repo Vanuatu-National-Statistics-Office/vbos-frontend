@@ -1,10 +1,7 @@
 import * as HTTP from "./http";
-import { ProvinceFeature } from "@/types/data";
-import { FeatureCollection, Geometry } from "geojson";
+import { ProvincesGeoJSON } from "@/types/data";
 
-type Provinces = FeatureCollection<Geometry, ProvinceFeature>;
-
-export function getProvinces(): Promise<Provinces> {
+export function getProvinces(): Promise<ProvincesGeoJSON> {
   return HTTP.get("/api/v1/provinces/").then((r) => {
     if (!r.ok) throw new Error("Unable to get provinces.");
     return r.json();
