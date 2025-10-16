@@ -6,7 +6,7 @@ on:
       - main
       - deploy
     tags:
-        - 'v*.*.*'
+      - 'v*.*.*'
   pull_request:
     branches:
       - main
