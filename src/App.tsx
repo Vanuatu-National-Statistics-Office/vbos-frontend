@@ -7,6 +7,7 @@ import { useUrlSync } from "./hooks/useUrlSync";
 import { LeftSidebar } from "./components/LeftSidebar";
 import { RightSidebar } from "./components/RightSidebar";
 import { AdminAreaMapLayers } from "./components/AdminAreaMapLayers";
+import { VectorDatasetMapLayers } from "./components/VectorDatasetsMapLayers";
 
 function App() {
   useUrlSync();
@@ -22,6 +23,7 @@ function App() {
           <Box position="relative" h="100%">
             <Map ref={mapRef}>
               <AdminAreaMapLayers />
+              <VectorDatasetMapLayers />
             </Map>
           </Box>
         </Box>

@@ -2,8 +2,9 @@ import * as HTTP from "./http";
 import {
   Dataset,
   BaseDataset,
-  IListApiReponse,
+  IListApiResponse,
   ClusterDatasets,
+  PaginatedVectorData,
 } from "@/types/api";
 
 async function fetchAllDatasets(url: string): Promise<BaseDataset[]> {
@@ -14,7 +15,7 @@ async function fetchAllDatasets(url: string): Promise<BaseDataset[]> {
     const response = await HTTP.get(currentUrl);
     if (!response.ok) throw new Error(`Unable to fetch data from ${url}`);
 
-    const data: IListApiReponse<BaseDataset> = await response.json();
+    const data: IListApiResponse<BaseDataset> = await response.json();
     allResults.push(...data.results);
 
     // Extract relative path from next URL if it exists
@@ -61,4 +62,49 @@ export async function getDatasets(cluster: string): Promise<ClusterDatasets[]> {
   );
 
   return groupedByType;
+}
+
+interface ListApiResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: object[];
+}
+
+export async function getDatasetData(
+  dataType: "tabular" | "vector",
+  id: number,
+  filters?: URLSearchParams,
+) {
+  let allResults: PaginatedVectorData | ListApiResponse | null = null;
+  const queryString = filters ? new URLSearchParams(filters).toString() : "";
+  const url = `/api/v1/${dataType}/${id}/data/?page_size=500${queryString ? `&${queryString}` : ""}`;
+
+  let currentUrl: string | null = url;
+
+  while (currentUrl) {
+    const response = await HTTP.get(currentUrl);
+    if (!response.ok)
+      throw new Error(`Unable to fetch data from ${currentUrl}`);
+
+    const data = await response.json();
+
+    if (!allResults) {
+      allResults = data;
+    } else {
+      if (dataType === "vector" && "features" in allResults) {
+        (allResults as PaginatedVectorData).features.push(...data.features);
+      }
+      if (dataType === "tabular" && "results" in allResults) {
+        (allResults as ListApiResponse).results.push(...data.results);
+      }
+    }
+
+    // Extract relative path from next URL if it exists
+    currentUrl = data.next
+      ? new URL(data.next).pathname + new URL(data.next).search
+      : null;
+  }
+
+  return allResults as PaginatedVectorData | ListApiResponse;
 }
