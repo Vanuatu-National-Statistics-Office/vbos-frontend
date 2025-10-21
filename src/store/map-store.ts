@@ -4,11 +4,9 @@ import { ViewState } from "react-map-gl/maplibre";
 interface MapState {
   viewState: ViewState;
   setViewState: (viewState: Partial<ViewState>) => void;
-  syncFromUrl: () => void;
-  syncToUrl: () => void;
 }
 
-export const useMapStore = create<MapState>((set, get) => ({
+export const useMapStore = create<MapState>((set) => ({
   viewState: {
     longitude: 167.5997,
     latitude: -16.7087,
@@ -22,40 +20,5 @@ export const useMapStore = create<MapState>((set, get) => ({
     set((state) => ({
       viewState: { ...state.viewState, ...updates },
     }));
-    get().syncToUrl();
-  },
-
-  syncFromUrl: () => {
-    const params = new URLSearchParams(window.location.search);
-
-    const longitude = params.get("lng");
-    const latitude = params.get("lat");
-    const zoom = params.get("zoom");
-
-    const updates: Partial<ViewState> = {};
-
-    if (longitude && latitude) {
-      updates.longitude = parseFloat(longitude);
-      updates.latitude = parseFloat(latitude);
-    }
-
-    if (zoom) updates.zoom = parseFloat(zoom);
-
-    if (Object.keys(updates).length > 0) {
-      set((state) => ({
-        viewState: { ...state.viewState, ...updates },
-      }));
-    }
-  },
-
-  syncToUrl: () => {
-    const { viewState } = get();
-    const params = new URLSearchParams(window.location.search);
-
-    params.set("lng", Number(viewState.longitude).toFixed(4).toString());
-    params.set("lat", Number(viewState.latitude).toFixed(4).toString());
-    params.set("zoom", Number(viewState.zoom).toFixed(1).toString());
-
-    window.history.replaceState(null, "", `?${params.toString()}`);
   },
 }));
