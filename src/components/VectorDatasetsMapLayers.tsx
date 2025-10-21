@@ -55,12 +55,12 @@ function VectorMapLayer({ id }: VectorMapLayerProps) {
 
   const lineStyle: LayerProps = {
     type: "line",
-    paint: { "line-color": "#dc2626" },
+    paint: { "line-color": "#f09000" },
     source: layerId,
   };
   const pointStyle: LayerProps = {
     type: "circle",
-    paint: { "circle-color": "#dc2626" },
+    paint: { "circle-color": "#3d4aff" },
     source: layerId,
     filter: ["==", ["geometry-type"], "Point"],
   };

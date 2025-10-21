@@ -12,13 +12,17 @@ export function AdminAreaMapLayers() {
 
   const provinceLayerStyle: LayerProps = {
     type: "line",
-    paint: { "line-color": "#198EC8" },
+    paint: { "line-color": "#198EC8", "line-width": ac ? 1 : 2, "line-opacity": ac ? 0.5 : 1, },
     source: "provinces",
     filter: province ? ["==", "name", province.toUpperCase()] : ["all"],
   };
   const areaCouncilLayerStyle: LayerProps = {
     type: "line",
-    paint: { "line-color": "#374140" },
+    paint: {
+      "line-color": "#198EC8",
+      "line-width": ac ? 2 : 1,
+      "line-opacity": ac ? 1 : 0.125,
+    },
     source: "area-councils",
     filter: ac ? ["==", "name", ac] : ["all"],
   };
