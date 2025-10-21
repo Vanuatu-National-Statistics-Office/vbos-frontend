@@ -15,6 +15,9 @@ const SidebarSectionHeading = React.forwardRef<
       m={0}
       color="blue.800"
       {...props}
+      whiteSpace="pre"
+      overflow="hidden"
+      textOverflow="ellipsis"
     />
   );
 });

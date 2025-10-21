@@ -22,7 +22,14 @@ const LayerSwitch = ({ title, id, dataType }: LayerSwitchProps) => {
       <Switch.Control>
         <Switch.Thumb />
       </Switch.Control>
-      <Switch.Label fontWeight="normal">{title}</Switch.Label>
+      <Switch.Label 
+        fontWeight="normal"
+        whiteSpace="pre"
+        overflow="hidden"
+        textOverflow="ellipsis"
+      >
+        {title}
+      </Switch.Label>
     </Switch.Root>
   );
 };
