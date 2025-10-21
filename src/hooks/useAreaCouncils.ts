@@ -3,7 +3,7 @@ import API from "@/api";
 
 function useAreaCouncils(province: string) {
   const { isPending, error, data } = useQuery({
-    queryKey: ["observation", province],
+    queryKey: ["area-councils", province],
     queryFn: () => API.getAreaCouncils(province),
     enabled: !!province,
   });

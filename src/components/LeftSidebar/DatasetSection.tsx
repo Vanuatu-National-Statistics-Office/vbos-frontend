@@ -1,8 +1,6 @@
-import { Accordion, IconButton, Span } from "@chakra-ui/react";
-import { Tooltip } from "../ui";
+import { Accordion } from "@chakra-ui/react";
 import { LayerSwitch } from "./LayerSwitch";
 import { Dataset } from "@/types/api";
-import { LuInfo } from "react-icons/lu";
 
 type DatasetSectionProps = {
   title:
@@ -23,39 +21,34 @@ const DATASET_TYPES = {
 export function DatasetSection({ title, datasets }: DatasetSectionProps) {
   return (
     <Accordion.Item key={title} value={title}>
-      <Accordion.ItemTrigger cursor="pointer" px={4} py={1}>
-        <Span
-          flex="1"
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          fontWeight="normal"
-          fontSize="sm"
-        >
-          {DATASET_TYPES[title]}
-          <Tooltip
-            content={`Datasets categorized as ${DATASET_TYPES[title]}.`}
-            interactive
-          >
-            <IconButton
-              as="span"
-              size="xs"
-              aria-label="Dataset Information"
-              variant="plain"
-              color="gray.emphasized"
-              textAlign="right"
-              ml="auto"
-            >
-              <LuInfo />
-            </IconButton>
-          </Tooltip>
-        </Span>
+      <Accordion.ItemTrigger
+        cursor="pointer"
+        px={4}
+        py={1}
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        fontWeight="normal"
+        fontSize="sm"
+      >
+        {DATASET_TYPES[title]}
         <Accordion.ItemIndicator />
       </Accordion.ItemTrigger>
       <Accordion.ItemContent>
-        <Accordion.ItemBody px={4} pt={0}>
+        <Accordion.ItemBody
+          px={4}
+          pt={0}
+          display="flex"
+          flexDirection="column"
+          gap={1}
+        >
           {datasets.map((dataset) => (
-            <LayerSwitch key={dataset.id} title={dataset.name} />
+            <LayerSwitch
+              key={dataset.id}
+              dataType={dataset.dataType}
+              id={dataset.id}
+              title={dataset.name}
+            />
           ))}
         </Accordion.ItemBody>
       </Accordion.ItemContent>

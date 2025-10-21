@@ -1,4 +1,6 @@
-export interface IListApiReponse<T> {
+import { Feature } from "geojson";
+
+export interface IListApiResponse<T> {
   count: number;
   next: string | null;
   previous: string | null;
@@ -46,3 +48,11 @@ export type DatasetType =
   | "estimated_damage"
   | "aid_resources_needed"
   | "estimate_financial_damage";
+
+export interface PaginatedVectorData {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  type: "FeatureCollection";
+  features: Feature[];
+}
