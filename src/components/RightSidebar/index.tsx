@@ -3,11 +3,17 @@ import { Accordion, Box, Button } from "@chakra-ui/react";
 import { AreaSelect } from "./AreaSelect";
 import { SidebarSectionHeading } from "../SidebarSectionHeading";
 import { LuDownload } from "react-icons/lu";
+import { DateSelect } from "./DateSelect";
 
 const RightSidebar = () => {
   return (
     <Sidebar direction="right" title="Analysis">
-      <Box px={6} py={2} borderBottom="1px solid" borderColor="border.emphasized">
+      <Box
+        px={6}
+        py={2}
+        borderBottom="1px solid"
+        borderColor="border.emphasized"
+      >
         <AreaSelect />
       </Box>
       <Box flex="1" overflow="scroll">
@@ -18,9 +24,7 @@ const RightSidebar = () => {
               <Accordion.ItemIndicator />
             </Accordion.ItemTrigger>
             <Accordion.ItemContent>
-              <Accordion.ItemBody px={6}>
-                Soon...
-              </Accordion.ItemBody>
+              <Accordion.ItemBody px={6}>Soon...</Accordion.ItemBody>
             </Accordion.ItemContent>
           </Accordion.Item>
           <Accordion.Item value="1">
@@ -30,7 +34,7 @@ const RightSidebar = () => {
             </Accordion.ItemTrigger>
             <Accordion.ItemContent>
               <Accordion.ItemBody px={6}>
-                Soon...
+                <DateSelect />
               </Accordion.ItemBody>
             </Accordion.ItemContent>
           </Accordion.Item>
