@@ -27,6 +27,17 @@ export const useLayerStore = create<LayersState>((set, get) => ({
     if (layerArray.includes(layer)) {
       layerArray = layerArray.filter((l) => l !== layer);
     } else {
+      // We can only have one tabular layer and one raster layer enabled at once.
+      // So, we need to remove other enabled tabular/raster layers, before adding a new one.
+      const isTabularLayer = layer.startsWith("t");
+      const isRasterLayer = layer.startsWith("r");
+      if (isTabularLayer) {
+        layerArray = layerArray.filter((l) => !l.startsWith("t"));
+      }
+      if (isRasterLayer) {
+        layerArray = layerArray.filter((l) => !l.startsWith("r"));
+      }
+      // Add new enabled layer
       layerArray.push(layer);
     }
     get().setLayers(layerArray.join());
