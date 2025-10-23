@@ -5,6 +5,15 @@ export const DateSelect = () => {
   const minYear = 2004;
   const maxYear = new Date().getFullYear() - 1;
   const { year, setYear } = useDateStore();
+
+  // Get initial year from URL params if available
+  const getInitialYear = () => {
+    if (year) return Number(year);
+    const params = new URLSearchParams(window.location.search);
+    const urlYear = params.get("year");
+    return urlYear ? Number(urlYear) : maxYear;
+  };
+
   const marks = [
     { value: minYear, label: minYear.toString() },
     { value: maxYear, label: maxYear.toString() },
@@ -15,8 +24,8 @@ export const DateSelect = () => {
       width="100%"
       min={minYear}
       max={maxYear}
-      defaultValue={[typeof year === "number" ? year : 2024]}
-      onValueChange={(e) => setYear(String(e.value[0]))}
+      defaultValue={[getInitialYear()]}
+      onValueChangeEnd={(e) => setYear(String(e.value[0]))}
       colorPalette="blue"
       variant="solid"
     >
