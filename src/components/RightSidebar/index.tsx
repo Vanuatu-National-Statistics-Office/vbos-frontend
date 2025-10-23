@@ -17,7 +17,7 @@ const RightSidebar = () => {
         <AreaSelect />
       </Box>
       <Box flex="1" overflow="scroll">
-        <Accordion.Root multiple defaultValue={["0"]}>
+        <Accordion.Root multiple defaultValue={["0", "1"]}>
           <Accordion.Item value="0">
             <Accordion.ItemTrigger cursor="pointer" px={6}>
               <SidebarSectionHeading>Overview</SidebarSectionHeading>
