@@ -1,5 +1,5 @@
 import { useLayerStore } from "@/store/layer-store";
-import { Box, Table } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 
 export function Stats() {
   const { tabularLayerData } = useLayerStore();
