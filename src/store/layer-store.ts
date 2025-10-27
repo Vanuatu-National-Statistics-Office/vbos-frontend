@@ -1,14 +1,18 @@
+import { TabularData } from "@/types/api";
 import { create } from "zustand";
 
 interface LayersState {
   layers: string;
+  tabularLayerData: TabularData[];
   setLayers: (layers: string) => void;
   switchLayer: (layer: string) => void;
+  setTabularLayerData: (data: TabularData[]) => void;
   syncFromUrl: () => void;
 }
 
 export const useLayerStore = create<LayersState>((set, get) => ({
   layers: "",
+  tabularLayerData: [],
 
   setLayers: (layers: string) => {
     set({ layers });
@@ -41,6 +45,10 @@ export const useLayerStore = create<LayersState>((set, get) => ({
       layerArray.push(layer);
     }
     get().setLayers(layerArray.join());
+  },
+
+  setTabularLayerData: (data: TabularData[]) => {
+    set({ tabularLayerData: data });
   },
 
   syncFromUrl: () => {

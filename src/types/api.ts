@@ -49,6 +49,15 @@ export type DatasetType =
   | "aid_resources_needed"
   | "estimate_financial_damage";
 
+export interface TabularData {
+  id: number;
+  attribute: string;
+  date: string;
+  value: number;
+  province?: string;
+  area_council?: string;
+}
+
 export interface PaginatedVectorData {
   count: number;
   next: string | null;

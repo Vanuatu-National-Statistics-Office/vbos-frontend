@@ -4,6 +4,7 @@ import { AreaSelect } from "./AreaSelect";
 import { SidebarSectionHeading } from "../SidebarSectionHeading";
 import { LuDownload } from "react-icons/lu";
 import { DateSelect } from "./DateSelect";
+import { Stats } from "./Stats";
 
 const RightSidebar = () => {
   return (
@@ -35,6 +36,7 @@ const RightSidebar = () => {
             <Accordion.ItemContent>
               <Accordion.ItemBody px={6}>
                 <DateSelect />
+                <Stats />
               </Accordion.ItemBody>
             </Accordion.ItemContent>
           </Accordion.Item>

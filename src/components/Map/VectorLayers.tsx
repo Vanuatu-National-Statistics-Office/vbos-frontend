@@ -5,7 +5,7 @@ import { PaginatedVectorData } from "@/types/api";
 import { Box, Spinner, Text } from "@chakra-ui/react";
 import { useAreaStore } from "@/store/area-store";
 
-export function VectorDatasetMapLayers() {
+export function VectorLayers() {
   const { layers } = useLayerStore();
   const vectorLayers = layers
     .split(",")
