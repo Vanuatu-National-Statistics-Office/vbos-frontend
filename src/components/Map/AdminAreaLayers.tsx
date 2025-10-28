@@ -69,7 +69,7 @@ export function AdminAreaMapLayers() {
           <Layer {...provinceLayerStyle} />
         </Source>
       )}
-      {adminAreaStatsGeojson && maxValue > 0 && (
+      {adminAreaStatsGeojson.features.length && maxValue > 0 && (
         <Source id="stats" type="geojson" data={adminAreaStatsGeojson}>
           <Layer {...fillStyle} />
         </Source>

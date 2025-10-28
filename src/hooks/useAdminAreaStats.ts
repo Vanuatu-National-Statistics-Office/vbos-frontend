@@ -3,49 +3,81 @@ import { useDateStore } from "@/store/date-store";
 import { useLayerStore } from "@/store/layer-store";
 import { AreaCouncilGeoJSON, ProvincesGeoJSON } from "@/types/data";
 import { getAreaCouncilValue, getProvinceValue } from "@/utils/getValue";
+import { featureCollection } from "@turf/helpers";
+import { useEffect, useState } from "react";
 
 const useAdminAreaStats = (geojson: ProvincesGeoJSON | AreaCouncilGeoJSON) => {
-  const { province } = useAreaStore();
+  const { ac, province } = useAreaStore();
   const { tabularLayerData } = useLayerStore();
   const { year } = useDateStore();
-  const filteredData = tabularLayerData.filter((i) => i.date.startsWith(year));
+  const [result, setResult] = useState<ProvincesGeoJSON | AreaCouncilGeoJSON>(
+    featureCollection([]),
+  );
+  const [minValue, setMinValue] = useState<number>(0);
+  const [maxValue, setMaxValue] = useState<number>(0);
 
-  if (!tabularLayerData) {
-    return { geojson, maxValue: 0, minValue: 0 };
-  }
-
-  if (!province) {
-    geojson.features.forEach(
-      (p) =>
-        (p.properties.value = getProvinceValue(
-          filteredData,
-          p.properties.name,
-        )),
+  useEffect(() => {
+    const filteredData = tabularLayerData.filter((i) =>
+      i.date.startsWith(year),
     );
-  }
-  if (province) {
-    geojson.features.forEach(
-      (c) =>
-        (c.properties.value = getAreaCouncilValue(
-          filteredData,
-          c.properties.name,
-        )),
-    );
-  }
 
-  const values = geojson.features
-    .map((i) => i.properties?.value)
-    .filter((v): v is number => typeof v === "number" && isFinite(v));
+    if (!tabularLayerData) {
+      setResult(featureCollection([]));
+    }
 
-  if (values.length === 0) {
-    return { geojson, maxValue: 0, minValue: 0 };
-  }
+    const updatedGeojson = {
+      ...geojson,
+      features: geojson.features.map((feature) => ({
+        ...feature,
+        properties: { ...feature.properties },
+      })),
+    };
 
-  values.sort((a, b) => a - b);
-  const minValue = values[0];
-  const maxValue = values[values.length - 1];
+    if (!province) {
+      updatedGeojson.features.forEach(
+        (p) =>
+          (p.properties.value = getProvinceValue(
+            filteredData,
+            p.properties.name,
+          )),
+      );
+    }
+    if (province) {
+      updatedGeojson.features.forEach(
+        (c) =>
+          (c.properties.value = getAreaCouncilValue(
+            filteredData,
+            c.properties.name,
+          )),
+      );
+    }
 
-  return { geojson, maxValue, minValue };
+    const values = updatedGeojson.features
+      .map((i) => i.properties?.value)
+      .filter((v): v is number => typeof v === "number" && isFinite(v));
+
+    if (values.length === 0) {
+      setMinValue(0);
+      setMaxValue(0);
+    } else {
+      values.sort((a, b) => a - b);
+      setMinValue(values[0]);
+      setMaxValue(values[values.length - 1]);
+    }
+
+    setResult(updatedGeojson);
+  }, [
+    ac,
+    province,
+    tabularLayerData,
+    year,
+    setMaxValue,
+    setMinValue,
+    setResult,
+    geojson,
+  ]);
+
+  return { geojson: result, maxValue, minValue };
 };
 
 export { useAdminAreaStats };
