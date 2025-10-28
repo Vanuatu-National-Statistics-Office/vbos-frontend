@@ -21,12 +21,18 @@ import { featureCollection } from "@turf/helpers";
 import { AdminAreaMapLayers } from "./AdminAreaLayers";
 import { VectorLayers } from "./VectorLayers";
 import { TabularLayers } from "./TabularLayer";
+import { Legend } from "./Legend";
+import { useLegendLayers } from "@/hooks/useLegendLayers";
+import { useLayerStore } from "@/store/layer-store";
+import type { LayerActionHandler } from "./Legend/types";
 
 function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
   const [map, setMap] = useState<MapRef>();
   const setMapRef = (m: MapRef) => setMap(m);
   const { viewState, setViewState } = useMapStore();
   const { ac, acGeoJSON } = useAreaStore();
+  const { switchLayer } = useLayerStore();
+  const legendLayers = useLegendLayers();
 
   useImperativeHandle(ref, () => {
     if (map) {
@@ -39,6 +45,17 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
       setViewState(evt.viewState);
     },
     [setViewState],
+  );
+
+  const handleLayerAction: LayerActionHandler = useCallback(
+    (details) => {
+      if (details.action === "remove") {
+        // Toggle the layer off using the layer ID format (e.g., "t1", "v2", "r3")
+        const layerId = `${details.payload.layer.dataType.charAt(0)}${details.payload.layer.id}`;
+        switchLayer(layerId);
+      }
+    },
+    [switchLayer],
   );
 
   useEffect(() => {
@@ -74,11 +91,11 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
       <NavigationControl
         position="bottom-left"
         showZoom
-        style={{ marginBottom: "7rem" }}
       />
       <AdminAreaMapLayers />
       <VectorLayers />
       <TabularLayers />
+      <Legend layers={legendLayers} onLayerAction={handleLayerAction} />
       {props.children}
     </ReactMapGl>
   );
