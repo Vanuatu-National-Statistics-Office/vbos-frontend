@@ -14,8 +14,8 @@ export function VectorLayers() {
 
   return (
     <>
-      {vectorLayers.map((layer, index) => (
-        <VectorMapLayer id={layer} key={layer} index={index} />
+      {vectorLayers.map((layer) => (
+        <VectorMapLayer id={layer} key={layer} />
       ))}
     </>
   );
