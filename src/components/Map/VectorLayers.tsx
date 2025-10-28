@@ -23,10 +23,9 @@ export function VectorLayers() {
 
 type VectorMapLayerProps = {
   id: number;
-  index: number;
 };
 
-function VectorMapLayer({ id, index }: VectorMapLayerProps) {
+function VectorMapLayer({ id }: VectorMapLayerProps) {
   const layerId = `v${id}`;
   // load ac and province and set filters
   const { ac, province } = useAreaStore();
