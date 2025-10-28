@@ -58,17 +58,17 @@ export function AdminAreaMapLayers() {
     <>
       {acGeoJSON && (
         <Source id="area-councils" type="geojson" data={acGeoJSON}>
-          <Layer {...areaCouncilLayerStyle} />
+          <Layer {...areaCouncilLayerStyle} id="area-councils" />
         </Source>
       )}
       {provincesGeojson && (
         <Source id="provinces" type="geojson" data={provincesGeojson}>
-          <Layer {...provinceLayerStyle} />
+          <Layer {...provinceLayerStyle} beforeId="area-councils" />
         </Source>
       )}
       {adminAreaStatsGeojson.features.length && maxValue > 0 && (
         <Source id="stats" type="geojson" data={adminAreaStatsGeojson}>
-          <Layer {...fillStyle} />
+          <Layer {...fillStyle} beforeId="area-councils" />
         </Source>
       )}
     </>

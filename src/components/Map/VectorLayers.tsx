@@ -10,12 +10,12 @@ export function VectorLayers() {
   const vectorLayers = layers
     .split(",")
     .filter((i) => i.startsWith("v"))
-    .map((i) => Number(i.substr(1)));
+    .map((i) => Number(i.slice(1)));
 
   return (
     <>
-      {vectorLayers.map((layer) => (
-        <VectorMapLayer id={layer} key={layer} />
+      {vectorLayers.map((layer, index) => (
+        <VectorMapLayer id={layer} key={layer} index={index} />
       ))}
     </>
   );
@@ -23,9 +23,10 @@ export function VectorLayers() {
 
 type VectorMapLayerProps = {
   id: number;
+  index: number;
 };
 
-function VectorMapLayer({ id }: VectorMapLayerProps) {
+function VectorMapLayer({ id, index }: VectorMapLayerProps) {
   const layerId = `v${id}`;
   // load ac and province and set filters
   const { ac, province } = useAreaStore();

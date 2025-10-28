@@ -9,7 +9,7 @@ type LayerSwitchProps = {
 
 const LayerSwitch = ({ title, id, dataType }: LayerSwitchProps) => {
   const { layers, switchLayer } = useLayerStore();
-  const urlLayerId = `${dataType.substr(0, 1)}${id}`;
+  const urlLayerId = `${dataType.slice(0, 1)}${id}`;
 
   return (
     <Switch.Root
@@ -22,7 +22,7 @@ const LayerSwitch = ({ title, id, dataType }: LayerSwitchProps) => {
       <Switch.Control>
         <Switch.Thumb />
       </Switch.Control>
-      <Switch.Label 
+      <Switch.Label
         fontWeight="normal"
         whiteSpace="pre"
         overflow="hidden"

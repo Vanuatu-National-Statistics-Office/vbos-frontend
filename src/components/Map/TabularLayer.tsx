@@ -9,9 +9,9 @@ export function TabularLayers() {
   const tabularLayers = layers
     .split(",")
     .filter((i) => i.startsWith("t"))
-    .map((i) => Number(i.substr(1)));
+    .map((i) => Number(i.slice(1)));
 
-  const layer = tabularLayers.length ? Number(tabularLayers[0]) : null;
+  const layer = tabularLayers.length ? tabularLayers[0] : null;
 
   if (layer) return <TabularDatasetMapLayer id={layer} />;
 }
