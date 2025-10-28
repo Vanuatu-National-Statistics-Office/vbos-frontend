@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import useAreaCouncils from "@/hooks/useAreaCouncils";
 import { useAreaStore } from "@/store/area-store";
+import { featureCollection } from "@turf/helpers";
 
 const PROVINCES = createListCollection({
   items: [
@@ -49,8 +50,7 @@ const AreaSelect = () => {
 
   // update AreaStore with the area councils geojson data
   useEffect(
-    () =>
-      setAcGeoJSON(areaCouncils || { type: "FeatureCollection", features: [] }),
+    () => setAcGeoJSON(areaCouncils || featureCollection([])),
     [areaCouncils, setAcGeoJSON],
   );
 
