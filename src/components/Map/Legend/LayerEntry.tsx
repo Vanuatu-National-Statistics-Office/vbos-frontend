@@ -5,16 +5,18 @@
  * toggling visibility or removing the layer from the map.
  */
 
+import { useState } from "react";
 import {
   Box,
-  Flex,
   Text,
   IconButton,
   HStack,
   VStack,
 } from "@chakra-ui/react";
 import { Tooltip } from "@/components/ui/Tooltip";
-import { LuX } from "react-icons/lu";
+import { LuX, LuInfo, LuDroplet } from "react-icons/lu";
+import { OpacityControl } from "./OpacityControl";
+import { LayerInfoModal } from "./LayerInfoModal";
 
 import type {
   LegendLayer,
@@ -37,6 +39,8 @@ type LayerEntryProps = LegendLayer & {
  */
 export function LayerEntry(props: LayerEntryProps) {
   const { dataType, onLayerAction } = props;
+  const [infoOpen, setInfoOpen] = useState(false);
+  const [opacity, setOpacity] = useState(100);
 
   const handleRemove = () => {
     onLayerAction?.({
@@ -45,28 +49,73 @@ export function LayerEntry(props: LayerEntryProps) {
     });
   };
 
+  const handleOpacityChange = (newOpacity: number) => {
+    setOpacity(newOpacity);
+    onLayerAction?.({
+      action: "opacity",
+      payload: { layer: props, opacity: newOpacity },
+    });
+  };
+
   return (
-    <Flex w="100%" align="flex-start" gap={2} position="relative">
-      <Box flex={1} minW={0}>
-        {dataType === "tabular" && <TabularEntry {...(props as TabularLegendLayer)} />}
-        {dataType === "vector" && <VectorEntry {...(props as VectorLegendLayer)} />}
-        {dataType === "raster" && <RasterEntry {...(props as RasterLegendLayer)} />}
-      </Box>
-      <Tooltip content="Remove layer" positioning={{ placement: "left" }}>
-        <IconButton
-          aria-label="Remove layer"
-          size="xs"
-          variant="plain"
-          onClick={handleRemove}
-          flexShrink={0}
-          position="absolute"
-          top={-1}
-          right={-2}
-        >
-          <LuX />
-        </IconButton>
-      </Tooltip>
-    </Flex>
+    <>
+      <VStack w="100%" align="flex-start" gap={2}>
+        <HStack w="full">
+          <Text fontWeight="medium" fontSize="sm" lineClamp={1} mr="auto">
+            {props.name}
+          </Text>
+          {/* Control buttons */}
+          <HStack gap={0} flexShrink={0}>
+            {/* Info button */}
+            <Tooltip content="Layer info" positioning={{ placement: "top" }}>
+              <IconButton
+                aria-label="Layer info"
+                size="xs"
+                variant="ghost"
+                onClick={() => setInfoOpen(true)}
+              >
+                <LuInfo />
+              </IconButton>
+            </Tooltip>
+
+            {/* Opacity control */}
+            <OpacityControl value={opacity} onValueChange={handleOpacityChange}>
+              <IconButton
+                aria-label="Adjust opacity"
+                size="xs"
+                variant="ghost"
+              >
+                <LuDroplet />
+              </IconButton>
+            </OpacityControl>
+
+            {/* Remove button */}
+            <Tooltip content="Remove layer" positioning={{ placement: "top" }}>
+              <IconButton
+                aria-label="Remove layer"
+                size="xs"
+                variant="ghost"
+                onClick={handleRemove}
+              >
+                <LuX />
+              </IconButton>
+            </Tooltip>
+          </HStack>
+        </HStack>
+        <Box flex={1} minW={0} w="full">
+          {dataType === "tabular" && <TabularEntry {...(props as TabularLegendLayer)} />}
+          {dataType === "vector" && <VectorEntry {...(props as VectorLegendLayer)} />}
+          {dataType === "raster" && <RasterEntry {...(props as RasterLegendLayer)} />}
+        </Box>
+      </VStack>
+
+      {/* Info modal */}
+      <LayerInfoModal
+        layer={props}
+        open={infoOpen}
+        onOpenChange={setInfoOpen}
+      />
+    </>
   );
 }
 
@@ -75,16 +124,13 @@ export function LayerEntry(props: LayerEntryProps) {
  * Shows a color ramp matching the map's choropleth visualization.
  */
 function TabularEntry(props: TabularLegendLayer) {
-  const { name, unit, dataRange } = props;
+  const { unit, dataRange } = props;
 
   // Choropleth color from AdminAreaLayers.tsx
   const baseColor = "#8856a7"; // Purple used in the map
 
   return (
     <VStack align="stretch" gap={2} w="100%">
-      <Text fontWeight="medium" fontSize="sm" lineClamp={1}>
-        {name}
-      </Text>
       {dataRange ? (
         <VStack align="stretch" gap={1} w="100%">
           {/* Color ramp bar */}
@@ -139,10 +185,6 @@ function VectorEntry(props: VectorLegendLayer) {
 
   return (
     <VStack align="stretch" gap={2} w="100%">
-      <Text fontWeight="medium" fontSize="sm" lineClamp={1}>
-        {name}
-      </Text>
-
       {/* Symbology */}
       <HStack gap={2} align="center">
         {isPoint && (
@@ -198,13 +240,10 @@ function VectorEntry(props: VectorLegendLayer) {
  * Renders legend information for a raster layer.
  */
 function RasterEntry(props: RasterLegendLayer) {
-  const { name, unit, opacity } = props;
+  const { unit, opacity } = props;
 
   return (
     <VStack align="stretch" gap={1}>
-      <Text fontWeight="medium" fontSize="sm" lineClamp={1}>
-        {name}
-      </Text>
       {unit && (
         <Text fontSize="xs" color="fg.muted" pl={6}>
           Unit: {unit}

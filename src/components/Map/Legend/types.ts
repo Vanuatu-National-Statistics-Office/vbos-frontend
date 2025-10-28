@@ -68,20 +68,25 @@ export type LegendLayer = TabularLegendLayer | VectorLegendLayer | RasterLegendL
 /**
  * Action types that can be performed on legend layers.
  */
-export type LayerActionType = "toggle" | "remove";
+export type LayerActionType = "toggle" | "remove" | "opacity";
 
 /**
  * Details about a layer action event.
  */
-export interface LayerActionDetails {
-  /** The type of action performed */
-  action: LayerActionType;
-  /** The action payload */
-  payload: {
-    /** The layer that was acted upon */
-    layer: LegendLayer;
-  };
-}
+export type LayerActionDetails =
+  | {
+      action: "remove" | "toggle";
+      payload: {
+        layer: LegendLayer;
+      };
+    }
+  | {
+      action: "opacity";
+      payload: {
+        layer: LegendLayer;
+        opacity: number;
+      };
+    };
 
 /**
  * Callback function type for handling layer actions.

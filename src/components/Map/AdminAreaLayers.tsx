@@ -1,12 +1,16 @@
 import { Layer, Source, LayerProps } from "react-map-gl/maplibre";
 import useProvinces from "@/hooks/useProvinces";
 import { useAreaStore } from "@/store/area-store";
+import { useLayerStore } from "@/store/layer-store";
+import { useOpacityStore } from "@/store/opacity-store";
 import { useAdminAreaStats } from "@/hooks/useAdminAreaStats";
 import { featureCollection } from "@turf/helpers";
 
 export function AdminAreaMapLayers() {
   const { data: provincesGeojson, isPending, error } = useProvinces();
   const { ac, province, acGeoJSON } = useAreaStore();
+  const { layers } = useLayerStore();
+  const { getOpacity } = useOpacityStore();
   const {
     geojson: adminAreaStatsGeojson,
     maxValue,
@@ -18,6 +22,15 @@ export function AdminAreaMapLayers() {
   if (isPending || error) {
     return null;
   }
+
+  // Get the active tabular layer ID to apply opacity
+  const tabularLayers = layers
+    .split(",")
+    .filter((i) => i.startsWith("t"));
+  const activeTabularLayerId = tabularLayers.length ? tabularLayers[0] : null;
+
+  // Get opacity for the tabular layer (0-100) and convert to 0-1
+  const tabularOpacity = activeTabularLayerId ? getOpacity(activeTabularLayerId) / 100 : 1;
 
   const provinceLayerStyle: LayerProps = {
     type: "line",
@@ -44,13 +57,17 @@ export function AdminAreaMapLayers() {
     paint: {
       "fill-color": "#8856a7",
       "fill-opacity": [
-        "interpolate",
-        ["linear"],
-        ["get", "value"],
-        minValue,
-        0.1,
-        maxValue,
-        1,
+        "*",
+        tabularOpacity,
+        [
+          "interpolate",
+          ["linear"],
+          ["get", "value"],
+          minValue,
+          0.1,
+          maxValue,
+          1,
+        ],
       ],
     },
     source: "stats",

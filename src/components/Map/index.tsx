@@ -24,6 +24,7 @@ import { TabularLayers } from "./TabularLayer";
 import { Legend } from "./Legend";
 import { useLegendLayers } from "@/hooks/useLegendLayers";
 import { useLayerStore } from "@/store/layer-store";
+import { useOpacityStore } from "@/store/opacity-store";
 import type { LayerActionHandler } from "./Legend/types";
 
 function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
@@ -32,6 +33,7 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
   const { viewState, setViewState } = useMapStore();
   const { ac, acGeoJSON } = useAreaStore();
   const { switchLayer } = useLayerStore();
+  const { setOpacity } = useOpacityStore();
   const legendLayers = useLegendLayers();
 
   useImperativeHandle(ref, () => {
@@ -53,9 +55,13 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
         // Toggle the layer off using the layer ID format (e.g., "t1", "v2", "r3")
         const layerId = `${details.payload.layer.dataType.charAt(0)}${details.payload.layer.id}`;
         switchLayer(layerId);
+      } else if (details.action === "opacity") {
+        // Store opacity value for the layer
+        const layerId = `${details.payload.layer.dataType.charAt(0)}${details.payload.layer.id}`;
+        setOpacity(layerId, details.payload.opacity);
       }
     },
-    [switchLayer],
+    [switchLayer, setOpacity],
   );
 
   useEffect(() => {

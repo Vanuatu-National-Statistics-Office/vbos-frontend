@@ -1,5 +1,6 @@
 import { Layer, Source, LayerProps } from "react-map-gl/maplibre";
 import { useLayerStore } from "@/store/layer-store";
+import { useOpacityStore } from "@/store/opacity-store";
 import { useDataset } from "@/hooks/useDataset";
 import { PaginatedVectorData } from "@/types/api";
 import { Box, Spinner, Text } from "@chakra-ui/react";
@@ -27,6 +28,8 @@ type VectorMapLayerProps = {
 
 function VectorMapLayer({ id }: VectorMapLayerProps) {
   const layerId = `v${id}`;
+  const { getOpacity } = useOpacityStore();
+
   // load ac and province and set filters
   const { ac, province } = useAreaStore();
   const filters = new URLSearchParams();
@@ -53,14 +56,23 @@ function VectorMapLayer({ id }: VectorMapLayerProps) {
       </Box>
     );
 
+  // Get opacity from store (0-100) and convert to 0-1 for MapLibre
+  const opacity = getOpacity(layerId) / 100;
+
   const lineStyle: LayerProps = {
     type: "line",
-    paint: { "line-color": "#f09000" },
+    paint: {
+      "line-color": "#f09000",
+      "line-opacity": opacity,
+    },
     source: layerId,
   };
   const pointStyle: LayerProps = {
     type: "circle",
-    paint: { "circle-color": "#3d4aff" },
+    paint: {
+      "circle-color": "#3d4aff",
+      "circle-opacity": opacity,
+    },
     source: layerId,
     filter: ["==", ["geometry-type"], "Point"],
   };
