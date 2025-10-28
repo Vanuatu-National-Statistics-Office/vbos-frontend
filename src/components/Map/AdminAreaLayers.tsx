@@ -2,7 +2,6 @@ import { Layer, Source, LayerProps } from "react-map-gl/maplibre";
 import useProvinces from "@/hooks/useProvinces";
 import { useAreaStore } from "@/store/area-store";
 import { useAdminAreaStats } from "@/hooks/useAdminAreaStats";
-import { featureCollection } from "@turf/helpers";
 
 export function AdminAreaMapLayers() {
   const { data: provincesGeojson, isPending, error } = useProvinces();
@@ -11,9 +10,7 @@ export function AdminAreaMapLayers() {
     geojson: adminAreaStatsGeojson,
     maxValue,
     minValue,
-  } = useAdminAreaStats(
-    province ? acGeoJSON : provincesGeojson || featureCollection([]),
-  );
+  } = useAdminAreaStats(province ? acGeoJSON : provincesGeojson);
 
   if (isPending || error) {
     return null;
