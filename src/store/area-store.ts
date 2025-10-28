@@ -1,4 +1,5 @@
 import { AreaCouncilGeoJSON } from "@/types/data";
+import { featureCollection } from "@turf/helpers";
 import { create } from "zustand";
 
 interface AreaState {
@@ -13,13 +14,13 @@ interface AreaState {
 
 export const useAreaStore = create<AreaState>((set) => ({
   ac: "",
-  acGeoJSON: { type: "FeatureCollection", features: [] },
+  acGeoJSON: featureCollection([]),
   province: "",
 
   setAcGeoJSON: (acGeoJSON: AreaCouncilGeoJSON) => set({ acGeoJSON }),
 
   setAc: (ac: string) => {
-    set({ ac: ac });
+    set({ ac });
     const params = new URLSearchParams(window.location.search);
     if (ac) {
       params.set("ac", ac);
@@ -30,7 +31,7 @@ export const useAreaStore = create<AreaState>((set) => ({
   },
 
   setProvince: (province: string) => {
-    set({ province });
+    set({ province, ac: "" });
     const params = new URLSearchParams(window.location.search);
     params.delete("ac");
     if (province) {
