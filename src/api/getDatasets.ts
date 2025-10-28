@@ -5,6 +5,7 @@ import {
   IListApiResponse,
   ClusterDatasets,
   PaginatedVectorData,
+  TabularData,
 } from "@/types/api";
 
 async function fetchAllDatasets(url: string): Promise<BaseDataset[]> {
@@ -68,7 +69,7 @@ interface ListApiResponse {
   count: number;
   next: string | null;
   previous: string | null;
-  results: object[];
+  results: TabularData[];
 }
 
 export async function getDatasetData(

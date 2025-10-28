@@ -18,6 +18,9 @@ import { useMapStore } from "@/store/map-store";
 import { useAreaStore } from "@/store/area-store";
 import { bbox } from "@turf/bbox";
 import { featureCollection } from "@turf/helpers";
+import { AdminAreaMapLayers } from "./AdminAreaLayers";
+import { VectorLayers } from "./VectorLayers";
+import { TabularLayers } from "./TabularLayer";
 
 function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
   const [map, setMap] = useState<MapRef>();
@@ -73,6 +76,9 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
         showZoom
         style={{ marginBottom: "7rem" }}
       />
+      <AdminAreaMapLayers />
+      <VectorLayers />
+      <TabularLayers />
       {props.children}
     </ReactMapGl>
   );

@@ -1,10 +1,16 @@
 import { Layer, Source, LayerProps } from "react-map-gl/maplibre";
 import useProvinces from "@/hooks/useProvinces";
 import { useAreaStore } from "@/store/area-store";
+import { useAdminAreaStats } from "@/hooks/useAdminAreaStats";
 
 export function AdminAreaMapLayers() {
   const { data: provincesGeojson, isPending, error } = useProvinces();
   const { ac, province, acGeoJSON } = useAreaStore();
+  const {
+    geojson: adminAreaStatsGeojson,
+    maxValue,
+    minValue,
+  } = useAdminAreaStats(province ? acGeoJSON : provincesGeojson);
 
   if (isPending || error) {
     return null;
@@ -12,7 +18,11 @@ export function AdminAreaMapLayers() {
 
   const provinceLayerStyle: LayerProps = {
     type: "line",
-    paint: { "line-color": "#198EC8", "line-width": ac ? 1 : 2, "line-opacity": ac ? 0.5 : 1, },
+    paint: {
+      "line-color": "#198EC8",
+      "line-width": ac ? 1 : 2,
+      "line-opacity": ac ? 0.5 : 1,
+    },
     source: "provinces",
     filter: province ? ["==", "name", province.toUpperCase()] : ["all"],
   };
@@ -26,17 +36,39 @@ export function AdminAreaMapLayers() {
     source: "area-councils",
     filter: ac ? ["==", "name", ac] : ["all"],
   };
+  const fillStyle: LayerProps = {
+    type: "fill",
+    paint: {
+      "fill-color": "#8856a7",
+      "fill-opacity": [
+        "interpolate",
+        ["linear"],
+        ["get", "value"],
+        minValue,
+        0.1,
+        maxValue,
+        1,
+      ],
+    },
+    source: "stats",
+    filter: ac ? ["==", "name", ac] : ["all"],
+  };
 
   return (
     <>
       {acGeoJSON && (
         <Source id="area-councils" type="geojson" data={acGeoJSON}>
-          <Layer {...areaCouncilLayerStyle} />
+          <Layer {...areaCouncilLayerStyle} id="area-councils" />
         </Source>
       )}
       {provincesGeojson && (
         <Source id="provinces" type="geojson" data={provincesGeojson}>
-          <Layer {...provinceLayerStyle} />
+          <Layer {...provinceLayerStyle} beforeId="area-councils" />
+        </Source>
+      )}
+      {adminAreaStatsGeojson.features.length && maxValue > 0 && (
+        <Source id="stats" type="geojson" data={adminAreaStatsGeojson}>
+          <Layer {...fillStyle} beforeId="area-councils" />
         </Source>
       )}
     </>
