@@ -45,7 +45,6 @@ export function Legend(props: LegendProps) {
 
   // Hide legend when no layers are active
   if (!layers.length) return null;
-  console.log(layers);
   return (
     <Flex
       position="absolute"
