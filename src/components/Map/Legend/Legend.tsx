@@ -19,7 +19,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 
-import type { LegendLayer, LayerActionHandler } from "./types";
+import type { LegendLayer } from "./types";
 import { LayerEntry } from "./LayerEntry";
 
 /**
@@ -28,30 +28,20 @@ import { LayerEntry } from "./LayerEntry";
 interface LegendProps {
   /** Array of LegendLayer objects to display */
   layers: LegendLayer[];
-  /** Callback for layer actions (remove, toggle visibility) */
-  onLayerAction?: LayerActionHandler;
+  /** Function to toggle a layer on/off */
+  switchLayer: (layerId: string) => void;
+  /** Function to set layer opacity */
+  setOpacity: (layerId: string, opacity: number) => void;
 }
 
 /**
  * Legend component displaying a list of active map layers with legend details.
  *
  * The legend automatically hides when no layers are active. Each layer entry
- * shows the layer name, type, visualization style, and a remove button.
- *
- * @example
- * ```tsx
- * <Legend
- *   layers={activeLayers}
- *   onLayerAction={(details) => {
- *     if (details.action === "remove") {
- *       removeLayer(details.payload.layer.id);
- *     }
- *   }}
- * />
- * ```
+ * shows the layer name, type, visualization style, and controls for opacity and removal.
  */
 export function Legend(props: LegendProps) {
-  const { layers, onLayerAction } = props;
+  const { layers, switchLayer, setOpacity } = props;
 
   // Hide legend when no layers are active
   if (!layers.length) return null;
@@ -95,7 +85,11 @@ export function Legend(props: LegendProps) {
             borderColor="border"
             _last={{ borderBottom: "none" }}
           >
-            <LayerEntry {...layer} onLayerAction={onLayerAction} />
+            <LayerEntry
+              {...layer}
+              switchLayer={switchLayer}
+              setOpacity={setOpacity}
+            />
           </Flex>
         ))}
       </VStack>

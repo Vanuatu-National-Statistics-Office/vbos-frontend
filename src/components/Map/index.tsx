@@ -25,7 +25,6 @@ import { Legend } from "./Legend";
 import { useLegendLayers } from "@/hooks/useLegendLayers";
 import { useLayerStore } from "@/store/layer-store";
 import { useOpacityStore } from "@/store/opacity-store";
-import type { LayerActionHandler } from "./Legend/types";
 
 function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
   const [map, setMap] = useState<MapRef>();
@@ -49,20 +48,6 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
     [setViewState],
   );
 
-  const handleLayerAction: LayerActionHandler = useCallback(
-    (details) => {
-      if (details.action === "remove") {
-        // Toggle the layer off using the layer ID format (e.g., "t1", "v2", "r3")
-        const layerId = `${details.payload.layer.dataType.charAt(0)}${details.payload.layer.id}`;
-        switchLayer(layerId);
-      } else if (details.action === "opacity") {
-        // Store opacity value for the layer
-        const layerId = `${details.payload.layer.dataType.charAt(0)}${details.payload.layer.id}`;
-        setOpacity(layerId, details.payload.opacity);
-      }
-    },
-    [switchLayer, setOpacity],
-  );
 
   useEffect(() => {
     if (acGeoJSON?.features?.length && map) {
@@ -101,7 +86,11 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
       <AdminAreaMapLayers />
       <VectorLayers />
       <TabularLayers />
-      <Legend layers={legendLayers} onLayerAction={handleLayerAction} />
+      <Legend
+        layers={legendLayers}
+        switchLayer={switchLayer}
+        setOpacity={setOpacity}
+      />
       {props.children}
     </ReactMapGl>
   );

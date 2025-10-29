@@ -20,7 +20,6 @@ import { LayerInfoModal } from "./LayerInfoModal";
 
 import type {
   LegendLayer,
-  LayerActionHandler,
   TabularLegendLayer,
   VectorLegendLayer,
   RasterLegendLayer,
@@ -30,31 +29,27 @@ import type {
  * Props for the LayerEntry component.
  */
 type LayerEntryProps = LegendLayer & {
-  /** Callback for layer actions (toggle, remove) */
-  onLayerAction?: LayerActionHandler;
-};
+  switchLayer: (layerId: string) => void;
+  setOpacity: (layerId: string, opacity: number) => void;
+}
 
 /**
  * Main LayerEntry component that delegates to specific layer type renderers.
  */
 export function LayerEntry(props: LayerEntryProps) {
-  const { dataType, onLayerAction } = props;
+  const { dataType, id, name, switchLayer, setOpacity: setOpacityStore } = props;
   const [infoOpen, setInfoOpen] = useState(false);
   const [opacity, setOpacity] = useState(100);
 
+  const layerId = `${dataType.charAt(0)}${id}`;
+
   const handleRemove = () => {
-    onLayerAction?.({
-      action: "remove",
-      payload: { layer: props },
-    });
+    switchLayer(layerId);
   };
 
   const handleOpacityChange = (newOpacity: number) => {
     setOpacity(newOpacity);
-    onLayerAction?.({
-      action: "opacity",
-      payload: { layer: props, opacity: newOpacity },
-    });
+    setOpacityStore(layerId, newOpacity);
   };
 
   return (
@@ -202,7 +197,7 @@ function VectorEntry(props: VectorLegendLayer) {
         {isLine && (
           <>
             <Box
-              w="32px"
+              w="12px"
               h="3px"
               bg={color}
               flexShrink={0}

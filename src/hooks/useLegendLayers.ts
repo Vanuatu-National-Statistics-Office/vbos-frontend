@@ -16,7 +16,10 @@ import { useQueries, useQueryClient } from "@tanstack/react-query";
 import { useLayerStore } from "@/store/layer-store";
 import { useDateStore } from "@/store/date-store";
 import { useAreaStore } from "@/store/area-store";
-import * as HTTP from "@/api/http";
+import { useAdminAreaStats } from "@/hooks/useAdminAreaStats";
+import useProvinces from "@/hooks/useProvinces";
+import { featureCollection } from "@turf/helpers";
+import API from "@/api";
 import type {
   LegendLayer,
   TabularLegendLayer,
@@ -55,20 +58,6 @@ function parseLayerId(layerId: string): {
   };
 }
 
-/**
- * Fetches metadata for a single dataset.
- */
-async function fetchDatasetMetadata(
-  dataType: "vector" | "tabular" | "raster",
-  id: number,
-): Promise<Dataset> {
-  const response = await HTTP.get(`/api/v1/${dataType}/${id}/`);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${dataType} dataset ${id}`);
-  }
-  const data = await response.json();
-  return { ...data, dataType } as Dataset;
-}
 
 /**
  * Hook that provides legend layer data for all currently active map layers.
@@ -91,8 +80,14 @@ async function fetchDatasetMetadata(
 export function useLegendLayers(): LegendLayer[] {
   const { layers: layerString, tabularLayerData } = useLayerStore();
   const { year } = useDateStore();
-  const { ac, province } = useAreaStore();
+  const { ac, province, acGeoJSON } = useAreaStore();
+  const { data: provincesGeojson } = useProvinces();
   const queryClient = useQueryClient();
+
+  // Get min/max values from the same source as the map rendering
+  const { minValue, maxValue } = useAdminAreaStats(
+    province ? acGeoJSON : provincesGeojson || featureCollection([]),
+  );
 
   // Parse active layer IDs from the store
   const activeLayerIds = layerString
@@ -104,11 +99,11 @@ export function useLegendLayers(): LegendLayer[] {
     .map(parseLayerId)
     .filter((layer): layer is NonNullable<ReturnType<typeof parseLayerId>> => layer !== null);
 
-  // Fetch metadata for each active layer
+  // Fetch metadata for each active layer using the shared getLayerMetadata function
   const datasetQueries = useQueries({
     queries: parsedLayers.map((layer) => ({
       queryKey: ["dataset-metadata", layer.dataType, layer.id],
-      queryFn: () => fetchDatasetMetadata(layer.dataType, layer.id),
+      queryFn: () => API.getLayerMetadata(layer.dataType, layer.id),
       staleTime: 5 * 60 * 1000, // Cache for 5 minutes
     })),
   });
@@ -124,7 +119,7 @@ export function useLegendLayers(): LegendLayer[] {
       const parsedLayer = parsedLayers[index];
 
       if (dataset.dataType === "tabular") {
-        legendLayers.push(createTabularLegendLayer(dataset, tabularLayerData, year));
+        legendLayers.push(createTabularLegendLayer(dataset, minValue, maxValue));
       } else if (dataset.dataType === "vector") {
         // Try to get the vector data from the query cache to determine geometry type
         const filters = new URLSearchParams();
@@ -152,21 +147,19 @@ export function useLegendLayers(): LegendLayer[] {
 
 /**
  * Creates a TabularLegendLayer with data range information.
+ * Uses minValue and maxValue from useAdminAreaStats to match the actual rendered map values.
  */
 function createTabularLegendLayer(
   dataset: Dataset,
-  tabularData: any[],
-  year: string,
+  minValue: number,
+  maxValue: number,
 ): TabularLegendLayer {
-  // Calculate min/max from current filtered data
-  const filteredData = tabularData.filter((item) => item.date.startsWith(year));
-  const values = filteredData.map((item) => item.value).filter((v) => typeof v === "number");
-
+  // Use the same min/max values that are used for map rendering
   let dataRange: { min: number; max: number } | undefined;
-  if (values.length > 0) {
+  if (maxValue > 0) {
     dataRange = {
-      min: Math.min(...values),
-      max: Math.max(...values),
+      min: minValue,
+      max: maxValue,
     };
   }
 
