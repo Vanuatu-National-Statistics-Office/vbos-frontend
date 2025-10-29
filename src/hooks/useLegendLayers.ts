@@ -14,7 +14,6 @@
 
 import { useQueries, useQueryClient } from "@tanstack/react-query";
 import { useLayerStore } from "@/store/layer-store";
-import { useDateStore } from "@/store/date-store";
 import { useAreaStore } from "@/store/area-store";
 import { useAdminAreaStats } from "@/hooks/useAdminAreaStats";
 import useProvinces from "@/hooks/useProvinces";
@@ -78,8 +77,7 @@ function parseLayerId(layerId: string): {
  * ```
  */
 export function useLegendLayers(): LegendLayer[] {
-  const { layers: layerString, tabularLayerData } = useLayerStore();
-  const { year } = useDateStore();
+  const { layers: layerString } = useLayerStore();
   const { ac, province, acGeoJSON } = useAreaStore();
   const { data: provincesGeojson } = useProvinces();
   const queryClient = useQueryClient();

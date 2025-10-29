@@ -8,6 +8,7 @@
 import {
   Dialog,
   Stack,
+  CloseButton,
   Text,
   Heading,
   Code,
@@ -55,6 +56,9 @@ export function LayerInfoModal(props: LayerInfoModalProps) {
       <Dialog.Backdrop />
       <Dialog.Positioner>
         <Dialog.Content>
+          <Dialog.CloseTrigger asChild>
+            <CloseButton size="sm" />
+          </Dialog.CloseTrigger>
           <Dialog.Header>
             <Dialog.Title>Layer Information</Dialog.Title>
           </Dialog.Header>
@@ -142,12 +146,6 @@ export function LayerInfoModal(props: LayerInfoModalProps) {
               )}
             </Stack>
           </Dialog.Body>
-
-          <Dialog.Footer>
-            <Dialog.ActionTrigger asChild>
-              <button>Close</button>
-            </Dialog.ActionTrigger>
-          </Dialog.Footer>
         </Dialog.Content>
       </Dialog.Positioner>
     </Dialog.Root>
