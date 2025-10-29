@@ -57,7 +57,7 @@ export function LayerEntry(props: LayerEntryProps) {
       <VStack w="100%" align="flex-start" gap={2}>
         <HStack w="full">
           <Text fontWeight="medium" fontSize="sm" lineClamp={1} mr="auto">
-            {props.name}
+            {name}
           </Text>
           {/* Control buttons */}
           <HStack gap={0} flexShrink={0}>
