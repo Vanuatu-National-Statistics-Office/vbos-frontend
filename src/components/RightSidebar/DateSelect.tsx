@@ -3,7 +3,7 @@ import { Flex, Slider } from "@chakra-ui/react";
 
 export const DateSelect = () => {
   const minYear = 2004;
-  const maxYear = new Date().getFullYear() - 1;
+  const maxYear = new Date().getFullYear();
   const { year, setYear } = useDateStore();
 
   // Get initial year from URL params if available
@@ -11,7 +11,7 @@ export const DateSelect = () => {
     if (year) return Number(year);
     const params = new URLSearchParams(window.location.search);
     const urlYear = params.get("year");
-    return urlYear ? Number(urlYear) : maxYear;
+    return urlYear ? Number(urlYear) : maxYear - 1;
   };
 
   const marks = [

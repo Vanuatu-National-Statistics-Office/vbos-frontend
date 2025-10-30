@@ -1,9 +1,14 @@
-import { Layer, Source, LayerProps } from "react-map-gl/maplibre";
+import { Layer, Source, LayerProps, MapRef } from "react-map-gl/maplibre";
 import useProvinces from "@/hooks/useProvinces";
 import { useAreaStore } from "@/store/area-store";
 import { useAdminAreaStats } from "@/hooks/useAdminAreaStats";
+import { useEffect } from "react";
 
-export function AdminAreaMapLayers() {
+type AdminAreaMapLayers = {
+  fitBounds?: MapRef["fitBounds"];
+};
+
+export function AdminAreaMapLayers({ fitBounds }: AdminAreaMapLayers) {
   const { data: provincesGeojson, isPending, error } = useProvinces();
   const { ac, province, acGeoJSON } = useAreaStore();
   const {
@@ -11,6 +16,11 @@ export function AdminAreaMapLayers() {
     maxValue,
     minValue,
   } = useAdminAreaStats(province ? acGeoJSON : provincesGeojson);
+
+  useEffect(() => {
+    if (fitBounds && !province)
+      fitBounds([-194.18335, -20.50641, -189.9646, -12.84665]);
+  }, [province, fitBounds]);
 
   if (isPending || error) {
     return null;
