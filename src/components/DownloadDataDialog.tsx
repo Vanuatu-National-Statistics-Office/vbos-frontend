@@ -78,8 +78,8 @@ export const DownloadDataDialog = ({
 
       // Trigger the download
       downloadFile(result.blob, filename);
-    } catch (error) {
-      console.error("Failed to download dataset:", error);
+    } catch {
+      // Error occurred during download
       alert("Failed to download dataset. Please try again.");
     } finally {
       // Remove from downloading set

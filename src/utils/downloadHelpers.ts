@@ -21,8 +21,8 @@ export function convertToCSV(data: TabularData[]): string {
       // Escape values that contain commas, quotes, or newlines
       if (value === null || value === undefined) return "";
       const stringValue = String(value);
-      if (stringValue.includes(",") || stringValue.includes('"') || stringValue.includes("\n")) {
-        return `"${stringValue.replace(/"/g, '""')}"`;
+      if (stringValue.includes(",") || stringValue.includes("\"") || stringValue.includes("\n")) {
+        return `"${stringValue.replace(/"/g, "\"\"")}"`;
       }
       return stringValue;
     });

@@ -26,7 +26,7 @@ export async function downloadDataset(
   const queryString = filters ? new URLSearchParams(filters).toString() : "";
   const url = `/api/v1/${dataType}/${id}/data/?page_size=500${queryString ? `&${queryString}` : ""}`;
 
-  let allData: any[] = [];
+  const allData: Array<TabularData | Feature> = [];
   let currentUrl: string | null = url;
 
   // Fetch all paginated data
