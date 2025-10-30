@@ -76,7 +76,7 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
         showZoom
         style={{ marginBottom: "7rem" }}
       />
-      <AdminAreaMapLayers />
+      <AdminAreaMapLayers fitBounds={map?.fitBounds} />
       <VectorLayers />
       <TabularLayers />
       {props.children}
