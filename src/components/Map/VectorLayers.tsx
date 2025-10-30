@@ -11,7 +11,7 @@ export function VectorLayers() {
   const vectorLayers = layers
     .split(",")
     .filter((i) => i.startsWith("v"))
-    .map((i) => Number(i.substr(1)));
+    .map((i) => Number(i.slice(1)));
 
   return (
     <>

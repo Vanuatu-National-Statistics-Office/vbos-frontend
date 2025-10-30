@@ -4,7 +4,6 @@ import { useAreaStore } from "@/store/area-store";
 import { useLayerStore } from "@/store/layer-store";
 import { useOpacityStore } from "@/store/opacity-store";
 import { useAdminAreaStats } from "@/hooks/useAdminAreaStats";
-import { featureCollection } from "@turf/helpers";
 
 export function AdminAreaMapLayers() {
   const { data: provincesGeojson, isPending, error } = useProvinces();
@@ -15,9 +14,7 @@ export function AdminAreaMapLayers() {
     geojson: adminAreaStatsGeojson,
     maxValue,
     minValue,
-  } = useAdminAreaStats(
-    province ? acGeoJSON : provincesGeojson || featureCollection([]),
-  );
+  } = useAdminAreaStats(province ? acGeoJSON : provincesGeojson);
 
   if (isPending || error) {
     return null;
@@ -78,17 +75,17 @@ export function AdminAreaMapLayers() {
     <>
       {acGeoJSON && (
         <Source id="area-councils" type="geojson" data={acGeoJSON}>
-          <Layer {...areaCouncilLayerStyle} />
+          <Layer {...areaCouncilLayerStyle} id="area-councils" />
         </Source>
       )}
       {provincesGeojson && (
         <Source id="provinces" type="geojson" data={provincesGeojson}>
-          <Layer {...provinceLayerStyle} />
+          <Layer {...provinceLayerStyle} beforeId="area-councils" />
         </Source>
       )}
       {adminAreaStatsGeojson.features.length && maxValue > 0 && (
         <Source id="stats" type="geojson" data={adminAreaStatsGeojson}>
-          <Layer {...fillStyle} />
+          <Layer {...fillStyle} beforeId="area-councils" />
         </Source>
       )}
     </>

@@ -6,7 +6,9 @@ import { getAreaCouncilValue, getProvinceValue } from "@/utils/getValue";
 import { featureCollection } from "@turf/helpers";
 import { useEffect, useState } from "react";
 
-const useAdminAreaStats = (geojson: ProvincesGeoJSON | AreaCouncilGeoJSON) => {
+const useAdminAreaStats = (
+  geojson: ProvincesGeoJSON | AreaCouncilGeoJSON = featureCollection([]),
+) => {
   const { ac, province } = useAreaStore();
   const { tabularLayerData } = useLayerStore();
   const { year } = useDateStore();

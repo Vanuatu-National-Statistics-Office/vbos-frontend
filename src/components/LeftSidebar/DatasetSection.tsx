@@ -1,6 +1,7 @@
 import { Accordion } from "@chakra-ui/react";
 import { LayerSwitch } from "./LayerSwitch";
 import { Dataset } from "@/types/api";
+import { DATASET_TYPES } from "@/utils/datasetTypes";
 
 type DatasetSectionProps = {
   title:
@@ -9,13 +10,6 @@ type DatasetSectionProps = {
     | "aid_resources_needed"
     | "estimate_financial_damage";
   datasets: Dataset[];
-};
-
-const DATASET_TYPES = {
-  baseline: "Baseline",
-  estimated_damage: "Estimated Hazard Damage",
-  aid_resources_needed: "Immediate Response Resources",
-  estimate_financial_damage: "Estimated Financial Damage",
 };
 
 export function DatasetSection({ title, datasets }: DatasetSectionProps) {
