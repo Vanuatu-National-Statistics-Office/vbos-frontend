@@ -77,7 +77,8 @@ export function Stats() {
   if (!layerMetadata) {
     return (
       <Box display="block" p={2} fontSize="sm">
-        No data available for the selected year or administrative area. Please select a different time period or area.
+        No data available for the selected year or administrative area. Please
+        select a different time period or area.
       </Box>
     );
   }
@@ -143,42 +144,40 @@ export function Stats() {
         </Box>
         {filteredData.length === 0 ? (
           <Box display="block" p={2} fontSize="sm">
-            No data is available for the selected year or administrative area. Please select a different time period or area.
+            No data is available for the selected year or administrative area.
+            Please select a different time period or area.
           </Box>
         ) : (
           <Box display="block">
             {/* Stats display */}
             <HStack gap="3" width="100%" p={2} overflow="auto">
               {attributes.map((attr: string) => (
-                <Box
+                <Stat.Root
+                  size="sm"
+                  gap={0}
                   flex="1"
                   textAlign="right"
                   pr={2}
                   borderRight="1px solid"
                   borderColor="border.muted"
-                  _last={{ borderRight: "none" }}
+                  _last={{ borderRight: "none", paddingRight: 0 }}
                 >
-                  <Stat.Root size="sm" alignItems="end" gap={0}>
-                    <Stat.Label
-                      textTransform="capitalize"
-                      fontSize="xs"
-                      color="fg.subtle"
-                      lineHeight={1.2}
-                    >
-                      {attr}
-                    </Stat.Label>
-                    <Stat.ValueText
-                      fontSize="md"
-                      lineHeight={1.2}
-                      fontWeight="500"
-                    >
-                      {getAttributeValueSum(
-                        filteredData,
-                        attr
-                      ).toLocaleString()}
-                    </Stat.ValueText>
-                  </Stat.Root>
-                </Box>
+                  <Stat.Label
+                    textTransform="capitalize"
+                    fontSize="xs"
+                    color="fg.subtle"
+                    lineHeight={1.2}
+                  >
+                    {attr}
+                  </Stat.Label>
+                  <Stat.ValueText
+                    fontSize="md"
+                    lineHeight={1.2}
+                    fontWeight="500"
+                  >
+                    {getAttributeValueSum(filteredData, attr).toLocaleString()}
+                  </Stat.ValueText>
+                </Stat.Root>
               ))}
             </HStack>
             {visMode === "chart" && <StatsChart stats={filteredData} />}
