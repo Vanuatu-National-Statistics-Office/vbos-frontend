@@ -1,7 +1,8 @@
-import { Accordion } from "@chakra-ui/react";
+import { Accordion, HStack, Status } from "@chakra-ui/react";
 import { LayerSwitch } from "./LayerSwitch";
 import { Dataset } from "@/types/api";
 import { DATASET_TYPES } from "@/utils/datasetTypes";
+import { useActiveLayerCount } from "@/hooks/useActiveLayerCount";
 
 type DatasetSectionProps = {
   title:
@@ -13,6 +14,9 @@ type DatasetSectionProps = {
 };
 
 export function DatasetSection({ title, datasets }: DatasetSectionProps) {
+  // Check if any layer in this section is active
+  const { hasActive: hasActiveLayer } = useActiveLayerCount(datasets);
+
   return (
     <Accordion.Item key={title} value={title}>
       <Accordion.ItemTrigger
@@ -25,7 +29,14 @@ export function DatasetSection({ title, datasets }: DatasetSectionProps) {
         fontWeight="normal"
         fontSize="sm"
       >
-        {DATASET_TYPES[title]}
+        <HStack gap={2}>
+          {DATASET_TYPES[title]}
+          {hasActiveLayer && (
+            <Status.Root size="sm">
+              <Status.Indicator colorPalette="blue" />
+            </Status.Root>
+          )}
+        </HStack>
         <Accordion.ItemIndicator />
       </Accordion.ItemTrigger>
       <Accordion.ItemContent>
