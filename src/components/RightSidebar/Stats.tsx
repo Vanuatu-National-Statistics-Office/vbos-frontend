@@ -4,10 +4,15 @@ import {
   HStack,
   IconButton,
   Skeleton,
-  Stack,
+  Stat,
   Text,
 } from "@chakra-ui/react";
-import { LuChartLine, LuCircleX, LuList } from "react-icons/lu";
+import {
+  LuChartColumnBig,
+  LuChartLine,
+  LuCircleX,
+  LuList,
+} from "react-icons/lu";
 import { useDateStore } from "@/store/date-store";
 import { useLayerStore } from "@/store/layer-store";
 import { DATASET_TYPES } from "@/utils/datasetTypes";
@@ -15,6 +20,7 @@ import { Dataset } from "@/types/api";
 import { getAttributes, getAttributeValueSum } from "@/utils/getAttributes";
 import { StatsChart } from "./StatsChart";
 import { StatsTable } from "./StatsTable";
+import { Tooltip } from "../ui";
 
 export function Stats() {
   const [visMode, setVisMode] = useState<"chart" | "table">("chart");
@@ -36,24 +42,55 @@ export function Stats() {
   //  but it's what we have now
   if (tabularLayerData.length === 0 && filteredData.length === 0) {
     return (
-      <Stack gap={4} py={2}>
-        <Stack px={4}>
-          <Skeleton height={12} />
-        </Stack>
-        <Stack gap={3} px={4}>
-          <Skeleton height={10} />
-        </Stack>
-      </Stack>
+      <Box mt={4} borderColor="black.700" borderWidth={2} borderRadius={5}>
+        <Box
+          backgroundColor="gray.100"
+          px={2}
+          py={3}
+          display="flex"
+          alignItems="center"
+        >
+          <Box flex="1">
+            <Skeleton height={2} width="80%" mb={2} />
+            <Skeleton height={3} />
+          </Box>
+          <Box display="flex" flexDirection="row">
+            <IconButton size="xs" variant="ghost" disabled>
+              <LuChartLine />
+            </IconButton>
+            <IconButton size="xs" variant="ghost" disabled>
+              <LuList />
+            </IconButton>
+            <IconButton size="xs" variant="ghost" disabled>
+              <LuCircleX />
+            </IconButton>
+          </Box>
+        </Box>
+        <Box p={2}>
+          <Skeleton w="50%" h={4} mb={2} />
+          <Skeleton h={20} />
+        </Box>
+      </Box>
     );
   }
 
-  if (filteredData.length === 0) {
-    return <Box pt={4}>No data for this year and administrative area.</Box>;
+  if (!layerMetadata) {
+    return (
+      <Box display="block" p={2} fontSize="sm">
+        No data available for the selected year or administrative area. Please select a different time period or area.
+      </Box>
+    );
   }
 
   if (layerMetadata) {
     return (
-      <Box mt={4} borderColor="black.700" borderWidth={2} borderRadius={5}>
+      <Box
+        mt={4}
+        borderColor="black.700"
+        borderWidth={2}
+        borderRadius={5}
+        overflow="hidden"
+      >
         <Box
           backgroundColor="gray.100"
           px={2}
@@ -68,50 +105,86 @@ export function Stats() {
             <Text display="block">{layerMetadata.name}</Text>
           </Box>
           <Box display="flex" flexDirection="row">
-            <IconButton
-              size="xs"
-              variant="ghost"
-              onClick={() => setVisMode("chart")}
+            <Tooltip content="View time series">
+              <IconButton
+                size="xs"
+                variant="ghost"
+                // onClick={() => "openTimeSeries")} TODO - this button will open the time series chart when ready
+                disabled={filteredData.length === 0}
+              >
+                <LuChartLine />
+              </IconButton>
+            </Tooltip>
+            <Tooltip
+              content={`Switch to ${
+                visMode === "table" ? "chart" : "table"
+              } view`}
             >
-              <LuChartLine />
-            </IconButton>
-            <IconButton
-              size="xs"
-              variant="ghost"
-              onClick={() => setVisMode("table")}
-            >
-              <LuList />
-            </IconButton>
-            <IconButton
-              size="xs"
-              variant="ghost"
-              onClick={() => switchLayer(tabularLayerId)}
-            >
-              <LuCircleX />
-            </IconButton>
+              <IconButton
+                size="xs"
+                variant="ghost"
+                onClick={() =>
+                  setVisMode(visMode === "table" ? "chart" : "table")}
+                disabled={filteredData.length === 0}
+              >
+                {visMode === "table" ? <LuChartColumnBig /> : <LuList />}
+              </IconButton>
+            </Tooltip>
+            <Tooltip content="Remove layer from map">
+              <IconButton
+                size="xs"
+                variant="ghost"
+                onClick={() => switchLayer(tabularLayerId)}
+              >
+                <LuCircleX />
+              </IconButton>
+            </Tooltip>
           </Box>
         </Box>
-        <Box display="block">
-          <HStack gap="3" width="100%" px="2">
-            {attributes.map((attr: string) => (
-              <Box flex="1" textAlign="center">
-                <Text
-                  fontSize="md"
-                  textTransform="uppercase"
-                  fontWeight="500"
-                  display="block"
+        {filteredData.length === 0 ? (
+          <Box display="block" p={2} fontSize="sm">
+            No data is available for the selected year or administrative area. Please select a different time period or area.
+          </Box>
+        ) : (
+          <Box display="block">
+            {/* Stats display */}
+            <HStack gap="3" width="100%" p={2} overflow="auto">
+              {attributes.map((attr: string) => (
+                <Box
+                  flex="1"
+                  textAlign="right"
+                  pr={2}
+                  borderRight="1px solid"
+                  borderColor="border.muted"
+                  _last={{ borderRight: "none" }}
                 >
-                  {attr}
-                </Text>
-                <Text fontSize="md" display="block">
-                  {getAttributeValueSum(filteredData, attr)}
-                </Text>
-              </Box>
-            ))}
-          </HStack>
-          {visMode === "chart" && <StatsChart stats={filteredData} />}
-          {visMode === "table" && <StatsTable stats={filteredData} />}
-        </Box>
+                  <Stat.Root size="sm" alignItems="end" gap={0}>
+                    <Stat.Label
+                      textTransform="capitalize"
+                      fontSize="xs"
+                      color="fg.subtle"
+                      lineHeight={1.2}
+                    >
+                      {attr}
+                    </Stat.Label>
+                    <Stat.ValueText
+                      fontSize="md"
+                      lineHeight={1.2}
+                      fontWeight="500"
+                    >
+                      {getAttributeValueSum(
+                        filteredData,
+                        attr
+                      ).toLocaleString()}
+                    </Stat.ValueText>
+                  </Stat.Root>
+                </Box>
+              ))}
+            </HStack>
+            {visMode === "chart" && <StatsChart stats={filteredData} />}
+            {visMode === "table" && <StatsTable stats={filteredData} />}
+          </Box>
+        )}
       </Box>
     );
   }

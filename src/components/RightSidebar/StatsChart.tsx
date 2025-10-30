@@ -4,6 +4,7 @@ import { useAreaStore } from "@/store/area-store";
 import { TabularData } from "@/types/api";
 import { consolidateStats } from "@/utils/consolidateStats";
 import { getAttributes } from "@/utils/getAttributes";
+import { formatYAxisLabel } from "@/utils/formatCharts";
 
 type StatsChartType = {
   stats: TabularData[];
@@ -33,11 +34,23 @@ export function StatsChart({ stats }: StatsChartType) {
   });
 
   return (
-    <Chart.Root maxH="sm" mt={4} chart={chart}>
+    <Chart.Root maxH="sm" mt={4} chart={chart} mb={8}>
       <BarChart data={chart.data}>
         <CartesianGrid stroke={chart.color("border.muted")} vertical={false} />
-        <XAxis axisLine={false} tickLine={false} dataKey={chart.key("place")} />
-        <YAxis axisLine={false} tickLine={false} />
+        <XAxis
+          axisLine={false}
+          tickLine={false}
+          dataKey={chart.key("place")}
+          angle={-45}
+          textAnchor="end"
+          interval={0}
+        />
+        <YAxis
+          axisLine={false}
+          tickLine={false}
+          type="number"
+          tickFormatter={(value: number) => String(formatYAxisLabel(value))}
+        />
         <Tooltip
           cursor={false}
           animationDuration={100}
