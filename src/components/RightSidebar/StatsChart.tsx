@@ -9,13 +9,22 @@ type StatsChartType = {
   stats: TabularData[];
 };
 
-const COLORS = ["blue", "red", "green", "orange", "pink", "teal", "gray"];
+const COLORS = [
+  "blue",
+  "red",
+  "green",
+  "purple",
+  "orange",
+  "pink",
+  "teal",
+  "gray",
+];
 
 export function StatsChart({ stats }: StatsChartType) {
   const { province } = useAreaStore();
   const series = getAttributes(stats).map((i, index) => ({
     name: i,
-    color: `${COLORS[index]}.solid`,
+    color: `${index < COLORS.length ? COLORS[index] : "yellow"}.solid`,
     stackId: "a",
   }));
   const chart = useChart({

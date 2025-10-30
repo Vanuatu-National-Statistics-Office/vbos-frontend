@@ -1,5 +1,4 @@
 import { useDateStore } from "@/store/date-store";
-import { useLayerStore } from "@/store/layer-store";
 import { Flex, Slider } from "@chakra-ui/react";
 
 export const DateSelect = () => {
