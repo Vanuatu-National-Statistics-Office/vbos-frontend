@@ -36,7 +36,7 @@ export function Stats() {
   //  but it's what we have now
   if (tabularLayerData.length === 0 && filteredData.length === 0) {
     return (
-      <Stack gap={4} py={2} overflowY="scroll">
+      <Stack gap={4} py={2}>
         <Stack px={4}>
           <Skeleton height={12} />
         </Stack>

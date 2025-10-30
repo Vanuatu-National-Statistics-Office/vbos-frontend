@@ -37,7 +37,7 @@ export function StatsChart({ stats }: StatsChartType) {
       <BarChart data={chart.data}>
         <CartesianGrid stroke={chart.color("border.muted")} vertical={false} />
         <XAxis axisLine={false} tickLine={false} dataKey={chart.key("place")} />
-        <YAxis axisLine={false} tickLine={false} domain={[0, 100]} />
+        <YAxis axisLine={false} tickLine={false} />
         <Tooltip
           cursor={false}
           animationDuration={100}
