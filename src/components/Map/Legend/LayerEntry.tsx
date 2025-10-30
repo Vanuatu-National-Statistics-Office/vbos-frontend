@@ -12,6 +12,7 @@ import {
   IconButton,
   HStack,
   VStack,
+  Skeleton,
 } from "@chakra-ui/react";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { LuX, LuInfo, LuDroplet } from "react-icons/lu";
@@ -119,8 +120,7 @@ export function LayerEntry(props: LayerEntryProps) {
  * Shows a color ramp matching the map's choropleth visualization.
  */
 function TabularEntry(props: TabularLegendLayer) {
-  const { unit, dataRange } = props;
-
+  const { unit, dataRange, isPending, hasData } = props;
   // Choropleth color from AdminAreaLayers.tsx
   const baseColor = "#8856a7"; // Purple used in the map
 
@@ -145,17 +145,19 @@ function TabularEntry(props: TabularLegendLayer) {
           </HStack>
         </VStack>
       ) : (
-        /* Show placeholder when data is loading */
+        /* Show different messages based on loading vs no data state */
         <VStack align="stretch" gap={1} w="100%">
-          <Box
-            h="16px"
-            w="100%"
-            rounded="sm"
-            bg="gray.100"
-            opacity={0.5}
-          />
+          <Skeleton loading={isPending}>
+            <Box
+              h="16px"
+              w="100%"
+              rounded="sm"
+              bg="gray.100"
+              opacity={0.5}
+            />
+          </Skeleton>
           <Text fontSize="xs" color="fg.muted" fontStyle="italic">
-            Loading data...
+            {isPending ? "Loading data..." : hasData === false ? "Data unavailable for the time or area selected." : "Loading data..."}
           </Text>
         </VStack>
       )}

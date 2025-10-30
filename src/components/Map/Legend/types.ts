@@ -34,6 +34,10 @@ export interface TabularLegendLayer extends BaseLegendLayer {
     min: number;
     max: number;
   };
+  /** Whether the data is currently being loaded */
+  isPending?: boolean;
+  /** Whether there is data available for current filters (time/place) */
+  hasData?: boolean;
 }
 
 /**

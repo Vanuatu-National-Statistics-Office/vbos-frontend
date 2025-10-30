@@ -11,9 +11,10 @@
  * - Returns array of LegendLayer objects ready for display
  */
 
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useIsFetching } from "@tanstack/react-query";
 import { useLayerStore } from "@/store/layer-store";
 import { useAreaStore } from "@/store/area-store";
+import { useDateStore } from "@/store/date-store";
 import { useAdminAreaStats } from "@/hooks/useAdminAreaStats";
 import useProvinces from "@/hooks/useProvinces";
 import { featureCollection } from "@turf/helpers";
@@ -44,10 +45,12 @@ import type { Dataset, PaginatedVectorData } from "@/types/api";
  * ```
  */
 export function useLegendLayers(): LegendLayer[] {
-  const { layers: layerString, getLayerMetadata } = useLayerStore();
+  const { layers: layerString, getLayerMetadata, tabularLayerData } = useLayerStore();
   const { ac, province, acGeoJSON } = useAreaStore();
+  const { year } = useDateStore();
   const { data: provincesGeojson } = useProvinces();
   const queryClient = useQueryClient();
+  const isFetching = useIsFetching();
 
   // Get min/max values from the same source as the map rendering
   const { minValue, maxValue } = useAdminAreaStats(
@@ -70,7 +73,26 @@ export function useLegendLayers(): LegendLayer[] {
     // Only include layers that have metadata loaded
     if (dataset) {
       if (dataset.dataType === "tabular") {
-        legendLayers.push(createTabularLegendLayer(dataset, minValue, maxValue));
+        // Check if we're currently fetching data for this dataset
+        const filters = new URLSearchParams();
+        if (ac) filters.set("area_council", ac);
+        if (province) filters.set("province", province);
+
+        const queryKey = [
+          "dataset",
+          "tabular",
+          dataset.id,
+          filters.toString(),
+        ];
+
+        // Check if this specific query is fetching
+        const isPending = isFetching > 0 && queryClient.isFetching({ queryKey }) > 0;
+
+        // Check if there's data for the current year
+        const filteredData = tabularLayerData.filter((i) => i.date.startsWith(year));
+        const hasData = filteredData.length > 0;
+
+        legendLayers.push(createTabularLegendLayer(dataset, minValue, maxValue, isPending, hasData));
       } else if (dataset.dataType === "vector") {
         // Try to get the vector data from the query cache to determine geometry type
         const filters = new URLSearchParams();
@@ -104,6 +126,8 @@ function createTabularLegendLayer(
   dataset: Dataset,
   minValue: number,
   maxValue: number,
+  isPending: boolean,
+  hasData: boolean,
 ): TabularLegendLayer {
   // Use the same min/max values that are used for map rendering
   let dataRange: { min: number; max: number } | undefined;
@@ -122,6 +146,8 @@ function createTabularLegendLayer(
     source: dataset.source,
     colorScheme: "sequential", // Could be made configurable
     dataRange,
+    isPending,
+    hasData,
   };
 }
 
