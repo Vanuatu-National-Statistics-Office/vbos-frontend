@@ -22,7 +22,7 @@ import { AdminAreaMapLayers } from "./AdminAreaLayers";
 import { VectorLayers } from "./VectorLayers";
 import { TabularLayers } from "./TabularLayer";
 import { Legend } from "./Legend";
-import { useLegendLayers } from "@/hooks/useLegendLayers";
+import { useLegendLayers } from "@/components/Map/Legend/hooks/useLegendLayers";
 import { useLayerStore } from "@/store/layer-store";
 import { useOpacityStore } from "@/store/opacity-store";
 
