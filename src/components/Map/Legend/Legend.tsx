@@ -18,21 +18,10 @@ import {
   VisuallyHidden,
   VStack,
 } from "@chakra-ui/react";
-
-import type { LegendLayer } from "./types";
+import { useLayerStore } from "@/store/layer-store";
+import { useOpacityStore } from "@/store/opacity-store";
+import { useLegendLayers } from "@/components/Map/Legend/hooks/useLegendLayers";
 import { LayerEntry } from "./LayerEntry";
-
-/**
- * Props for the Legend component.
- */
-interface LegendProps {
-  /** Array of LegendLayer objects to display */
-  layers: LegendLayer[];
-  /** Function to toggle a layer on/off */
-  switchLayer: (layerId: string) => void;
-  /** Function to set layer opacity */
-  setOpacity: (layerId: string, opacity: number) => void;
-}
 
 /**
  * Legend component displaying a list of active map layers with legend details.
@@ -40,11 +29,13 @@ interface LegendProps {
  * The legend automatically hides when no layers are active. Each layer entry
  * shows the layer name, type, visualization style, and controls for opacity and removal.
  */
-export function Legend(props: LegendProps) {
-  const { layers, switchLayer, setOpacity } = props;
+export function Legend() {
+  const { switchLayer } = useLayerStore();
+  const { setOpacity } = useOpacityStore();
+  const legendLayers = useLegendLayers();
 
   // Hide legend when no layers are active
-  if (!layers.length) return null;
+  if (!legendLayers.length) return null;
   return (
     <Flex
       position="absolute"
@@ -74,7 +65,7 @@ export function Legend(props: LegendProps) {
         gap={0}
         align="stretch"
       >
-        {layers.map((layer) => (
+        {legendLayers.map((layer) => (
           <Flex
             as="li"
             key={`${layer.dataType}-${layer.id}`}

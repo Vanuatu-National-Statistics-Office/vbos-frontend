@@ -22,18 +22,12 @@ import { AdminAreaMapLayers } from "./AdminAreaLayers";
 import { VectorLayers } from "./VectorLayers";
 import { TabularLayers } from "./TabularLayer";
 import { Legend } from "./Legend";
-import { useLegendLayers } from "@/components/Map/Legend/hooks/useLegendLayers";
-import { useLayerStore } from "@/store/layer-store";
-import { useOpacityStore } from "@/store/opacity-store";
 
 function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
   const [map, setMap] = useState<MapRef>();
   const setMapRef = (m: MapRef) => setMap(m);
   const { viewState, setViewState } = useMapStore();
   const { ac, acGeoJSON } = useAreaStore();
-  const { switchLayer } = useLayerStore();
-  const { setOpacity } = useOpacityStore();
-  const legendLayers = useLegendLayers();
 
   useImperativeHandle(ref, () => {
     if (map) {
@@ -86,11 +80,7 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
       <AdminAreaMapLayers />
       <VectorLayers />
       <TabularLayers />
-      <Legend
-        layers={legendLayers}
-        switchLayer={switchLayer}
-        setOpacity={setOpacity}
-      />
+      <Legend />
       {props.children}
     </ReactMapGl>
   );
