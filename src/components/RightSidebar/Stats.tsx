@@ -34,6 +34,15 @@ export function Stats() {
     : undefined;
   const attributes = getAttributes(filteredData);
 
+  // Sort attributes by their total values (highest to lowest)
+  const sortedAttributes = attributes
+    .map((attr) => ({
+      name: attr,
+      total: getAttributeValueSum(filteredData, attr),
+    }))
+    .sort((a, b) => b.total - a.total)
+    .map((item) => item.name);
+
   if (!tabularLayerId) {
     return null;
   }
@@ -151,12 +160,14 @@ export function Stats() {
           <Box display="block">
             {/* Stats display */}
             <HStack gap="3" width="100%" p={2} overflow="auto">
-              {attributes.map((attr: string) => (
+              {/* Only show top 4 stat items */}
+              {sortedAttributes.slice(0, 4).map((attr: string) => (
                 <Stat.Root
                   size="sm"
                   gap={0}
                   flex="1"
                   textAlign="right"
+                  alignItems="flex-end"
                   pr={2}
                   borderRight="1px solid"
                   borderColor="border.muted"
