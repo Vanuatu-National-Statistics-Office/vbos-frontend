@@ -1,7 +1,10 @@
+import { useState, useEffect } from "react";
 import { Chart, useChart } from "@chakra-ui/charts";
 import {
   Accordion,
   Box,
+  Button,
+  ButtonGroup,
   Heading,
   Skeleton,
 } from "@chakra-ui/react";
@@ -42,10 +45,25 @@ const BottomDrawer = () => {
     : undefined;
 
   // Check if data has monthly variation
-  const isMonthlyData = hasMonthlyVariation(tabularLayerData);
+  const hasMonthlyData = hasMonthlyVariation(tabularLayerData);
+
+  // Track view mode: "monthly" or "annual"
+  const [viewMode, setViewMode] = useState<"monthly" | "annual">("annual");
+
+  // Auto-switch to monthly view when monthly data becomes available
+  useEffect(() => {
+    if (hasMonthlyData) {
+      setViewMode("monthly");
+    } else {
+      setViewMode("annual");
+    }
+  }, [hasMonthlyData]);
+
+  // Determine if we should show monthly data based on both availability and user selection
+  const showMonthlyView = hasMonthlyData && viewMode === "monthly";
 
   // Get time series data - tabularLayerData is already filtered by selected area
-  const timeSeriesData = consolidateTimeSeries(tabularLayerData);
+  const timeSeriesData = consolidateTimeSeries(tabularLayerData, showMonthlyView);
   const series = getAttributes(tabularLayerData).map((i, index) => ({
     name: i,
     color: `${index < COLORS.length ? COLORS[index] : "yellow"}.solid`,
@@ -101,12 +119,30 @@ const BottomDrawer = () => {
             <Box p={3}>
               {isLoading ? 
                 <Skeleton height={4} width="40%" mb={4} loading={isLoading} /> :
-                <Heading as="h4" fontSize="md" mb={2}>
-                  {ac ? ac : province ? province : "National Level"} -{" "}
-                  {layerMetadata
-                    ? layerMetadata.name
-                    : "Selected Data Over Time"}
-                </Heading>}
+                <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+                  <Heading as="h4" fontSize="md">
+                    {ac ? ac : province ? province : "National Level"} -{" "}
+                    {layerMetadata
+                      ? layerMetadata.name
+                      : "Selected Data Over Time"}
+                  </Heading>
+                  {hasMonthlyData && (
+                    <ButtonGroup size="xs" variant="surface" attached>
+                      <Button
+                        onClick={() => setViewMode("monthly")}
+                        colorPalette={viewMode === "monthly" ? "blue" : "gray"}
+                      >
+                        Monthly
+                      </Button>
+                      <Button
+                        onClick={() => setViewMode("annual")}
+                        colorPalette={viewMode === "annual" ? "blue" : "gray"}
+                      >
+                        Annual
+                      </Button>
+                    </ButtonGroup>
+                  )}
+                </Box>}
               <Skeleton height="100%" loading={isLoading}>
                 <Chart.Root maxH="200px" chart={chart}>
                   <LineChart data={chart.data}>
@@ -117,7 +153,7 @@ const BottomDrawer = () => {
                     <XAxis
                       axisLine={false}
                       tickLine={false}
-                      dataKey={chart.key(isMonthlyData ? "month" : "year")}
+                      dataKey={chart.key(showMonthlyView ? "month" : "year")}
                       stroke={chart.color("border")}
                     />
                     <YAxis

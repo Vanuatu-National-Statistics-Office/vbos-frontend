@@ -36,24 +36,28 @@ export function hasMonthlyVariation(data: TabularData[]): boolean {
 
 /**
  * Consolidates tabular data into time series format for line charts.
- * Automatically detects whether to group by year or by month based on data variation.
+ * Groups by year or by month based on user preference and data availability.
  *
  * Note: The data should already be filtered by administrative area before
  * being passed to this function (e.g., via API filters).
  *
  * @param data - Array of TabularData to consolidate (pre-filtered by area if needed)
+ * @param forceMonthly - If true, force monthly grouping (only works if data has monthly variation)
  * @returns Array of data points with date as x-axis and attributes as y-axis values
  *
  * @example
  * // Yearly data: [{ year: "2020", date: "2020-01-01", ecce: 1000, primary: 800 }, ...]
  * // Monthly data: [{ year: "2020", month: "2020-01", date: "2020-01-01", ecce: 100, primary: 80 }, ...]
- * consolidateTimeSeries(data)
+ * consolidateTimeSeries(data, true)
  */
 export function consolidateTimeSeries(
   data: TabularData[],
+  forceMonthly = false,
 ): TimeSeriesDataPoint[] {
   const filteredData = data;
-  const isMonthly = hasMonthlyVariation(filteredData);
+  const hasMonthly = hasMonthlyVariation(filteredData);
+  // Use monthly grouping if forced AND data has monthly variation
+  const isMonthly = forceMonthly && hasMonthly;
 
   // Group data by appropriate time period
   const timeMap = new Map<string, TabularData[]>();
