@@ -1,4 +1,11 @@
-import { Accordion, Badge, Box, HStack, Skeleton, Stack } from "@chakra-ui/react";
+import {
+  Accordion,
+  Badge,
+  Box,
+  HStack,
+  Skeleton,
+  Stack,
+} from "@chakra-ui/react";
 import { LuMinus, LuPlus } from "react-icons/lu";
 
 import { SidebarSectionHeading } from "../SidebarSectionHeading";
@@ -22,7 +29,7 @@ const Cluster = ({ name, id }: ClusterProps) => {
   }, [clusterDatasets]);
 
   // Count active layers within this cluster
-  const { count: activeLayerCount } = useActiveLayerCount(allDatasets);
+  const activeLayerCount = useActiveLayerCount(allDatasets);
 
   if (error) {
     return (

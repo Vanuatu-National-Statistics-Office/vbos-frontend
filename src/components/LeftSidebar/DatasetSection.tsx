@@ -15,7 +15,7 @@ type DatasetSectionProps = {
 
 export function DatasetSection({ title, datasets }: DatasetSectionProps) {
   // Check if any layer in this section is active
-  const { hasActive: hasActiveLayer } = useActiveLayerCount(datasets);
+  const activeLayerCount = useActiveLayerCount(datasets);
 
   return (
     <Accordion.Item key={title} value={title}>
@@ -31,7 +31,7 @@ export function DatasetSection({ title, datasets }: DatasetSectionProps) {
       >
         <HStack gap={2}>
           {DATASET_TYPES[title]}
-          {hasActiveLayer && (
+          {activeLayerCount > 0 && (
             <Status.Root size="sm">
               <Status.Indicator colorPalette="blue" />
             </Status.Root>
