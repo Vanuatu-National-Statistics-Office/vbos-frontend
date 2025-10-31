@@ -16,7 +16,7 @@ import {
 import { Dataset } from "@/types/api";
 import { useLayerStore } from "@/store/layer-store";
 import { getAttributes } from "@/utils/getAttributes";
-import { consolidateTimeSeries } from "@/utils/consolidateTimeSeries";
+import { consolidateTimeSeries, hasMonthlyVariation } from "@/utils/consolidateTimeSeries";
 import { formatYAxisLabel } from "@/utils/formatCharts";
 import { useAreaStore } from "@/store/area-store";
 import { useUiStore } from "@/store/ui-store";
@@ -40,6 +40,10 @@ const BottomDrawer = () => {
   const layerMetadata: Dataset | undefined = tabularLayerId
     ? getLayerMetadata(tabularLayerId)
     : undefined;
+
+  // Check if data has monthly variation
+  const isMonthlyData = hasMonthlyVariation(tabularLayerData);
+
   // Get time series data - tabularLayerData is already filtered by selected area
   const timeSeriesData = consolidateTimeSeries(tabularLayerData);
   const series = getAttributes(tabularLayerData).map((i, index) => ({
@@ -95,14 +99,14 @@ const BottomDrawer = () => {
         <Accordion.ItemContent>
           <Accordion.ItemBody>
             <Box p={3}>
-              <Skeleton height={4} width="40%" mb={4} loading={isLoading}>
+              {isLoading ? 
+                <Skeleton height={4} width="40%" mb={4} loading={isLoading} /> :
                 <Heading as="h4" fontSize="md" mb={2}>
                   {ac ? ac : province ? province : "National Level"} -{" "}
                   {layerMetadata
                     ? layerMetadata.name
                     : "Selected Data Over Time"}
-                </Heading>
-              </Skeleton>
+                </Heading>}
               <Skeleton height="100%" loading={isLoading}>
                 <Chart.Root maxH="200px" chart={chart}>
                   <LineChart data={chart.data}>
@@ -113,7 +117,7 @@ const BottomDrawer = () => {
                     <XAxis
                       axisLine={false}
                       tickLine={false}
-                      dataKey={chart.key("year")}
+                      dataKey={chart.key(isMonthlyData ? "month" : "year")}
                       stroke={chart.color("border")}
                     />
                     <YAxis
