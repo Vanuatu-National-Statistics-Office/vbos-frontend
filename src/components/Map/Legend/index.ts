@@ -11,6 +11,5 @@ export type {
   TabularLegendLayer,
   VectorLegendLayer,
   RasterLegendLayer,
-  LayerActionHandler,
   LayerActionDetails,
 } from "./types";

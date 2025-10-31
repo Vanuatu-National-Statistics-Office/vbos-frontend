@@ -4,6 +4,7 @@ import { useAreaStore } from "@/store/area-store";
 import { useLayerStore } from "@/store/layer-store";
 import { useOpacityStore } from "@/store/opacity-store";
 import { useAdminAreaStats } from "@/hooks/useAdminAreaStats";
+import mapColors from "./mapColors";
 
 export function AdminAreaMapLayers() {
   const { data: provincesGeojson, isPending, error } = useProvinces();
@@ -21,18 +22,18 @@ export function AdminAreaMapLayers() {
   }
 
   // Get the active tabular layer ID to apply opacity
-  const tabularLayers = layers
-    .split(",")
-    .filter((i) => i.startsWith("t"));
+  const tabularLayers = layers.split(",").filter((i) => i.startsWith("t"));
   const activeTabularLayerId = tabularLayers.length ? tabularLayers[0] : null;
 
   // Get opacity for the tabular layer (0-100) and convert to 0-1
-  const tabularOpacity = activeTabularLayerId ? getOpacity(activeTabularLayerId) / 100 : 1;
+  const tabularOpacity = activeTabularLayerId
+    ? getOpacity(activeTabularLayerId) / 100
+    : 1;
 
   const provinceLayerStyle: LayerProps = {
     type: "line",
     paint: {
-      "line-color": "#198EC8",
+      "line-color": mapColors.blueLight,
       "line-width": ac ? 1 : 2,
       "line-opacity": ac ? 0.5 : 1,
     },
@@ -42,7 +43,7 @@ export function AdminAreaMapLayers() {
   const areaCouncilLayerStyle: LayerProps = {
     type: "line",
     paint: {
-      "line-color": "#198EC8",
+      "line-color": mapColors.blueLight,
       "line-width": ac ? 2 : 1,
       "line-opacity": ac ? 1 : 0.125,
     },
@@ -52,7 +53,7 @@ export function AdminAreaMapLayers() {
   const fillStyle: LayerProps = {
     type: "fill",
     paint: {
-      "fill-color": "#8856a7",
+      "fill-color": mapColors.purple,
       "fill-opacity": [
         "*",
         tabularOpacity,

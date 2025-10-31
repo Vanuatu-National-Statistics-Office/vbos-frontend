@@ -5,6 +5,7 @@ import { useDataset } from "@/hooks/useDataset";
 import { PaginatedVectorData } from "@/types/api";
 import { Box, Spinner, Text } from "@chakra-ui/react";
 import { useAreaStore } from "@/store/area-store";
+import mapColors from "./mapColors";
 
 export function VectorLayers() {
   const { layers } = useLayerStore();
@@ -62,7 +63,7 @@ function VectorMapLayer({ id }: VectorMapLayerProps) {
   const lineStyle: LayerProps = {
     type: "line",
     paint: {
-      "line-color": "#f09000",
+      "line-color": mapColors.orange,
       "line-opacity": opacity,
     },
     source: layerId,
@@ -70,7 +71,7 @@ function VectorMapLayer({ id }: VectorMapLayerProps) {
   const pointStyle: LayerProps = {
     type: "circle",
     paint: {
-      "circle-color": "#3d4aff",
+      "circle-color": mapColors.blue,
       "circle-opacity": opacity,
     },
     source: layerId,

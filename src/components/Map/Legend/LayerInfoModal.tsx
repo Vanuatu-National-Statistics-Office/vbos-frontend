@@ -112,7 +112,8 @@ export function LayerInfoModal(props: LayerInfoModalProps) {
                       Data Range
                     </Text>
                     <Text>
-                      {layer.dataRange.min.toLocaleString()} - {layer.dataRange.max.toLocaleString()}
+                      {layer.dataRange.min.toLocaleString()} -{" "}
+                      {layer.dataRange.max.toLocaleString()}
                       {layer.unit ? ` ${layer.unit}` : ""}
                     </Text>
                   </Stack>

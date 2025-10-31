@@ -72,23 +72,6 @@ interface ListApiResponse {
   results: TabularData[];
 }
 
-/**
- * Fetches metadata for a single dataset.
- * This function should be used whenever you need dataset information (name, unit, source, etc.)
- * without fetching the actual data.
- */
-export async function getLayerMetadata(
-  dataType: "vector" | "tabular" | "raster",
-  id: number,
-): Promise<Dataset> {
-  const response = await HTTP.get(`/api/v1/${dataType}/${id}/`);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${dataType} dataset ${id}`);
-  }
-  const data = await response.json();
-  return { ...data, dataType } as Dataset;
-}
-
 export async function getDatasetData(
   dataType: "tabular" | "vector",
   id: number,

@@ -5,27 +5,13 @@
  * allowing users to understand what data is being visualized.
  */
 
-/**
- * Base properties shared by all legend layer types.
- */
-interface BaseLegendLayer {
-  /** Unique identifier matching the dataset ID */
-  id: number;
-  /** Display name of the layer */
-  name: string;
-  /** Data type discriminator */
-  dataType: "tabular" | "vector" | "raster";
-  /** Unit of measurement (e.g., "people", "meters") */
-  unit?: string | null;
-  /** Data source description */
-  source?: string | null;
-}
+import { Dataset } from "@/types/api";
 
 /**
  * Legend entry for tabular (statistical) layers.
  * Tabular layers are visualized as choropleth maps on admin boundaries.
  */
-export interface TabularLegendLayer extends BaseLegendLayer {
+export type TabularLegendLayer = Dataset & {
   dataType: "tabular";
   /** Color scheme used for choropleth visualization */
   colorScheme: "sequential" | "diverging" | "categorical";
@@ -38,36 +24,45 @@ export interface TabularLegendLayer extends BaseLegendLayer {
   isPending?: boolean;
   /** Whether there is data available for current filters (time/place) */
   hasData?: boolean;
-}
+};
 
 /**
  * Legend entry for vector (geometry) layers.
  * Vector layers display points, lines, or polygons loaded from GeoJSON.
  */
-export interface VectorLegendLayer extends BaseLegendLayer {
+export type VectorLegendLayer = Dataset & {
   dataType: "vector";
   /** Primary geometry type in this layer */
-  geometryType: "Point" | "LineString" | "Polygon" | "MultiPoint" | "MultiLineString" | "MultiPolygon";
+  geometryType:
+    | "Point"
+    | "LineString"
+    | "Polygon"
+    | "MultiPoint"
+    | "MultiLineString"
+    | "MultiPolygon";
   /** Color used to render this layer */
   color: string;
-}
+};
 
 /**
  * Legend entry for raster (imagery/grid) layers.
  * Raster layers display continuous data like satellite imagery or elevation.
  */
-export interface RasterLegendLayer extends BaseLegendLayer {
+export type RasterLegendLayer = Dataset & {
   dataType: "raster";
   /** Color scheme or palette description */
   colorScheme?: string;
   /** Optional opacity/transparency level */
   opacity?: number;
-}
+};
 
 /**
  * Union type representing any type of legend layer.
  */
-export type LegendLayer = TabularLegendLayer | VectorLegendLayer | RasterLegendLayer;
+export type LegendLayer =
+  | TabularLegendLayer
+  | VectorLegendLayer
+  | RasterLegendLayer;
 
 /**
  * Action types that can be performed on legend layers.
@@ -91,8 +86,3 @@ export type LayerActionDetails =
         opacity: number;
       };
     };
-
-/**
- * Callback function type for handling layer actions.
- */
-export type LayerActionHandler = (details: LayerActionDetails) => void;

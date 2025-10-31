@@ -25,6 +25,7 @@ import type {
   VectorLegendLayer,
   RasterLegendLayer,
 } from "./types";
+import mapColors from "../mapColors";
 
 /**
  * Props for the LayerEntry component.
@@ -32,13 +33,19 @@ import type {
 type LayerEntryProps = LegendLayer & {
   switchLayer: (layerId: string) => void;
   setOpacity: (layerId: string, opacity: number) => void;
-}
+};
 
 /**
  * Main LayerEntry component that delegates to specific layer type renderers.
  */
 export function LayerEntry(props: LayerEntryProps) {
-  const { dataType, id, name, switchLayer, setOpacity: setOpacityStore } = props;
+  const {
+    dataType,
+    id,
+    name,
+    switchLayer,
+    setOpacity: setOpacityStore,
+  } = props;
   const [infoOpen, setInfoOpen] = useState(false);
   const [opacity, setOpacity] = useState(100);
 
@@ -76,11 +83,7 @@ export function LayerEntry(props: LayerEntryProps) {
 
             {/* Opacity control */}
             <OpacityControl value={opacity} onValueChange={handleOpacityChange}>
-              <IconButton
-                aria-label="Adjust opacity"
-                size="xs"
-                variant="ghost"
-              >
+              <IconButton aria-label="Adjust opacity" size="xs" variant="ghost">
                 <LuDroplet />
               </IconButton>
             </OpacityControl>
@@ -99,9 +102,15 @@ export function LayerEntry(props: LayerEntryProps) {
           </HStack>
         </HStack>
         <Box flex={1} minW={0} w="full">
-          {dataType === "tabular" && <TabularEntry {...(props as TabularLegendLayer)} />}
-          {dataType === "vector" && <VectorEntry {...(props as VectorLegendLayer)} />}
-          {dataType === "raster" && <RasterEntry {...(props as RasterLegendLayer)} />}
+          {dataType === "tabular" && (
+            <TabularEntry {...(props as TabularLegendLayer)} />
+          )}
+          {dataType === "vector" && (
+            <VectorEntry {...(props as VectorLegendLayer)} />
+          )}
+          {dataType === "raster" && (
+            <RasterEntry {...(props as RasterLegendLayer)} />
+          )}
         </Box>
       </VStack>
 
@@ -121,8 +130,6 @@ export function LayerEntry(props: LayerEntryProps) {
  */
 function TabularEntry(props: TabularLegendLayer) {
   const { unit, dataRange, isPending, hasData } = props;
-  // Choropleth color from AdminAreaLayers.tsx
-  const baseColor = "#8856a7"; // Purple used in the map
 
   return (
     <VStack align="stretch" gap={2} w="100%">
@@ -136,28 +143,32 @@ function TabularEntry(props: TabularLegendLayer) {
             overflow="hidden"
             bgGradient="to-r"
             gradientFrom="transparent"
-            gradientTo={baseColor}
+            gradientTo={mapColors.purple}
           />
           {/* Min/Max labels */}
           <HStack justify="space-between" fontSize="xs" color="fg.muted">
-            <Text>{dataRange.min.toLocaleString()}{unit ? ` ${unit}` : ""}</Text>
-            <Text textAlign="right">{dataRange.max.toLocaleString()}{unit ? ` ${unit}` : ""}</Text>
+            <Text>
+              {dataRange.min.toLocaleString()}
+              {unit ? ` ${unit}` : ""}
+            </Text>
+            <Text textAlign="right">
+              {dataRange.max.toLocaleString()}
+              {unit ? ` ${unit}` : ""}
+            </Text>
           </HStack>
         </VStack>
       ) : (
         /* Show different messages based on loading vs no data state */
         <VStack align="stretch" gap={1} w="100%">
           <Skeleton loading={isPending}>
-            <Box
-              h="16px"
-              w="100%"
-              rounded="sm"
-              bg="gray.100"
-              opacity={0.5}
-            />
+            <Box h="16px" w="100%" rounded="sm" bg="gray.100" opacity={0.5} />
           </Skeleton>
           <Text fontSize="xs" color="fg.muted" fontStyle="italic">
-            {isPending ? "Loading data..." : hasData === false ? "Data unavailable for the time or area selected." : "Loading data..."}
+            {isPending
+              ? "Loading data..."
+              : hasData === false
+                ? "Data unavailable for the time or area selected."
+                : "Loading data..."}
           </Text>
         </VStack>
       )}
@@ -186,26 +197,18 @@ function VectorEntry(props: VectorLegendLayer) {
       <HStack gap={2} align="center">
         {isPoint && (
           <>
-            <Box
-              w="12px"
-              h="12px"
-              rounded="full"
-              bg={color}
-              flexShrink={0}
-            />
-            <Text fontSize="xs" color="fg.muted">{name}</Text>
+            <Box w="12px" h="12px" rounded="full" bg={color} flexShrink={0} />
+            <Text fontSize="xs" color="fg.muted">
+              {name}
+            </Text>
           </>
         )}
         {isLine && (
           <>
-            <Box
-              w="12px"
-              h="3px"
-              bg={color}
-              flexShrink={0}
-              rounded="full"
-            />
-            <Text fontSize="xs" color="fg.muted">{name}</Text>
+            <Box w="12px" h="3px" bg={color} flexShrink={0} rounded="full" />
+            <Text fontSize="xs" color="fg.muted">
+              {name}
+            </Text>
           </>
         )}
         {!isPoint && !isLine && (
@@ -219,7 +222,9 @@ function VectorEntry(props: VectorLegendLayer) {
               flexShrink={0}
               rounded="sm"
             />
-            <Text fontSize="xs" color="fg.muted">{geometryType}</Text>
+            <Text fontSize="xs" color="fg.muted">
+              {geometryType}
+            </Text>
           </>
         )}
       </HStack>

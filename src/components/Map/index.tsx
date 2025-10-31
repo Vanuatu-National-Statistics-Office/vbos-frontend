@@ -42,7 +42,6 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
     [setViewState],
   );
 
-
   useEffect(() => {
     if (acGeoJSON?.features?.length && map) {
       const acBbox = ac
@@ -73,10 +72,7 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
       dragRotate={false}
       {...props}
     >
-      <NavigationControl
-        position="bottom-left"
-        showZoom
-      />
+      <NavigationControl position="bottom-left" showZoom />
       <AdminAreaMapLayers />
       <VectorLayers />
       <TabularLayers />

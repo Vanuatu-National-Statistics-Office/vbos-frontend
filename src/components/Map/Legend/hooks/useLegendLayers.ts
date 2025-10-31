@@ -20,11 +20,10 @@ import useProvinces from "@/hooks/useProvinces";
 import { featureCollection } from "@turf/helpers";
 import type {
   LegendLayer,
-  TabularLegendLayer,
   VectorLegendLayer,
-  RasterLegendLayer,
 } from "@/components/Map/Legend/types";
-import type { Dataset, PaginatedVectorData } from "@/types/api";
+import type { PaginatedVectorData } from "@/types/api";
+import mapColors from "../../mapColors";
 
 /**
  * Hook that provides legend layer data for all currently active map layers.
@@ -34,18 +33,21 @@ import type { Dataset, PaginatedVectorData } from "@/types/api";
  * @example
  * ```tsx
  * function MapComponent() {
- *   const legendLayers = useLegendLayers();
  *
  *   return (
  *     <Map>
- *       <Legend layers={legendLayers} />
+ *       <Legend />
  *     </Map>
  *   );
  * }
  * ```
  */
 export function useLegendLayers(): LegendLayer[] {
-  const { layers: layerString, getLayerMetadata, tabularLayerData } = useLayerStore();
+  const {
+    layers: layerString,
+    getLayerMetadata,
+    tabularLayerData,
+  } = useLayerStore();
   const { ac, province, acGeoJSON } = useAreaStore();
   const { year } = useDateStore();
   const { data: provincesGeojson } = useProvinces();
@@ -78,21 +80,24 @@ export function useLegendLayers(): LegendLayer[] {
         if (ac) filters.set("area_council", ac);
         if (province) filters.set("province", province);
 
-        const queryKey = [
-          "dataset",
-          "tabular",
-          dataset.id,
-          filters.toString(),
-        ];
+        const queryKey = ["dataset", "tabular", dataset.id, filters.toString()];
 
         // Check if this specific query is fetching
-        const isPending = isFetching > 0 && queryClient.isFetching({ queryKey }) > 0;
+        const isPending =
+          isFetching > 0 && queryClient.isFetching({ queryKey }) > 0;
 
-        // Check if there's data for the current year
-        const filteredData = tabularLayerData.filter((i) => i.date.startsWith(year));
-        const hasData = filteredData.length > 0;
+        // Filter data for the current year
+        const filteredData = tabularLayerData.filter((i) =>
+          i.date.startsWith(year),
+        );
 
-        legendLayers.push(createTabularLegendLayer(dataset, minValue, maxValue, isPending, hasData));
+        legendLayers.push({
+          ...dataset,
+          colorScheme: "sequential", // Could be made configurable
+          dataRange: { min: minValue, max: maxValue },
+          isPending,
+          hasData: filteredData.length > 0,
+        });
       } else if (dataset.dataType === "vector") {
         // Try to get the vector data from the query cache to determine geometry type
         const filters = new URLSearchParams();
@@ -106,102 +111,25 @@ export function useLegendLayers(): LegendLayer[] {
           new URLSearchParams(filters).toString(),
         ];
 
-        const vectorData = queryClient.getQueryData<PaginatedVectorData>(vectorDataQueryKey);
+        const vectorData =
+          queryClient.getQueryData<PaginatedVectorData>(vectorDataQueryKey);
+        const geometryType: VectorLegendLayer["geometryType"] =
+          (vectorData?.features[0]?.geometry
+            .type as VectorLegendLayer["geometryType"]) || "LineString";
 
-        legendLayers.push(createVectorLegendLayer(dataset, vectorData));
+        legendLayers.push({
+          ...dataset,
+          geometryType,
+          color: geometryType === "Point" ? mapColors.blue : mapColors.orange,
+        });
       } else if (dataset.dataType === "raster") {
-        legendLayers.push(createRasterLegendLayer(dataset));
+        legendLayers.push({
+          ...dataset,
+          opacity: 1.0,
+        });
       }
     }
   });
 
   return legendLayers;
-}
-
-/**
- * Creates a TabularLegendLayer with data range information.
- * Uses minValue and maxValue from useAdminAreaStats to match the actual rendered map values.
- */
-function createTabularLegendLayer(
-  dataset: Dataset,
-  minValue: number,
-  maxValue: number,
-  isPending: boolean,
-  hasData: boolean,
-): TabularLegendLayer {
-  // Use the same min/max values that are used for map rendering
-  let dataRange: { min: number; max: number } | undefined;
-  if (maxValue > 0) {
-    dataRange = {
-      min: minValue,
-      max: maxValue,
-    };
-  }
-
-  return {
-    id: dataset.id,
-    name: dataset.name,
-    dataType: "tabular",
-    unit: dataset.unit,
-    source: dataset.source,
-    colorScheme: "sequential", // Could be made configurable
-    dataRange,
-    isPending,
-    hasData,
-  };
-}
-
-/**
- * Creates a VectorLegendLayer with geometry type and color.
- *
- * Analyzes the GeoJSON data to determine the primary geometry type.
- * Falls back to LineString if data is not available.
- */
-function createVectorLegendLayer(
-  dataset: Dataset,
-  vectorData?: PaginatedVectorData,
-): VectorLegendLayer {
-  // Colors from VectorLayers.tsx:
-  // - Lines: #f09000 (orange)
-  // - Points: #3d4aff (blue)
-
-  let geometryType: VectorLegendLayer["geometryType"] = "LineString";
-  let color = "#f09000"; // Default to line color
-
-  // Detect geometry type from the actual data
-  if (vectorData && vectorData.features && vectorData.features.length > 0) {
-    const firstFeature = vectorData.features[0];
-    if (firstFeature.geometry) {
-      geometryType = firstFeature.geometry.type as VectorLegendLayer["geometryType"];
-
-      // Use point color for point geometries
-      if (geometryType.includes("Point")) {
-        color = "#3d4aff"; // Blue for points
-      }
-    }
-  }
-
-  return {
-    id: dataset.id,
-    name: dataset.name,
-    dataType: "vector",
-    unit: dataset.unit,
-    source: dataset.source,
-    geometryType,
-    color,
-  };
-}
-
-/**
- * Creates a RasterLegendLayer.
- */
-function createRasterLegendLayer(dataset: Dataset): RasterLegendLayer {
-  return {
-    id: dataset.id,
-    name: dataset.name,
-    dataType: "raster",
-    unit: dataset.unit,
-    source: dataset.source,
-    opacity: 1.0,
-  };
 }
