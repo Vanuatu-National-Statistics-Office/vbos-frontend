@@ -8,7 +8,6 @@ const SidebarSectionHeading = React.forwardRef<
   return (
     <Heading
       ref={ref}
-      flex="1"
       as="h3"
       fontWeight={600}
       fontSize="1rem"

@@ -14,10 +14,10 @@ import ReactMapGl, {
   LngLatLike,
 } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useMapStore } from "@/store/map-store";
-import { useAreaStore } from "@/store/area-store";
 import { bbox } from "@turf/bbox";
 import { featureCollection } from "@turf/helpers";
+import { useMapStore } from "@/store/map-store";
+import { useAreaStore } from "@/store/area-store";
 import { AdminAreaMapLayers } from "./AdminAreaLayers";
 import { VectorLayers } from "./VectorLayers";
 import { TabularLayers } from "./TabularLayer";
@@ -73,7 +73,7 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
       {...props}
     >
       <NavigationControl position="bottom-left" showZoom />
-      <AdminAreaMapLayers />
+      <AdminAreaMapLayers fitBounds={map?.fitBounds} />
       <VectorLayers />
       <TabularLayers />
       <Legend />

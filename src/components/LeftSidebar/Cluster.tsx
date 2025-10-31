@@ -1,9 +1,18 @@
-import { Accordion, Box, Skeleton, Stack } from "@chakra-ui/react";
+import {
+  Accordion,
+  Badge,
+  Box,
+  HStack,
+  Skeleton,
+  Stack,
+} from "@chakra-ui/react";
 import { LuMinus, LuPlus } from "react-icons/lu";
 
 import { SidebarSectionHeading } from "../SidebarSectionHeading";
 import { DatasetSection } from "./DatasetSection";
 import { useClusterDatasets } from "@/hooks/useClusters";
+import { useActiveLayerCount } from "@/hooks/useActiveLayerCount";
+import { useMemo } from "react";
 
 type ClusterProps = {
   name: string;
@@ -12,6 +21,15 @@ type ClusterProps = {
 
 const Cluster = ({ name, id }: ClusterProps) => {
   const { data: clusterDatasets, isPending, error } = useClusterDatasets(name);
+
+  // Flatten all datasets from all type groups in this cluster
+  const allDatasets = useMemo(() => {
+    if (!clusterDatasets) return undefined;
+    return clusterDatasets.flatMap((typeGroup) => typeGroup.datasets);
+  }, [clusterDatasets]);
+
+  // Count active layers within this cluster
+  const activeLayerCount = useActiveLayerCount(allDatasets);
 
   if (error) {
     return (
@@ -46,7 +64,19 @@ const Cluster = ({ name, id }: ClusterProps) => {
   return (
     <Accordion.Item key={name} value={`${id}`}>
       <Accordion.ItemTrigger cursor="pointer" px={4}>
-        <SidebarSectionHeading>{name}</SidebarSectionHeading>
+        <HStack gap={2} flex={1} minW={0}>
+          <SidebarSectionHeading>{name}</SidebarSectionHeading>
+          {activeLayerCount > 0 && (
+            <Badge
+              colorPalette="blue"
+              variant="surface"
+              size="sm"
+              flexShrink={0}
+            >
+              {activeLayerCount}
+            </Badge>
+          )}
+        </HStack>
         <Accordion.ItemIndicator asChild color="fg">
           <Accordion.ItemContext>
             {(context) => (context.expanded ? <LuMinus /> : <LuPlus />)}

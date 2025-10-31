@@ -17,7 +17,7 @@ export const Sidebar = ({ title, direction, children }: Props) => {
         flexDir="column"
         w={{
           base: "full",
-          md: !sideBarVisible ? "0px" : isLeftSidebar ? "19rem" : "26rem",
+          md: !sideBarVisible ? "0px" : isLeftSidebar ? "20rem" : "28rem",
         }}
         h="full"
         maxH="calc(100vh - 3.75rem)"
