@@ -1,7 +1,7 @@
 import { useAreaStore } from "@/store/area-store";
 import { TabularData } from "@/types/api";
 import { consolidateStats } from "@/utils/consolidateStats";
-import { getAttributes } from "@/utils/getAttributes";
+import { getAttributes, getAttributeValueSum } from "@/utils/getAttributes";
 import { Table } from "@chakra-ui/react";
 
 type StatsTableProps = {
@@ -74,6 +74,14 @@ export function StatsTable({ stats }: StatsTableProps) {
               ))}
             </Table.Row>
           ))}
+          <Table.Row borderTopWidth="2px" borderTopColor="border.emphasized">
+            <Table.Cell data-sticky="end" left="0" fontWeight="600">Total</Table.Cell>
+            {columns.map((col) => (
+              <Table.Cell key={col} textAlign="right" fontWeight="600">
+                {getAttributeValueSum(stats, col).toLocaleString()}
+              </Table.Cell>
+            ))}
+          </Table.Row>
         </Table.Body>
       </Table.Root>
     </Table.ScrollArea>
