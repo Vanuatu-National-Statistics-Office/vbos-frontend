@@ -11,8 +11,8 @@ import {
   CloseButton,
   Text,
   Heading,
-  Code,
   Separator,
+  Badge,
 } from "@chakra-ui/react";
 import type { LegendLayer } from "./types";
 
@@ -76,13 +76,13 @@ export function LayerInfoModal(props: LayerInfoModalProps) {
               </Stack>
 
               {/* Layer Type */}
-              <Stack gap={1}>
+              <Stack gap={1} alignItems="start">
                 <Text fontSize="sm" fontWeight="medium" color="fg.muted">
                   Type
                 </Text>
-                <Code colorPalette="blue" size="sm" px={2} py={1} rounded="sm">
+                <Badge colorPalette="blue" size="sm">
                   {layer.dataType}
-                </Code>
+                </Badge>
               </Stack>
 
               {/* ID */}
