@@ -131,27 +131,9 @@ export function LayerEntry(props: LayerEntryProps) {
 function TabularEntry(props: TabularLegendLayer) {
   const { unit, dataRange, isPending, hasData } = props;
 
-  if (isPending) {
-    return (
-      /* Show different messages based on loading vs no data state */
-      <VStack align="stretch" gap={1} w="100%">
-        <Skeleton loading={isPending}>
-          <Box h="16px" w="100%" rounded="sm" bg="gray.100" opacity={0.5} />
-        </Skeleton>
-        <Text fontSize="xs" color="fg.muted" fontStyle="italic">
-          {isPending
-            ? "Loading data..."
-            : hasData === false
-              ? "Data unavailable for the time or area selected."
-              : "Loading data..."}
-        </Text>
-      </VStack>
-    );
-  }
-
   return (
     <VStack align="stretch" gap={2} w="100%">
-      {dataRange && (
+      {dataRange && dataRange.max > 0 ? (
         <VStack align="stretch" gap={1} w="100%">
           {/* Color ramp bar */}
           <Box
@@ -174,6 +156,20 @@ function TabularEntry(props: TabularLegendLayer) {
               {unit || ""}
             </Text>
           </HStack>
+        </VStack>
+      ) : (
+        /* Show different messages based on loading vs no data state */
+        <VStack align="stretch" gap={1} w="100%">
+          <Skeleton loading={isPending}>
+            <Box h="16px" w="100%" rounded="sm" bg="gray.100" opacity={0.5} />
+          </Skeleton>
+          <Text fontSize="xs" color="fg.muted" fontStyle="italic">
+            {isPending
+              ? "Loading data..."
+              : hasData === false
+                ? "Data unavailable for the time or area selected."
+                : "Loading data..."}
+          </Text>
         </VStack>
       )}
 
