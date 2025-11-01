@@ -2,22 +2,14 @@
 
 A Management Information System (MIS) for Climate Change and Natural Disasters in Vanuatu.
 
-# Installation
+## Installation
 
-```
-  pnpm install
-```
+Install dependencies using pnpm install
 
-# Running a development server
+## Running a development server
 
-Copy `.env.example` to `.env.local` and set the environment variables. Then, run the development server.
+Copy .env.example to .env.local and set the environment variables. Then, run the development server with pnpm dev
 
-```
-  pnpm dev
-```
+## Building the application
 
-# Building the application
-
-```
-  pnpm build
-```
+Build the application with pnpm build

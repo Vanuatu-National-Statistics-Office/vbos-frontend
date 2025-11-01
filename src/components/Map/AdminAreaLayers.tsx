@@ -1,8 +1,11 @@
+import { useEffect } from "react";
 import { Layer, Source, LayerProps, MapRef } from "react-map-gl/maplibre";
 import useProvinces from "@/hooks/useProvinces";
 import { useAreaStore } from "@/store/area-store";
+import { useLayerStore } from "@/store/layer-store";
+import { useOpacityStore } from "@/store/opacity-store";
 import { useAdminAreaStats } from "@/hooks/useAdminAreaStats";
-import { useEffect } from "react";
+import mapColors from "./mapColors";
 
 type AdminAreaMapLayers = {
   fitBounds?: MapRef["fitBounds"];
@@ -11,6 +14,8 @@ type AdminAreaMapLayers = {
 export function AdminAreaMapLayers({ fitBounds }: AdminAreaMapLayers) {
   const { data: provincesGeojson, isPending, error } = useProvinces();
   const { ac, province, acGeoJSON } = useAreaStore();
+  const { layers } = useLayerStore();
+  const { getOpacity } = useOpacityStore();
   const {
     geojson: adminAreaStatsGeojson,
     maxValue,
@@ -26,10 +31,19 @@ export function AdminAreaMapLayers({ fitBounds }: AdminAreaMapLayers) {
     return null;
   }
 
+  // Get the active tabular layer ID to apply opacity
+  const tabularLayers = layers.split(",").filter((i) => i.startsWith("t"));
+  const activeTabularLayerId = tabularLayers.length ? tabularLayers[0] : null;
+
+  // Get opacity for the tabular layer (0-100) and convert to 0-1
+  const tabularOpacity = activeTabularLayerId
+    ? getOpacity(activeTabularLayerId) / 100
+    : 1;
+
   const provinceLayerStyle: LayerProps = {
     type: "line",
     paint: {
-      "line-color": "#198EC8",
+      "line-color": mapColors.blueLight,
       "line-width": ac ? 1 : 2,
       "line-opacity": ac ? 0.5 : 1,
     },
@@ -39,7 +53,7 @@ export function AdminAreaMapLayers({ fitBounds }: AdminAreaMapLayers) {
   const areaCouncilLayerStyle: LayerProps = {
     type: "line",
     paint: {
-      "line-color": "#198EC8",
+      "line-color": mapColors.blueLight,
       "line-width": ac ? 2 : 1,
       "line-opacity": ac ? 1 : 0.125,
     },
@@ -49,15 +63,19 @@ export function AdminAreaMapLayers({ fitBounds }: AdminAreaMapLayers) {
   const fillStyle: LayerProps = {
     type: "fill",
     paint: {
-      "fill-color": "#8856a7",
+      "fill-color": mapColors.purple,
       "fill-opacity": [
-        "interpolate",
-        ["linear"],
-        ["get", "value"],
-        minValue,
-        0.1,
-        maxValue,
-        1,
+        "*",
+        tabularOpacity,
+        [
+          "interpolate",
+          ["linear"],
+          ["get", "value"],
+          minValue,
+          0.1,
+          maxValue,
+          1,
+        ],
       ],
     },
     source: "stats",
