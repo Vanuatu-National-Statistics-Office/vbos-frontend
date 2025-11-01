@@ -166,10 +166,8 @@ const BottomDrawer = () => {
                       tickMargin={10}
                       type="number"
                       allowDecimals={true}
-                      tickFormatter={(value: number) => {
-                        const formatted = formatYAxisLabel(value);
-                        return unit ? `${formatted} ${unit}` : String(formatted);
-                      }}
+                      tickFormatter={(value: number) => String(formatYAxisLabel(value))}
+                      label={unit ? { value: unit, angle: -90, position: "insideLeft", offset: 10 } : undefined}
                       stroke={chart.color("border")}
                     />
                     <Tooltip

@@ -192,15 +192,30 @@ export function Stats() {
                     fontSize="md"
                     lineHeight={1.2}
                     fontWeight="500"
+                    display="inline-flex"
+                    alignItems="baseline"
                   >
                     {getAttributeValueSum(filteredData, attr).toLocaleString()}
-                    {unit && ` ${unit}`}
+                    {unit && (
+                      <Box
+                        as="span"
+                        fontWeight="400"
+                        fontSize="sm"
+                        color="fg.muted"
+                      >
+                        {`${unit}`}
+                      </Box>
+                    )}
                   </Stat.ValueText>
                 </Stat.Root>
               ))}
             </HStack>
-            {visMode === "chart" && <StatsChart stats={filteredData} unit={unit} />}
-            {visMode === "table" && <StatsTable stats={filteredData} unit={unit} />}
+            {visMode === "chart" && (
+              <StatsChart stats={filteredData} unit={unit} />
+            )}
+            {visMode === "table" && (
+              <StatsTable stats={filteredData} unit={unit} />
+            )}
           </Box>
         )}
       </Box>
