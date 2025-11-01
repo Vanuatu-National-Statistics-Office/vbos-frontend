@@ -19,6 +19,7 @@ import { useUiStore } from "@/store/ui-store";
 import { DATASET_TYPES } from "@/utils/datasetTypes";
 import { Dataset } from "@/types/api";
 import { getAttributes, getAttributeValueSum } from "@/utils/getAttributes";
+import { getUnit } from "@/utils/getUnit";
 import { StatsChart } from "./StatsChart";
 import { StatsTable } from "./StatsTable";
 import { Tooltip } from "../ui";
@@ -35,6 +36,7 @@ export function Stats() {
     ? getLayerMetadata(tabularLayerId)
     : undefined;
   const attributes = getAttributes(filteredData);
+  const unit = getUnit(filteredData);
 
   // Sort attributes by their total values (highest to lowest)
   const sortedAttributes = attributes
@@ -192,12 +194,13 @@ export function Stats() {
                     fontWeight="500"
                   >
                     {getAttributeValueSum(filteredData, attr).toLocaleString()}
+                    {unit && ` ${unit}`}
                   </Stat.ValueText>
                 </Stat.Root>
               ))}
             </HStack>
-            {visMode === "chart" && <StatsChart stats={filteredData} />}
-            {visMode === "table" && <StatsTable stats={filteredData} />}
+            {visMode === "chart" && <StatsChart stats={filteredData} unit={unit} />}
+            {visMode === "table" && <StatsTable stats={filteredData} unit={unit} />}
           </Box>
         )}
       </Box>

@@ -6,9 +6,10 @@ import { Table } from "@chakra-ui/react";
 
 type StatsTableProps = {
   stats: TabularData[];
+  unit?: string | null;
 };
 
-export function StatsTable({ stats }: StatsTableProps) {
+export function StatsTable({ stats, unit }: StatsTableProps) {
   const { province } = useAreaStore();
   const rows = consolidateStats(stats, province ? "area_council" : "province");
   const columns = getAttributes(stats);
@@ -70,6 +71,7 @@ export function StatsTable({ stats }: StatsTableProps) {
               {columns.map((col) => (
                 <Table.Cell textAlign="right">
                   {row[col].toLocaleString()}
+                  {unit && ` ${unit}`}
                 </Table.Cell>
               ))}
             </Table.Row>
@@ -79,6 +81,7 @@ export function StatsTable({ stats }: StatsTableProps) {
             {columns.map((col) => (
               <Table.Cell key={col} textAlign="right" fontWeight="600">
                 {getAttributeValueSum(stats, col).toLocaleString()}
+                {unit && ` ${unit}`}
               </Table.Cell>
             ))}
           </Table.Row>

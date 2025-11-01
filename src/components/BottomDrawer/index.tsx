@@ -19,6 +19,7 @@ import {
 import { Dataset } from "@/types/api";
 import { useLayerStore } from "@/store/layer-store";
 import { getAttributes } from "@/utils/getAttributes";
+import { getUnit } from "@/utils/getUnit";
 import { consolidateTimeSeries, hasMonthlyVariation } from "@/utils/consolidateTimeSeries";
 import { formatYAxisLabel } from "@/utils/formatCharts";
 import { useAreaStore } from "@/store/area-store";
@@ -46,6 +47,9 @@ const BottomDrawer = () => {
 
   // Check if data has monthly variation
   const hasMonthlyData = hasMonthlyVariation(tabularLayerData);
+
+  // Get unit from the data
+  const unit = getUnit(tabularLayerData);
 
   // Track view mode: "monthly" or "annual"
   const [viewMode, setViewMode] = useState<"monthly" | "annual">("annual");
@@ -161,8 +165,11 @@ const BottomDrawer = () => {
                       tickLine={false}
                       tickMargin={10}
                       type="number"
-                      tickFormatter={(value: number) =>
-                        String(formatYAxisLabel(value))}
+                      allowDecimals={true}
+                      tickFormatter={(value: number) => {
+                        const formatted = formatYAxisLabel(value);
+                        return unit ? `${formatted} ${unit}` : String(formatted);
+                      }}
                       stroke={chart.color("border")}
                     />
                     <Tooltip

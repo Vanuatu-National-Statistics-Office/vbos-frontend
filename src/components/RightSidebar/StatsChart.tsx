@@ -8,6 +8,7 @@ import { formatYAxisLabel } from "@/utils/formatCharts";
 
 type StatsChartType = {
   stats: TabularData[];
+  unit?: string | null;
 };
 
 const COLORS = [
@@ -21,7 +22,7 @@ const COLORS = [
   "gray",
 ];
 
-export function StatsChart({ stats }: StatsChartType) {
+export function StatsChart({ stats, unit }: StatsChartType) {
   const { province, ac } = useAreaStore();
   const isAreaCouncilLevel = Boolean(ac);
 
@@ -52,7 +53,11 @@ export function StatsChart({ stats }: StatsChartType) {
           axisLine={false}
           tickLine={false}
           type="number"
-          tickFormatter={(value: number) => String(formatYAxisLabel(value))}
+          allowDecimals={true}
+          tickFormatter={(value: number) => {
+            const formatted = formatYAxisLabel(value);
+            return unit ? `${formatted} ${unit}` : String(formatted);
+          }}
         />
         <Tooltip
           cursor={false}
