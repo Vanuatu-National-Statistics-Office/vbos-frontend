@@ -78,6 +78,7 @@ export function abbreviateUnit(unit: string | undefined): string | undefined {
     "seconds": "s",
 
     // Other
+    "vatu": "VT",
     "percent": "%",
     "percentage": "%",
     "degree": "°",
