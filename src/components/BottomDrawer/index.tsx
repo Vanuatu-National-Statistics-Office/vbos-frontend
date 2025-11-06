@@ -23,17 +23,7 @@ import { consolidateTimeSeries, hasMonthlyVariation } from "@/utils/consolidateT
 import { formatYAxisLabel } from "@/utils/formatCharts";
 import { useAreaStore } from "@/store/area-store";
 import { useUiStore } from "@/store/ui-store";
-
-const COLORS = [
-  "blue",
-  "red",
-  "green",
-  "purple",
-  "orange",
-  "pink",
-  "teal",
-  "gray",
-];
+import { chartColors } from "../Map/mapColors";
 
 const BottomDrawer = () => {
   const { layers, tabularLayerData, getLayerMetadata } = useLayerStore();
@@ -66,7 +56,7 @@ const BottomDrawer = () => {
   const timeSeriesData = consolidateTimeSeries(tabularLayerData, showMonthlyView);
   const series = getAttributes(tabularLayerData).map((i, index) => ({
     name: i,
-    color: `${index < COLORS.length ? COLORS[index] : "yellow"}.solid`,
+    color: `${index < chartColors.length ? chartColors[index] : "yellow"}.solid`,
   }));
 
   const chart = useChart({

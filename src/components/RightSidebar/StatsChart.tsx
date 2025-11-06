@@ -5,21 +5,11 @@ import { TabularData } from "@/types/api";
 import { consolidateStats } from "@/utils/consolidateStats";
 import { getAttributes } from "@/utils/getAttributes";
 import { formatYAxisLabel } from "@/utils/formatCharts";
+import { chartColors } from "../Map/mapColors";
 
 type StatsChartType = {
   stats: TabularData[];
 };
-
-const COLORS = [
-  "blue",
-  "red",
-  "green",
-  "purple",
-  "orange",
-  "pink",
-  "teal",
-  "gray",
-];
 
 export function StatsChart({ stats }: StatsChartType) {
   const { province, ac } = useAreaStore();
@@ -27,7 +17,7 @@ export function StatsChart({ stats }: StatsChartType) {
 
   const series = getAttributes(stats).map((i, index) => ({
     name: i,
-    color: `${index < COLORS.length ? COLORS[index] : "yellow"}.solid`,
+    color: `${index < chartColors.length ? chartColors[index] : "yellow"}.solid`,
     // Stack bars at province level, group them at area council level
     stackId: isAreaCouncilLevel ? undefined : "a",
   }));

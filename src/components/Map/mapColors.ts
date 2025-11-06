@@ -6,3 +6,16 @@ const mapColors = {
 };
 
 export default mapColors;
+
+const chartColors = [
+  "blue",
+  "red",
+  "green",
+  "purple",
+  "orange",
+  "pink",
+  "teal",
+  "gray",
+];
+
+export { chartColors };
