@@ -16,17 +16,17 @@ test("getAttributes returns the correct value", () => {
 });
 
 test("getAttributeValueSum returns the correct value", () => {
-  expect(getAttributeValueSum(tabularData.results, "ecce")).toEqual(760);
-  expect(getAttributeValueSum(tabularData.results, "primary")).toEqual(592);
+  expect(getAttributeValueSum(tabularData.results, "ecce")).toEqual(2232);
+  expect(getAttributeValueSum(tabularData.results, "primary")).toEqual(1735);
 });
 
 test("getProvinceAttributeValueSum returns the correct value", () => {
   expect(
     getProvinceAttributeValueSum(tabularData.results, "TAFEA", "ecce"),
-  ).toEqual(113);
+  ).toEqual(334);
   expect(
     getProvinceAttributeValueSum(tabularData.results, "MALAMPA", "primary"),
-  ).toEqual(24);
+  ).toEqual(71);
 });
 
 test("getAreaCouncilAttributeValueSum returns the correct value", () => {
@@ -36,12 +36,12 @@ test("getAreaCouncilAttributeValueSum returns the correct value", () => {
       "North West Malekula",
       "ecce",
     ),
-  ).toEqual(4);
+  ).toEqual(11);
   expect(
     getAreaCouncilAttributeValueSum(
       tabularData.results,
       "North West Malekula",
       "primary",
     ),
-  ).toEqual(3);
+  ).toEqual(8);
 });
