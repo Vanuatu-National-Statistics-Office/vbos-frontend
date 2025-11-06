@@ -5,7 +5,7 @@ import { TabularData } from "@/types/api";
 import { consolidateStats } from "@/utils/consolidateStats";
 import { getAttributes } from "@/utils/getAttributes";
 import { formatYAxisLabel } from "@/utils/formatCharts";
-import { chartColors } from "../Map/mapColors";
+import { chartColors } from "../colors";
 
 type StatsChartType = {
   stats: TabularData[];

@@ -5,8 +5,6 @@ const mapColors = {
   orange: "#f09000",
 };
 
-export default mapColors;
-
 const chartColors = [
   "blue",
   "red",
@@ -18,4 +16,4 @@ const chartColors = [
   "gray",
 ];
 
-export { chartColors };
+export { mapColors, chartColors };

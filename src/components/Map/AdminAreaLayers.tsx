@@ -5,7 +5,7 @@ import { useAreaStore } from "@/store/area-store";
 import { useLayerStore } from "@/store/layer-store";
 import { useOpacityStore } from "@/store/opacity-store";
 import { useAdminAreaStats } from "@/hooks/useAdminAreaStats";
-import mapColors from "./mapColors";
+import { mapColors } from "../colors";
 
 type AdminAreaMapLayers = {
   fitBounds?: MapRef["fitBounds"];
