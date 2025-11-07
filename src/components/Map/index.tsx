@@ -9,7 +9,6 @@ import {
 import ReactMapGl, {
   type MapRef,
   type MapProps,
-  Popup,
   ViewStateChangeEvent,
   MapLayerMouseEvent,
   NavigationControl,
@@ -21,15 +20,16 @@ import { bbox } from "@turf/bbox";
 import { featureCollection } from "@turf/helpers";
 import { useMapStore } from "@/store/map-store";
 import { useAreaStore } from "@/store/area-store";
+import { useLayerStore } from "@/store/layer-store";
 import { AdminAreaMapLayers } from "./AdminAreaLayers";
 import { VectorLayers } from "./VectorLayers";
 import { TabularLayers } from "./TabularLayer";
 import { Legend } from "./Legend";
-import { DataList } from "@chakra-ui/react";
-import { toSentenceCase } from "@/utils/format";
+import { MapPopup } from "./MapPopup";
 
-interface PopupInfo extends PopupProps {
+export interface PopupInfo extends PopupProps {
   properties: Record<string, unknown>;
+  datasetName?: string;
 }
 
 function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
@@ -37,6 +37,7 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
   const setMapRef = (m: MapRef) => setMap(m);
   const { viewState, setViewState } = useMapStore();
   const { ac, acGeoJSON } = useAreaStore();
+  const { layers, getLayerMetadata } = useLayerStore();
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
 
   useImperativeHandle(ref, () => {
@@ -59,10 +60,16 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
       // Set stats popup
       const statsFeatures = features.filter((i) => i.source === "stats");
       if (statsFeatures.length > 0) {
+        // Get the active tabular layer
+        const tabularLayers = layers.split(",").filter((i) => i.startsWith("t"));
+        const activeTabularLayer = tabularLayers.length ? tabularLayers[0] : null;
+        const metadata = activeTabularLayer ? getLayerMetadata(activeTabularLayer) : undefined;
+
         setPopupInfo({
           ...statsFeatures[0],
           longitude: evt.lngLat.lng,
           latitude: evt.lngLat.lat,
+          datasetName: metadata?.name,
         });
         return;
       }
@@ -72,10 +79,14 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
         typeof i.source === "string" && i.source.startsWith("v")
       );
       if (vectorFeatures.length > 0) {
+        const source = vectorFeatures[0].source as string;
+        const metadata = getLayerMetadata(source);
+
         setPopupInfo({
           ...vectorFeatures[0],
           longitude: evt.lngLat.lng,
           latitude: evt.lngLat.lat,
+          datasetName: metadata?.name,
         });
         return;
       }
@@ -84,7 +95,7 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
       setPopupInfo(null);
       console.error(error);
     }
-  }, [map]);
+  }, [map, layers, getLayerMetadata]);
 
   useEffect(() => {
     if (acGeoJSON?.features?.length && map) {
@@ -123,22 +134,7 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
       <TabularLayers />
       <Legend />
       {popupInfo && (
-        <Popup
-          latitude={popupInfo.latitude}
-          longitude={popupInfo.longitude}
-          offset={[0, -10]}
-          closeButton={false}
-          style={{ fontFamily: "var(--chakra-fonts-body)"}}
-        >
-          <DataList.Root orientation="horizontal" divideY="1px" size="sm" maxW="sm" gap={2}>
-            {Object.entries(popupInfo.properties).map(([key, value]) => (
-              <DataList.Item alignItems="baseline" key={key} _notFirst={{ pt: "2" }}>
-                <DataList.ItemLabel minW="5rem">{toSentenceCase(key)}</DataList.ItemLabel>
-                <DataList.ItemValue maxW="100%" display="inline-block">{value !== null && value !== undefined ? String(value) : "N/A"}</DataList.ItemValue>
-              </DataList.Item>
-            ))}
-          </DataList.Root>
-        </Popup>
+        <MapPopup {...popupInfo} />
       )}
       {props.children}
     </ReactMapGl>
