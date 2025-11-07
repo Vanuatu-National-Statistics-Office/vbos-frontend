@@ -26,13 +26,18 @@ import { VectorLayers } from "./VectorLayers";
 import { TabularLayers } from "./TabularLayer";
 import { Legend } from "./Legend";
 import { DataList } from "@chakra-ui/react";
+import { toSentenceCase } from "@/utils/format";
+
+interface PopupInfo extends PopupProps {
+  properties: Record<string, unknown>;
+}
 
 function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
   const [map, setMap] = useState<MapRef>();
   const setMapRef = (m: MapRef) => setMap(m);
   const { viewState, setViewState } = useMapStore();
   const { ac, acGeoJSON } = useAreaStore();
-  const [popupInfo, setPopupInfo] = useState<PopupProps | null>(null);
+  const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
 
   useImperativeHandle(ref, () => {
     if (map) {
@@ -50,16 +55,31 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
     if(!map) return;
     try {
       const features = map.queryRenderedFeatures(evt.point);
-      const featuresFilter = features.filter((i) => i.source === "stats");
-      if (featuresFilter.length > 0) {
+
+      // Set stats popup
+      const statsFeatures = features.filter((i) => i.source === "stats");
+      if (statsFeatures.length > 0) {
         setPopupInfo({
-          ...featuresFilter[0],
+          ...statsFeatures[0],
           longitude: evt.lngLat.lng,
           latitude: evt.lngLat.lat,
         });
-      } else {
-        setPopupInfo(null);
+        return;
       }
+
+      // Set vector popup
+      const vectorFeatures = features.filter((i) =>
+        typeof i.source === "string" && i.source.startsWith("v")
+      );
+      if (vectorFeatures.length > 0) {
+        setPopupInfo({
+          ...vectorFeatures[0],
+          longitude: evt.lngLat.lng,
+          latitude: evt.lngLat.lat,
+        });
+        return;
+      }
+      setPopupInfo(null);
     } catch (error) {
       setPopupInfo(null);
       console.error(error);
@@ -95,7 +115,6 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
       touchPitch={false}
       dragRotate={false}
       onClick={onClick}
-      interactiveLayerIds={["stats"]}
       {...props}
     >
       <NavigationControl position="bottom-left" showZoom />
@@ -109,13 +128,13 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
           longitude={popupInfo.longitude}
           offset={[0, -10]}
           closeButton={false}
-          // style={{ "& .maplibregl-popup-content": {borderRadius: "6px", boxShadow: "var(--chakra-shadows-md)"} }}
+          style={{ fontFamily: "var(--chakra-fonts-body)"}}
         >
-          <DataList.Root orientation="horizontal" divideY="1px" size="sm" maxW="xs" gap={2}>
+          <DataList.Root orientation="horizontal" divideY="1px" size="sm" maxW="sm" gap={2}>
             {Object.entries(popupInfo.properties).map(([key, value]) => (
-              <DataList.Item key={key} _notFirst={{ pt: "2" }}>
-                <DataList.ItemLabel minW="4rem">{key}</DataList.ItemLabel>
-                <DataList.ItemValue>{value}</DataList.ItemValue>
+              <DataList.Item alignItems="baseline" key={key} _notFirst={{ pt: "2" }}>
+                <DataList.ItemLabel minW="5rem">{toSentenceCase(key)}</DataList.ItemLabel>
+                <DataList.ItemValue maxW="100%" display="inline-block">{value !== null && value !== undefined ? String(value) : "N/A"}</DataList.ItemValue>
               </DataList.Item>
             ))}
           </DataList.Root>
