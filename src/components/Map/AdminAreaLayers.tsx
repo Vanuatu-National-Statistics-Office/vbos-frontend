@@ -91,12 +91,12 @@ export function AdminAreaMapLayers({ fitBounds }: AdminAreaMapLayers) {
       )}
       {provincesGeojson && (
         <Source id="provinces" type="geojson" data={provincesGeojson}>
-          <Layer {...provinceLayerStyle} beforeId="area-councils" />
+          <Layer {...provinceLayerStyle} beforeId="area-councils" id="provinces" />
         </Source>
       )}
       {adminAreaStatsGeojson.features.length && maxValue > 0 && (
         <Source id="stats" type="geojson" data={adminAreaStatsGeojson}>
-          <Layer {...fillStyle} beforeId="area-councils" />
+          <Layer {...fillStyle} beforeId="area-councils" id="stats" />
         </Source>
       )}
     </>
