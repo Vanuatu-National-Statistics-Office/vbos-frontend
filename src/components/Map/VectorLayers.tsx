@@ -5,7 +5,7 @@ import { useDataset } from "@/hooks/useDataset";
 import { PaginatedVectorData } from "@/types/api";
 import { Box, Spinner, Text } from "@chakra-ui/react";
 import { useAreaStore } from "@/store/area-store";
-import mapColors from "./mapColors";
+import { mapColors } from "../colors";
 
 export function VectorLayers() {
   const { layers } = useLayerStore();

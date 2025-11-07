@@ -6,6 +6,7 @@ import { useRef } from "react";
 import { useUrlSync } from "./hooks/useUrlSync";
 import { LeftSidebar } from "./components/LeftSidebar";
 import { RightSidebar } from "./components/RightSidebar";
+import BottomDrawer from "./components/BottomDrawer";
 
 function App() {
   useUrlSync();
@@ -18,8 +19,9 @@ function App() {
           <LeftSidebar />
         </Box>
         <Box>
-          <Box position="relative" h="100%">
+          <Box position="relative" h="100%" maxH="full" display="flex" flexDir="column">
             <Map ref={mapRef} />
+            <BottomDrawer />
           </Box>
         </Box>
         <Box>

@@ -25,7 +25,7 @@ import type {
   VectorLegendLayer,
   RasterLegendLayer,
 } from "./types";
-import mapColors from "../mapColors";
+import { mapColors } from "../../colors";
 
 /**
  * Props for the LayerEntry component.

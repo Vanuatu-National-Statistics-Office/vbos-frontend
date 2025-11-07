@@ -12,7 +12,15 @@ export const Sidebar = ({ title, direction, children }: Props) => {
   const [sideBarVisible, setSideBarVisible] = useState(true);
   const isLeftSidebar = direction === "left";
   return (
-    <Box position="relative" height="full" shadow="xs">
+    <Box
+      position="relative"
+      height="full"
+      shadow="xs"
+      borderColor="border"
+      borderLeftWidth={isLeftSidebar ? 0 : 1}
+      borderRightWidth={isLeftSidebar ? 1 : 0}
+      bg="white"
+    >
       <Flex
         flexDir="column"
         w={{

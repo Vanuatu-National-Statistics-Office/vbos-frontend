@@ -23,7 +23,7 @@ import type {
   VectorLegendLayer,
 } from "@/components/Map/Legend/types";
 import type { PaginatedVectorData } from "@/types/api";
-import mapColors from "../../mapColors";
+import { mapColors } from "../../../colors";
 
 /**
  * Hook that provides legend layer data for all currently active map layers.
