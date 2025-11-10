@@ -30,6 +30,7 @@ export interface TabularDataset extends BaseDataset {
 
 export interface RasterDataset extends BaseDataset {
   dataType: "raster";
+  file: string; // URL to the raster file (e.g., TIFF)
 }
 
 export interface VectorDataset extends BaseDataset {

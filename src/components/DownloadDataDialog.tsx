@@ -84,9 +84,13 @@ export const DownloadDataDialog = ({
 
         result = downloadVectorDatasetFromCache(cachedData);
       } else {
-        // Raster datasets - we cannot download these as they are TIFF files
-        // The backend should provide a direct file link
-        alert("Raster dataset downloads are not yet supported. Please contact support for access to the source files.");
+        // Raster datasets - download directly from the file URL
+        if (!dataset.file) {
+          throw new Error("Raster file URL not available.");
+        }
+
+        // Open the file URL in a new tab to trigger download
+        window.open(dataset.file, "_blank");
         return;
       }
 
@@ -232,7 +236,12 @@ const DatasetRow = ({
   const getFileFormat = () => {
     if (dataset.dataType === "tabular") return "XLSX";
     if (dataset.dataType === "vector") return "GeoJSON";
-    return "N/A"; // raster - not supported
+    // Raster files - extract extension from file URL if available
+    if (dataset.dataType === "raster" && dataset.file) {
+      const extension = dataset.file.split(".").pop()?.toUpperCase();
+      return extension || "File";
+    }
+    return "File"; // raster without file URL
   };
 
   return (
