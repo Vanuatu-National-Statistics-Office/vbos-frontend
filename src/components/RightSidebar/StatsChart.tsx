@@ -5,28 +5,21 @@ import { TabularData } from "@/types/api";
 import { consolidateStats } from "@/utils/consolidateStats";
 import { getAttributes } from "@/utils/getAttributes";
 import { formatYAxisLabel } from "@/utils/formatCharts";
+import { chartColors } from "../colors";
 
 type StatsChartType = {
   stats: TabularData[];
 };
 
-const COLORS = [
-  "blue",
-  "red",
-  "green",
-  "purple",
-  "orange",
-  "pink",
-  "teal",
-  "gray",
-];
-
 export function StatsChart({ stats }: StatsChartType) {
-  const { province } = useAreaStore();
+  const { province, ac } = useAreaStore();
+  const isAreaCouncilLevel = Boolean(ac);
+
   const series = getAttributes(stats).map((i, index) => ({
     name: i,
-    color: `${index < COLORS.length ? COLORS[index] : "yellow"}.solid`,
-    stackId: "a",
+    color: `${index < chartColors.length ? chartColors[index] : "yellow"}.solid`,
+    // Stack bars at province level, group them at area council level
+    stackId: isAreaCouncilLevel ? undefined : "a",
   }));
   const chart = useChart({
     data: consolidateStats(stats, province ? "area_council" : "province"),
@@ -34,7 +27,7 @@ export function StatsChart({ stats }: StatsChartType) {
   });
 
   return (
-    <Chart.Root maxH="sm" mt={4} chart={chart} mb={8}>
+    <Chart.Root maxH="sm" mt={4} chart={chart} mb={12}>
       <BarChart data={chart.data}>
         <CartesianGrid stroke={chart.color("border.muted")} vertical={false} />
         <XAxis

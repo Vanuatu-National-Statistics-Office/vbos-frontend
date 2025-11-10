@@ -15,6 +15,7 @@ import {
 } from "react-icons/lu";
 import { useDateStore } from "@/store/date-store";
 import { useLayerStore } from "@/store/layer-store";
+import { useUiStore } from "@/store/ui-store";
 import { DATASET_TYPES } from "@/utils/datasetTypes";
 import { Dataset } from "@/types/api";
 import { getAttributes, getAttributeValueSum } from "@/utils/getAttributes";
@@ -27,12 +28,22 @@ export function Stats() {
   const { layers, tabularLayerData, getLayerMetadata, switchLayer } =
     useLayerStore();
   const { year } = useDateStore();
+  const { toggleTimeSeries, isTimeSeriesOpen } = useUiStore();
   const filteredData = tabularLayerData.filter((i) => i.date.startsWith(year));
   const tabularLayerId = layers.split(",").find((i) => i.startsWith("t"));
   const layerMetadata: Dataset | undefined = tabularLayerId
     ? getLayerMetadata(tabularLayerId)
     : undefined;
   const attributes = getAttributes(filteredData);
+
+  // Sort attributes by their total values (highest to lowest)
+  const sortedAttributes = attributes
+    .map((attr) => ({
+      name: attr,
+      total: getAttributeValueSum(filteredData, attr),
+    }))
+    .sort((a, b) => b.total - a.total)
+    .map((item) => item.name);
 
   if (!tabularLayerId) {
     return null;
@@ -109,8 +120,9 @@ export function Stats() {
             <Tooltip content="View time series">
               <IconButton
                 size="xs"
-                variant="ghost"
-                // onClick={() => "openTimeSeries")} TODO - this button will open the time series chart when ready
+                variant={isTimeSeriesOpen ? "solid" : "ghost"}
+                colorPalette="blue"
+                onClick={toggleTimeSeries}
                 disabled={filteredData.length === 0}
               >
                 <LuChartLine />
@@ -124,6 +136,7 @@ export function Stats() {
               <IconButton
                 size="xs"
                 variant="ghost"
+                colorPalette="blue"
                 onClick={() =>
                   setVisMode(visMode === "table" ? "chart" : "table")}
                 disabled={filteredData.length === 0}
@@ -135,6 +148,7 @@ export function Stats() {
               <IconButton
                 size="xs"
                 variant="ghost"
+                _hover={{ color: "fg.error" }}
                 onClick={() => switchLayer(tabularLayerId)}
               >
                 <LuCircleX />
@@ -151,12 +165,14 @@ export function Stats() {
           <Box display="block">
             {/* Stats display */}
             <HStack gap="3" width="100%" p={2} overflow="auto">
-              {attributes.map((attr: string) => (
+              {/* Only show top 4 stat items */}
+              {sortedAttributes.slice(0, 4).map((attr: string) => (
                 <Stat.Root
                   size="sm"
                   gap={0}
                   flex="1"
                   textAlign="right"
+                  alignItems="flex-end"
                   pr={2}
                   borderRight="1px solid"
                   borderColor="border.muted"
