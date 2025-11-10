@@ -18,7 +18,7 @@ export async function downloadTabularDataset(
   filters?: URLSearchParams,
 ): Promise<DownloadResult> {
   const queryString = filters ? new URLSearchParams(filters).toString() : "";
-  const url = `/api/v1/tabular/${id}/data/xlsx/${queryString ? `?${queryString}` : ""}`;
+  const url = `/api/v1/tabular/${id}/data-xlsx/${queryString ? `?${queryString}` : ""}`;
 
   const response = await HTTP.get(url);
   if (!response.ok) throw new Error(`Unable to fetch data from ${url}`);

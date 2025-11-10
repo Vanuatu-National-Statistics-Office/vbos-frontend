@@ -12,7 +12,6 @@ import { LuDownload } from "react-icons/lu";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLayerStore } from "@/store/layer-store";
 import { useAreaStore } from "@/store/area-store";
-import { useDateStore } from "@/store/date-store";
 import {
   downloadTabularDataset,
   downloadVectorDatasetFromCache,
@@ -31,7 +30,6 @@ export const DownloadDataDialog = ({
 }: DownloadDataDialogProps) => {
   const { layers, getLayerMetadata } = useLayerStore();
   const { province, ac } = useAreaStore();
-  const { year } = useDateStore();
   const queryClient = useQueryClient();
   const [downloadingIds, setDownloadingIds] = useState<Set<string>>(new Set());
 
@@ -58,24 +56,25 @@ export const DownloadDataDialog = ({
     setDownloadingIds((prev) => new Set(prev).add(layerId));
 
     try {
-      // Build filters based on current state
-      const filters = new URLSearchParams();
-      if (year) filters.append("date", year);
-      if (province) filters.append("province", province);
-      if (ac) filters.append("area_council", ac);
+      // Build area filters (province and ac only)
+      // Note: Date/year filtering is not used for downloads - we download the full dataset
+      const areaFilters = new URLSearchParams();
+      if (province) areaFilters.set("province", province);
+      if (ac) areaFilters.set("area_council", ac);
 
       let result;
 
       if (dataset.dataType === "tabular") {
         // Use the dedicated XLSX endpoint for tabular data
-        result = await downloadTabularDataset(dataset.id, filters);
+        // Downloads full dataset filtered only by area
+        result = await downloadTabularDataset(dataset.id, areaFilters);
       } else if (dataset.dataType === "vector") {
         // Get cached data from queryClient
         const queryKey = [
           "dataset",
           "vector",
           dataset.id,
-          filters.toString(),
+          areaFilters.toString(),
         ];
         const cachedData = queryClient.getQueryData<PaginatedVectorData>(queryKey);
 
@@ -91,13 +90,12 @@ export const DownloadDataDialog = ({
         return;
       }
 
-      // Generate filename with area context: DatasetName_Province_AC_Year.ext
+      // Generate filename with area context: DatasetName_Province_AC.ext
       const sanitizedName = sanitizeFilename(dataset.name);
       const filenameParts = [sanitizedName];
 
       if (province) filenameParts.push(sanitizeFilename(province));
       if (ac) filenameParts.push(sanitizeFilename(ac));
-      if (year) filenameParts.push(year);
 
       const filename = `${filenameParts.join("_")}.${result.extension}`;
 
