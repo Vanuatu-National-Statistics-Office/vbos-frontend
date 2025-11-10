@@ -1,9 +1,5 @@
 import * as HTTP from "./http";
-import { convertToCSV, convertToGeoJSON } from "@/utils/downloadHelpers";
-import { TabularData } from "@/types/api";
-import { Feature } from "geojson";
-
-export type DownloadFormat = "csv" | "geojson" | "json";
+import { PaginatedVectorData } from "@/types/api";
 
 export interface DownloadResult {
   blob: Blob;
@@ -12,68 +8,53 @@ export interface DownloadResult {
 }
 
 /**
- * Downloads dataset data in the appropriate format
- * @param dataType - The type of dataset (tabular, raster, vector)
+ * Downloads tabular dataset as XLSX file using the dedicated endpoint
  * @param id - The dataset ID
  * @param filters - Optional query parameters for filtering data
  * @returns Object containing blob, file extension, and MIME type
  */
-export async function downloadDataset(
-  dataType: "tabular" | "raster" | "vector",
+export async function downloadTabularDataset(
   id: number,
   filters?: URLSearchParams,
 ): Promise<DownloadResult> {
   const queryString = filters ? new URLSearchParams(filters).toString() : "";
-  const url = `/api/v1/${dataType}/${id}/data/?page_size=500${queryString ? `&${queryString}` : ""}`;
+  const url = `/api/v1/tabular/${id}/data/xlsx/${queryString ? `?${queryString}` : ""}`;
 
-  const allData: Array<TabularData | Feature> = [];
-  let currentUrl: string | null = url;
+  const response = await HTTP.get(url);
+  if (!response.ok) throw new Error(`Unable to fetch data from ${url}`);
 
-  // Fetch all paginated data
-  while (currentUrl) {
-    const response = await HTTP.get(currentUrl);
-    if (!response.ok)
-      throw new Error(`Unable to fetch data from ${currentUrl}`);
-
-    const data = await response.json();
-
-    // Extract results based on data type
-    if (dataType === "vector" && data.features) {
-      allData.push(...data.features);
-    } else if ((dataType === "tabular" || dataType === "raster") && data.results) {
-      allData.push(...data.results);
-    }
-
-    // Extract relative path from next URL if it exists
-    currentUrl = data.next
-      ? new URL(data.next).pathname + new URL(data.next).search
-      : null;
-  }
-
-  // Convert data to appropriate format based on dataType
-  if (dataType === "tabular") {
-    // Convert tabular data to CSV
-    const csvString = convertToCSV(allData as TabularData[]);
-    return {
-      blob: new Blob([csvString], { type: "text/csv" }),
-      extension: "csv",
-      mimeType: "text/csv",
-    };
-  } else if (dataType === "vector") {
-    // Convert vector data to GeoJSON
-    const geoJSONString = convertToGeoJSON(allData as Feature[]);
-    return {
-      blob: new Blob([geoJSONString], { type: "application/geo+json" }),
-      extension: "geojson",
-      mimeType: "application/geo+json",
-    };
-  } else {
-    // For raster, return as JSON (until we have direct TIFF access)
-    const jsonString = JSON.stringify(allData, null, 2);
-    return {
-      blob: new Blob([jsonString], { type: "application/json" }),
-      extension: "json",
-      mimeType: "application/json",
-    };
-  }
+  const blob = await response.blob();
+  return {
+    blob,
+    extension: "xlsx",
+    mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  };
 }
+
+/**
+ * Downloads vector dataset from cached query data as GeoJSON
+ * @param cachedData - The cached vector data from queryClient
+ * @returns Object containing blob, file extension, and MIME type
+ */
+export function downloadVectorDatasetFromCache(
+  cachedData: PaginatedVectorData,
+): DownloadResult {
+  // Convert to GeoJSON FeatureCollection
+  const geoJSON = {
+    type: "FeatureCollection" as const,
+    features: cachedData.features,
+  };
+
+  const geoJSONString = JSON.stringify(geoJSON, null, 2);
+  return {
+    blob: new Blob([geoJSONString], { type: "application/geo+json" }),
+    extension: "geojson",
+    mimeType: "application/geo+json",
+  };
+}
+
+/**
+ * Note: Raster datasets should be downloaded directly from their source file URLs.
+ * The backend stores raster data as TIFF files which should be linked directly.
+ * There is no conversion from TIFF to other formats client-side.
+ */

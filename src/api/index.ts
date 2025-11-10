@@ -2,7 +2,10 @@ import { getAreaCouncils } from "./getAreaCouncils";
 import { getProvinces } from "./getProvinces";
 import { getClusters } from "./getClusters";
 import { getDatasets, getDatasetData } from "./getDatasets";
-import { downloadDataset } from "./downloadDataset";
+import {
+  downloadTabularDataset,
+  downloadVectorDatasetFromCache,
+} from "./downloadDataset";
 
 export default {
   getProvinces,
@@ -10,5 +13,6 @@ export default {
   getClusters,
   getDatasets,
   getDatasetData,
-  downloadDataset,
+  downloadTabularDataset,
+  downloadVectorDatasetFromCache,
 };

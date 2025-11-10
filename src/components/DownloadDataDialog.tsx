@@ -9,11 +9,15 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { LuDownload } from "react-icons/lu";
+import { useQueryClient } from "@tanstack/react-query";
 import { useLayerStore } from "@/store/layer-store";
 import { useAreaStore } from "@/store/area-store";
 import { useDateStore } from "@/store/date-store";
-import API from "@/api";
-import { Dataset } from "@/types/api";
+import {
+  downloadTabularDataset,
+  downloadVectorDatasetFromCache,
+} from "@/api/downloadDataset";
+import { Dataset, PaginatedVectorData } from "@/types/api";
 import { downloadFile, sanitizeFilename } from "@/utils/downloadHelpers";
 
 type DownloadDataDialogProps = {
@@ -28,6 +32,7 @@ export const DownloadDataDialog = ({
   const { layers, getLayerMetadata } = useLayerStore();
   const { province, ac } = useAreaStore();
   const { year } = useDateStore();
+  const queryClient = useQueryClient();
   const [downloadingIds, setDownloadingIds] = useState<Set<string>>(new Set());
 
   // Parse active layers from the layers string (format: "t1,v34,r54")
@@ -59,12 +64,32 @@ export const DownloadDataDialog = ({
       if (province) filters.append("province", province);
       if (ac) filters.append("area_council", ac);
 
-      // Download the data in the appropriate format
-      const result = await API.downloadDataset(
-        dataset.dataType,
-        dataset.id,
-        filters,
-      );
+      let result;
+
+      if (dataset.dataType === "tabular") {
+        // Use the dedicated XLSX endpoint for tabular data
+        result = await downloadTabularDataset(dataset.id, filters);
+      } else if (dataset.dataType === "vector") {
+        // Get cached data from queryClient
+        const queryKey = [
+          "dataset",
+          "vector",
+          dataset.id,
+          filters.toString(),
+        ];
+        const cachedData = queryClient.getQueryData<PaginatedVectorData>(queryKey);
+
+        if (!cachedData) {
+          throw new Error("Vector data not available. Please ensure the layer is loaded on the map first.");
+        }
+
+        result = downloadVectorDatasetFromCache(cachedData);
+      } else {
+        // Raster datasets - we cannot download these as they are TIFF files
+        // The backend should provide a direct file link
+        alert("Raster dataset downloads are not yet supported. Please contact support for access to the source files.");
+        return;
+      }
 
       // Generate filename with area context: DatasetName_Province_AC_Year.ext
       const sanitizedName = sanitizeFilename(dataset.name);
@@ -78,9 +103,10 @@ export const DownloadDataDialog = ({
 
       // Trigger the download
       downloadFile(result.blob, filename);
-    } catch {
+    } catch (error) {
       // Error occurred during download
-      alert("Failed to download dataset. Please try again.");
+      const message = error instanceof Error ? error.message : "Failed to download dataset. Please try again.";
+      alert(message);
     } finally {
       // Remove from downloading set
       setDownloadingIds((prev) => {
@@ -206,9 +232,9 @@ const DatasetRow = ({
 }: DatasetRowProps) => {
   // Determine file format based on dataset type
   const getFileFormat = () => {
-    if (dataset.dataType === "tabular") return "CSV";
+    if (dataset.dataType === "tabular") return "XLSX";
     if (dataset.dataType === "vector") return "GeoJSON";
-    return "JSON"; // raster
+    return "N/A"; // raster - not supported
   };
 
   return (
