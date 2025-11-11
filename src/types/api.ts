@@ -25,13 +25,13 @@ export interface BaseDataset {
 }
 
 // Raw API response types before adding dataType discriminator
-export interface RawTabularDataset extends BaseDataset {}
+export type RawTabularDataset = BaseDataset;
 
 export interface RawRasterDataset extends BaseDataset {
   file: string;
 }
 
-export interface RawVectorDataset extends BaseDataset {}
+export type RawVectorDataset = BaseDataset;
 
 export interface TabularDataset extends BaseDataset {
   dataType: "tabular";
