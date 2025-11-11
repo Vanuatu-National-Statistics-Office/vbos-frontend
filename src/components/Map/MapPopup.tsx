@@ -5,17 +5,20 @@ import { toSentenceCase } from "@/utils/format";
 import { PopupInfo } from "./index";
 
 export function MapPopup(popupInfo: PopupInfo) {
+  const { latitude, longitude, datasetName, properties } = popupInfo;
   return (
     <Popup
-      latitude={popupInfo.latitude}
-      longitude={popupInfo.longitude}
+      latitude={latitude}
+      longitude={longitude}
+      key={latitude + longitude}
       offset={[0, -10]}
       closeButton={false}
       style={{ fontFamily: "var(--chakra-fonts-body)" }}
+      closeOnClick={false}
     >
-      {popupInfo.datasetName && (
-        <Heading size="xs" as="span" mb={2}>
-          {popupInfo.datasetName}
+      {datasetName && (
+        <Heading size="xs" mb={2}>
+          {datasetName}
         </Heading>
       )}
       <DataList.Root
@@ -23,13 +26,13 @@ export function MapPopup(popupInfo: PopupInfo) {
         divideY="1px"
         size="sm"
         maxW="sm"
-        gap={2}
+        gap={1}
       >
-        {Object.entries(popupInfo.properties).map(([key, value]) => (
+        {Object.entries(properties).map(([key, value]) => (
           <DataList.Item
             alignItems="baseline"
             key={key}
-            _notFirst={{ pt: "2" }}
+            _notFirst={{ pt: "1" }}
           >
             <DataList.ItemLabel minW="5rem">
               {toSentenceCase(key)}
