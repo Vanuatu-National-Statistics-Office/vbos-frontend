@@ -20,21 +20,14 @@ import { Dataset } from "@/types/api";
 import { useLayerStore } from "@/store/layer-store";
 import { getAttributes } from "@/utils/getAttributes";
 import { getUnit } from "@/utils/getUnit";
-import { consolidateTimeSeries, hasMonthlyVariation } from "@/utils/consolidateTimeSeries";
+import {
+  consolidateTimeSeries,
+  hasMonthlyVariation,
+} from "@/utils/consolidateTimeSeries";
 import { formatYAxisLabel } from "@/utils/formatCharts";
 import { useAreaStore } from "@/store/area-store";
 import { useUiStore } from "@/store/ui-store";
-
-const COLORS = [
-  "blue",
-  "red",
-  "green",
-  "purple",
-  "orange",
-  "pink",
-  "teal",
-  "gray",
-];
+import { chartColors } from "../colors";
 
 const BottomDrawer = () => {
   const { layers, tabularLayerData, getLayerMetadata } = useLayerStore();
@@ -67,10 +60,13 @@ const BottomDrawer = () => {
   const showMonthlyView = hasMonthlyData && viewMode === "monthly";
 
   // Get time series data - tabularLayerData is already filtered by selected area
-  const timeSeriesData = consolidateTimeSeries(tabularLayerData, showMonthlyView);
+  const timeSeriesData = consolidateTimeSeries(
+    tabularLayerData,
+    showMonthlyView,
+  );
   const series = getAttributes(tabularLayerData).map((i, index) => ({
     name: i,
-    color: `${index < COLORS.length ? COLORS[index] : "yellow"}.solid`,
+    color: `${index < chartColors.length ? chartColors[index] : "yellow"}.solid`,
   }));
 
   const chart = useChart({
@@ -87,7 +83,8 @@ const BottomDrawer = () => {
       collapsible
       variant="plain"
       value={isTimeSeriesOpen ? ["bottom-drawer"] : []}
-      onValueChange={(details) => setTimeSeriesOpen(details.value.includes("bottom-drawer"))}
+      onValueChange={(details) =>
+        setTimeSeriesOpen(details.value.includes("bottom-drawer"))}
       disabled={!tabularLayerData.length}
     >
       <Accordion.Item
@@ -121,9 +118,15 @@ const BottomDrawer = () => {
         <Accordion.ItemContent>
           <Accordion.ItemBody>
             <Box p={3}>
-              {isLoading ? 
-                <Skeleton height={4} width="40%" mb={4} loading={isLoading} /> :
-                <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+              {isLoading ? (
+                <Skeleton height={4} width="40%" mb={4} loading={isLoading} />
+              ) : (
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  mb={4}
+                >
                   <Heading as="h4" fontSize="md">
                     {ac ? ac : province ? province : "National Level"} -{" "}
                     {layerMetadata
@@ -146,7 +149,8 @@ const BottomDrawer = () => {
                       </Button>
                     </ButtonGroup>
                   )}
-                </Box>}
+                </Box>
+              )}
               <Skeleton height="100%" loading={isLoading}>
                 <Chart.Root maxH="200px" chart={chart}>
                   <LineChart data={chart.data}>
