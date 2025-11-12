@@ -18,18 +18,15 @@ const RightSidebar = () => {
         <AreaSelect />
       </Box>
       <Box flex="1" overflow="scroll">
-        <Accordion.Root multiple defaultValue={["0", "1"]}>
+        <Accordion.Root multiple defaultValue={["0"]}>
           <Accordion.Item value="0">
-            <Accordion.ItemTrigger cursor="pointer" px={6}>
-              <SidebarSectionHeading>Overview</SidebarSectionHeading>
-              <Accordion.ItemIndicator />
-            </Accordion.ItemTrigger>
-            <Accordion.ItemContent>
-              <Accordion.ItemBody px={6}>Soon...</Accordion.ItemBody>
-            </Accordion.ItemContent>
-          </Accordion.Item>
-          <Accordion.Item value="1">
-            <Accordion.ItemTrigger cursor="pointer" px={6}>
+            <Accordion.ItemTrigger
+              cursor="pointer"
+              px={6}
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+            >
               <SidebarSectionHeading>Selected Indicators</SidebarSectionHeading>
               <Accordion.ItemIndicator />
             </Accordion.ItemTrigger>
