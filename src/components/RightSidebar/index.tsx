@@ -20,7 +20,13 @@ const RightSidebar = () => {
       <Box flex="1" overflow="scroll">
         <Accordion.Root multiple defaultValue={["0"]}>
           <Accordion.Item value="0">
-            <Accordion.ItemTrigger cursor="pointer" px={6}>
+            <Accordion.ItemTrigger
+              cursor="pointer"
+              px={6}
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+            >
               <SidebarSectionHeading>Selected Indicators</SidebarSectionHeading>
               <Accordion.ItemIndicator />
             </Accordion.ItemTrigger>
