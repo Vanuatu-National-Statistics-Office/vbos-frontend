@@ -38,6 +38,9 @@ importers:
       maplibre-gl:
         specifier: ^5.7.1
         version: 5.7.1
+      maplibre-gl-map-to-image:
+        specifier: ^1.2.0
+        version: 1.2.0
       react:
         specifier: ^19.1.1
         version: 19.1.1
@@ -1880,6 +1883,9 @@ packages:
 
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
+
+  maplibre-gl-map-to-image@1.2.0:
+    resolution: {integrity: sha512-U4IKKalUd/rudZMHDkpNWqHlOtdLOANDD/s7t8dBPiCAL14zmLAEJ/PE+yFRyl4ZsVymIPAhEPHg/n+7Rq47mA==}
 
   maplibre-gl@5.7.1:
     resolution: {integrity: sha512-iCOQB6W/EGgQx8aU4SyfU5a5/GR2E+ELF92NMsqYfs3x+vnY+8mARmz4gor6XZHCz3tv19mnotVDRlRTMNKyGw==}
@@ -4808,6 +4814,8 @@ snapshots:
   magic-string@0.30.21:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  maplibre-gl-map-to-image@1.2.0: {}
 
   maplibre-gl@5.7.1:
     dependencies:

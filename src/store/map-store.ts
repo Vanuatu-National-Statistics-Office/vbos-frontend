@@ -1,9 +1,11 @@
 import { create } from "zustand";
-import { ViewState } from "react-map-gl/maplibre";
+import { ViewState, MapRef } from "react-map-gl/maplibre";
 
 interface MapState {
   viewState: ViewState;
   setViewState: (viewState: Partial<ViewState>) => void;
+  mapRef: MapRef | null;
+  setMapRef: (mapRef: MapRef | null) => void;
 }
 
 export const useMapStore = create<MapState>((set) => ({
@@ -21,4 +23,7 @@ export const useMapStore = create<MapState>((set) => ({
       viewState: { ...state.viewState, ...updates },
     }));
   },
+
+  mapRef: null,
+  setMapRef: (mapRef) => set({ mapRef }),
 }));
