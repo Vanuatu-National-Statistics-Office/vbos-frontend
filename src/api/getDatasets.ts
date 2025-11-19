@@ -2,21 +2,26 @@ import * as HTTP from "./http";
 import {
   Dataset,
   BaseDataset,
+  TabularDataset,
+  RasterDataset,
+  VectorDataset,
   IListApiResponse,
   ClusterDatasets,
   PaginatedVectorData,
   TabularData,
 } from "@/types/api";
 
-async function fetchAllDatasets(url: string): Promise<BaseDataset[]> {
-  const allResults: BaseDataset[] = [];
+async function fetchAllDatasets<T extends BaseDataset>(
+  url: string,
+): Promise<BaseDataset[]> {
+  const allResults: T[] = [];
   let currentUrl: string | null = url;
 
   while (currentUrl) {
     const response = await HTTP.get(currentUrl);
     if (!response.ok) throw new Error(`Unable to fetch data from ${url}`);
 
-    const data: IListApiResponse<BaseDataset> = await response.json();
+    const data: IListApiResponse<T> = await response.json();
     allResults.push(...data.results);
 
     // Extract relative path from next URL if it exists
@@ -31,9 +36,15 @@ async function fetchAllDatasets(url: string): Promise<BaseDataset[]> {
 export async function getDatasets(cluster: string): Promise<ClusterDatasets[]> {
   // Fetch all pages for both tabular and raster datasets in parallel
   const [tabularData, rasterData, vectorData] = await Promise.all([
-    fetchAllDatasets(`/api/v1/tabular/?cluster=${encodeURIComponent(cluster)}`),
-    fetchAllDatasets(`/api/v1/raster/?cluster=${encodeURIComponent(cluster)}`),
-    fetchAllDatasets(`/api/v1/vector/?cluster=${encodeURIComponent(cluster)}`),
+    fetchAllDatasets<TabularDataset>(
+      `/api/v1/tabular/?cluster=${encodeURIComponent(cluster)}`,
+    ),
+    fetchAllDatasets<RasterDataset>(
+      `/api/v1/raster/?cluster=${encodeURIComponent(cluster)}`,
+    ),
+    fetchAllDatasets<VectorDataset>(
+      `/api/v1/vector/?cluster=${encodeURIComponent(cluster)}`,
+    ),
   ]);
 
   // Add dataType discriminator
