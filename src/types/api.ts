@@ -21,7 +21,8 @@ export interface BaseDataset {
   cluster: string; // Cluster name, not ID
   type: DatasetType;
   source: string | null;
-  unit: string | null;
+  unit?: string | null;
+  filename_id?: string;
 }
 
 export interface TabularDataset extends BaseDataset {

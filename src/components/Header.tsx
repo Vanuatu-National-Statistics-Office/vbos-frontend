@@ -7,6 +7,7 @@ import {
   Dialog,
   Heading,
   IconButton,
+  Image,
   Link,
   List,
   Portal,
@@ -21,24 +22,23 @@ export const Header = () => {
       as="header"
       display="flex"
       alignItems="center"
-      gap="5"
+      gap="3"
       bg="white"
       px="4"
       py="3"
       shadow="base"
     >
+      <Image src="/MISLogo.svg" alt="VBoS MIS Logo" boxSize="9" />
       <Heading
         font="Work Sans"
-        letterSpacing="0.125rem"
-        fontWeight="400"
-        textTransform="uppercase"
-        size="md"
+        fontWeight="700"
+        size="xl"
+        color="blue.700"
         as="h1"
-        flex="1"
       >
         VBoS MIS
       </Heading>
-      <Box as="nav">
+      <Box as="nav" ml="auto">
         <List.Root
           display="flex"
           flexDirection="row"
