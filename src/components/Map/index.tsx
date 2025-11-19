@@ -52,50 +52,56 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
     },
     [setViewState],
   );
-  const onClick = useCallback((evt: MapLayerMouseEvent) =>{
-    if(!map) return;
-    try {
-      const features = map.queryRenderedFeatures(evt.point);
+  const onClick = useCallback(
+    (evt: MapLayerMouseEvent) => {
+      if (!map) return;
+      try {
+        const features = map.queryRenderedFeatures(evt.point);
 
-      // Set stats popup
-      const statsFeatures = features.filter((i) => i.source === "stats");
-      if (statsFeatures.length > 0) {
-        // Get the active tabular layer
-        const tabularLayers = layers.split(",").filter((i) => i.startsWith("t"));
-        const activeTabularLayer = tabularLayers.length ? tabularLayers[0] : null;
-        const metadata = activeTabularLayer ? getLayerMetadata(activeTabularLayer) : undefined;
+        // Set stats popup
+        const statsFeatures = features.filter((i) => i.source === "stats");
+        if (statsFeatures.length > 0) {
+          // Get the active tabular layer
+          const tabularLayers = layers
+            .split(",")
+            .filter((i) => i.startsWith("t"));
+          const metadata = tabularLayers.length
+            ? getLayerMetadata(tabularLayers[0])
+            : undefined;
 
-        setPopupInfo({
-          ...statsFeatures[0],
-          longitude: evt.lngLat.lng,
-          latitude: evt.lngLat.lat,
-          datasetName: metadata?.name,
-        });
-        return;
+          setPopupInfo({
+            ...statsFeatures[0],
+            longitude: evt.lngLat.lng,
+            latitude: evt.lngLat.lat,
+            datasetName: metadata?.name,
+          });
+          return;
+        }
+
+        // Set vector popup
+        const vectorFeatures = features.filter(
+          (i) => typeof i.source === "string" && i.source.startsWith("v"),
+        );
+        if (vectorFeatures.length > 0) {
+          const source = vectorFeatures[0].source as string;
+          const metadata = getLayerMetadata(source);
+
+          setPopupInfo({
+            ...vectorFeatures[0],
+            longitude: evt.lngLat.lng,
+            latitude: evt.lngLat.lat,
+            datasetName: metadata?.name,
+          });
+          return;
+        }
+        setPopupInfo(null);
+      } catch (error) {
+        setPopupInfo(null);
+        console.error(error);
       }
-
-      // Set vector popup
-      const vectorFeatures = features.filter((i) =>
-        typeof i.source === "string" && i.source.startsWith("v")
-      );
-      if (vectorFeatures.length > 0) {
-        const source = vectorFeatures[0].source as string;
-        const metadata = getLayerMetadata(source);
-
-        setPopupInfo({
-          ...vectorFeatures[0],
-          longitude: evt.lngLat.lng,
-          latitude: evt.lngLat.lat,
-          datasetName: metadata?.name,
-        });
-        return;
-      }
-      setPopupInfo(null);
-    } catch (error) {
-      setPopupInfo(null);
-      console.error(error);
-    }
-  }, [map, layers, getLayerMetadata]);
+    },
+    [map, layers, getLayerMetadata],
+  );
 
   useEffect(() => {
     if (acGeoJSON?.features?.length && map) {
@@ -116,7 +122,7 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
       );
     }
   }, [ac, acGeoJSON, map]);
-  
+
   return (
     <ReactMapGl
       initialViewState={viewState}
@@ -133,9 +139,7 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
       <VectorLayers />
       <TabularLayers />
       <Legend />
-      {popupInfo && (
-        <MapPopup {...popupInfo} />
-      )}
+      {popupInfo && <MapPopup {...popupInfo} />}
       {props.children}
     </ReactMapGl>
   );
