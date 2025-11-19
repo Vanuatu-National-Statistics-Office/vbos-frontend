@@ -19,10 +19,10 @@ import { useUiStore } from "@/store/ui-store";
 import { DATASET_TYPES } from "@/utils/datasetTypes";
 import { Dataset } from "@/types/api";
 import { getAttributes, getAttributeValueSum } from "@/utils/getAttributes";
-import { getUnit } from "@/utils/getUnit";
 import { StatsChart } from "./StatsChart";
 import { StatsTable } from "./StatsTable";
 import { Tooltip } from "../ui";
+import { abbreviateUnit } from "@/utils/abbreviateUnit";
 
 export function Stats() {
   const [visMode, setVisMode] = useState<"chart" | "table">("chart");
@@ -36,7 +36,7 @@ export function Stats() {
     ? getLayerMetadata(tabularLayerId)
     : undefined;
   const attributes = getAttributes(filteredData);
-  const unit = getUnit(filteredData);
+  const unit = layerMetadata ? abbreviateUnit(layerMetadata?.unit) : "";
 
   // Sort attributes by their total values (highest to lowest)
   const sortedAttributes = attributes

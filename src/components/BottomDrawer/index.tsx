@@ -19,7 +19,6 @@ import {
 import { Dataset } from "@/types/api";
 import { useLayerStore } from "@/store/layer-store";
 import { getAttributes } from "@/utils/getAttributes";
-import { getUnit } from "@/utils/getUnit";
 import {
   consolidateTimeSeries,
   hasMonthlyVariation,
@@ -28,6 +27,7 @@ import { formatYAxisLabel } from "@/utils/formatCharts";
 import { useAreaStore } from "@/store/area-store";
 import { useUiStore } from "@/store/ui-store";
 import { chartColors } from "../colors";
+import { abbreviateUnit } from "@/utils/abbreviateUnit";
 
 const BottomDrawer = () => {
   const { layers, tabularLayerData, getLayerMetadata } = useLayerStore();
@@ -40,9 +40,6 @@ const BottomDrawer = () => {
 
   // Check if data has monthly variation
   const hasMonthlyData = hasMonthlyVariation(tabularLayerData);
-
-  // Get unit from the data
-  const unit = getUnit(tabularLayerData);
 
   // Track view mode: "monthly" or "annual"
   const [viewMode, setViewMode] = useState<"monthly" | "annual">("annual");
@@ -62,11 +59,13 @@ const BottomDrawer = () => {
   // Get time series data - tabularLayerData is already filtered by selected area
   const timeSeriesData = consolidateTimeSeries(
     tabularLayerData,
-    showMonthlyView,
+    showMonthlyView
   );
   const series = getAttributes(tabularLayerData).map((i, index) => ({
     name: i,
-    color: `${index < chartColors.length ? chartColors[index] : "yellow"}.solid`,
+    color: `${
+      index < chartColors.length ? chartColors[index] : "yellow"
+    }.solid`,
   }));
 
   const chart = useChart({
@@ -170,8 +169,18 @@ const BottomDrawer = () => {
                       tickMargin={10}
                       type="number"
                       allowDecimals={true}
-                      tickFormatter={(value: number) => String(formatYAxisLabel(value))}
-                      label={unit ? { value: unit, angle: -90, position: "insideLeft", offset: 10 } : undefined}
+                      tickFormatter={(value: number) =>
+                        String(formatYAxisLabel(value))}
+                      label={
+                        layerMetadata?.unit
+                          ? {
+                            value: abbreviateUnit(layerMetadata.unit),
+                            angle: -90,
+                            position: "insideLeft",
+                            offset: 10,
+                          }
+                          : undefined
+                      }
                       stroke={chart.color("border")}
                     />
                     <Tooltip

@@ -9,7 +9,7 @@
  * abbreviateUnit("meter") // "m"
  * abbreviateUnit("schools") // "schools" (no abbreviation, returns original)
  */
-export function abbreviateUnit(unit: string | undefined): string | undefined {
+export function abbreviateUnit(unit: string | null | undefined): string | null | undefined {
   if (!unit) return undefined;
 
   // Normalize to lowercase and trim for comparison
