@@ -37,7 +37,10 @@ const BottomDrawer = () => {
   const layerMetadata: Dataset | undefined = tabularLayerId
     ? getLayerMetadata(tabularLayerId)
     : undefined;
-
+  const formattedUnit =
+    layerMetadata?.unit === "number"
+      ? undefined
+      : abbreviateUnit(layerMetadata?.unit);
   // Check if data has monthly variation
   const hasMonthlyData = hasMonthlyVariation(tabularLayerData);
 
@@ -174,7 +177,7 @@ const BottomDrawer = () => {
                       label={
                         layerMetadata?.unit
                           ? {
-                            value: abbreviateUnit(layerMetadata.unit),
+                            value: formattedUnit,
                             angle: -90,
                             position: "insideLeft",
                             offset: 10,

@@ -13,7 +13,7 @@ export function abbreviateUnit(unit: string | null | undefined): string | null |
   if (!unit) return undefined;
 
   // Normalize to lowercase and trim for comparison
-  const normalized = unit.toLowerCase().trim();
+  const normalizedUnit = unit.toLowerCase().trim();
 
   // Common unit abbreviations
   const abbreviations: Record<string, string> = {
@@ -78,6 +78,7 @@ export function abbreviateUnit(unit: string | null | undefined): string | null |
     "seconds": "s",
 
     // Other
+    "number": "\n",
     "vatu": "VT",
     "percent": "%",
     "percentage": "%",
@@ -87,5 +88,5 @@ export function abbreviateUnit(unit: string | null | undefined): string | null |
     "fahrenheit": "°F",
   };
 
-  return abbreviations[normalized] || unit;
+  return abbreviations[normalizedUnit] || normalizedUnit;
 }

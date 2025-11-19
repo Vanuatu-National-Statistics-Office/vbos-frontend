@@ -36,7 +36,11 @@ export function Stats() {
     ? getLayerMetadata(tabularLayerId)
     : undefined;
   const attributes = getAttributes(filteredData);
-  const unit = layerMetadata ? abbreviateUnit(layerMetadata?.unit) : "";
+  const unit = layerMetadata
+    ? layerMetadata?.unit === "number"
+      ? undefined
+      : abbreviateUnit(layerMetadata?.unit)
+    : undefined;
 
   // Sort attributes by their total values (highest to lowest)
   const sortedAttributes = attributes
