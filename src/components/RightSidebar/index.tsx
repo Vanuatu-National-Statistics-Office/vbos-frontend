@@ -5,7 +5,7 @@ import { SidebarSectionHeading } from "../SidebarSectionHeading";
 import { LuDownload } from "react-icons/lu";
 import { DateSelect } from "./DateSelect";
 import { Stats } from "./Stats";
-import { DownloadDataDialog } from "../DownloadDataDialog";
+import { DownloadDataDialog } from "./DownloadDataDialog";
 import { useState } from "react";
 import { useLayerStore } from "@/store/layer-store";
 
