@@ -26,6 +26,7 @@ import type {
   RasterLegendLayer,
 } from "./types";
 import { mapColors } from "../../colors";
+import { abbreviateUnit } from "@/utils/abbreviateUnit";
 
 /**
  * Props for the LayerEntry component.
@@ -149,11 +150,11 @@ function TabularEntry(props: TabularLegendLayer) {
           <HStack justify="space-between" fontSize="xs" color="fg.muted">
             <Text>
               {dataRange.min.toLocaleString()}
-              {unit || ""}
+              {abbreviateUnit(unit) || ""}
             </Text>
             <Text textAlign="right">
               {dataRange.max.toLocaleString()}
-              {unit || ""}
+              {abbreviateUnit(unit) || ""}
             </Text>
           </HStack>
         </VStack>
@@ -175,7 +176,7 @@ function TabularEntry(props: TabularLegendLayer) {
 
       {!dataRange && unit && (
         <Text fontSize="xs" color="fg.muted">
-          Unit: {unit}
+          Unit: {abbreviateUnit(unit)}
         </Text>
       )}
     </VStack>
@@ -231,7 +232,7 @@ function VectorEntry(props: VectorLegendLayer) {
 
       {unit && (
         <Text fontSize="xs" color="fg.muted">
-          Unit: {unit}
+          Unit: {abbreviateUnit(unit)}
         </Text>
       )}
     </VStack>
@@ -248,7 +249,7 @@ function RasterEntry(props: RasterLegendLayer) {
     <VStack align="stretch" gap={1}>
       {unit && (
         <Text fontSize="xs" color="fg.muted" pl={6}>
-          Unit: {unit}
+          Unit: {abbreviateUnit(unit)}
         </Text>
       )}
       {opacity !== undefined && (
