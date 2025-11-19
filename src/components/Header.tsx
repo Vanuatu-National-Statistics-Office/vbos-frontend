@@ -52,7 +52,7 @@ export const Header = () => {
             <LuShare2 />
             Share
           </NavButton>
-          <Link href="/admin">
+          <Link href={`${import.meta.env.VITE_API_HOST}/admin/`}>
             <NavButton solid colorPalette="blue">
               <LuLockKeyhole />
               Admin
@@ -68,7 +68,7 @@ export const Header = () => {
   );
 };
 
-interface  NavButtonProps extends ButtonProps {
+interface NavButtonProps extends ButtonProps {
   solid?: boolean;
   children: ReactNode;
   onClick?: () => void;
