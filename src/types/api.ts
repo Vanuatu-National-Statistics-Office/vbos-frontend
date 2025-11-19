@@ -21,17 +21,9 @@ export interface BaseDataset {
   cluster: string; // Cluster name, not ID
   type: DatasetType;
   source: string | null;
-  unit: string | null;
+  unit?: string | null;
+  filename_id?: string;
 }
-
-// Raw API response types before adding dataType discriminator
-export type RawTabularDataset = BaseDataset;
-
-export interface RawRasterDataset extends BaseDataset {
-  file: string;
-}
-
-export type RawVectorDataset = BaseDataset;
 
 export interface TabularDataset extends BaseDataset {
   dataType: "tabular";
@@ -39,7 +31,6 @@ export interface TabularDataset extends BaseDataset {
 
 export interface RasterDataset extends BaseDataset {
   dataType: "raster";
-  file: string; // URL to the raster file (e.g., TIFF)
 }
 
 export interface VectorDataset extends BaseDataset {

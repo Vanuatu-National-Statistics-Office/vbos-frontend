@@ -4,20 +4,23 @@ import {
   CloseButton,
   Dialog,
   Flex,
+  Link,
   Portal,
   Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { LuDownload } from "react-icons/lu";
-import { useQueryClient } from "@tanstack/react-query";
+import { LuDownload, LuExternalLink } from "react-icons/lu";
 import { useLayerStore } from "@/store/layer-store";
 import { useAreaStore } from "@/store/area-store";
+import { getXLSXData } from "@/api/getXLSXData";
+import { Dataset } from "@/types/api";
 import {
-  downloadTabularDataset,
-  downloadVectorDatasetFromCache,
-} from "@/api/downloadDataset";
-import { Dataset, PaginatedVectorData } from "@/types/api";
-import { downloadFile, sanitizeFilename } from "@/utils/downloadHelpers";
+  downloadFile,
+  getRasterFileUrl,
+  sanitizeFilename,
+} from "@/utils/downloadHelpers";
+import { useVectorDatasetFromCache } from "@/hooks/useVectorDatasetFromCache";
+import { useDateStore } from "@/store/date-store";
 
 type DownloadDataDialogProps = {
   isOpen: boolean;
@@ -30,7 +33,7 @@ export const DownloadDataDialog = ({
 }: DownloadDataDialogProps) => {
   const { layers, getLayerMetadata } = useLayerStore();
   const { province, ac } = useAreaStore();
-  const queryClient = useQueryClient();
+  const getVectorDatasetFromCache = useVectorDatasetFromCache();
   const [downloadingIds, setDownloadingIds] = useState<Set<string>>(new Set());
 
   // Parse active layers from the layers string (format: "t1,v34,r54")
@@ -42,7 +45,9 @@ export const DownloadDataDialog = ({
       const metadata = getLayerMetadata(layerId);
       return metadata ? { layerId, metadata } : null;
     })
-    .filter((item): item is { layerId: string; metadata: Dataset } => item !== null);
+    .filter(
+      (item): item is { layerId: string; metadata: Dataset } => item !== null,
+    );
 
   // Group datasets by type
   const groupedDatasets = {
@@ -67,30 +72,10 @@ export const DownloadDataDialog = ({
       if (dataset.dataType === "tabular") {
         // Use the dedicated XLSX endpoint for tabular data
         // Downloads full dataset filtered only by area
-        result = await downloadTabularDataset(dataset.id, areaFilters);
+        result = await getXLSXData(dataset.id, areaFilters);
       } else if (dataset.dataType === "vector") {
-        // Get cached data from queryClient
-        const queryKey = [
-          "dataset",
-          "vector",
-          dataset.id,
-          areaFilters.toString(),
-        ];
-        const cachedData = queryClient.getQueryData<PaginatedVectorData>(queryKey);
-
-        if (!cachedData) {
-          throw new Error("Vector data not available. Please ensure the layer is loaded on the map first.");
-        }
-
-        result = downloadVectorDatasetFromCache(cachedData);
+        result = getVectorDatasetFromCache(dataset.id, areaFilters);
       } else {
-        // Raster datasets - download directly from the file URL
-        if (!dataset.file) {
-          throw new Error("Raster file URL not available.");
-        }
-
-        // Open the file URL in a new tab to trigger download
-        window.open(dataset.file, "_blank");
         return;
       }
 
@@ -107,7 +92,10 @@ export const DownloadDataDialog = ({
       downloadFile(result.blob, filename);
     } catch (error) {
       // Error occurred during download
-      const message = error instanceof Error ? error.message : "Failed to download dataset. Please try again.";
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Failed to download dataset. Please try again.";
       alert(message);
     } finally {
       // Remove from downloading set
@@ -143,26 +131,38 @@ export const DownloadDataDialog = ({
                 <Flex direction="column" gap={4}>
                   {groupedDatasets.tabular.length > 0 && (
                     <Box>
-                      <Text fontWeight="600" mb={2} fontSize="sm" color="gray.700">
+                      <Text
+                        fontWeight="600"
+                        mb={2}
+                        fontSize="sm"
+                        color="gray.700"
+                      >
                         Tabular Datasets
                       </Text>
                       <Flex direction="column" gap={2}>
-                        {groupedDatasets.tabular.map(({ layerId, metadata }) => (
-                          <DatasetRow
-                            key={layerId}
-                            layerId={layerId}
-                            dataset={metadata}
-                            onDownload={handleDownload}
-                            isDownloading={downloadingIds.has(layerId)}
-                          />
-                        ))}
+                        {groupedDatasets.tabular.map(
+                          ({ layerId, metadata }) => (
+                            <DatasetRow
+                              key={layerId}
+                              layerId={layerId}
+                              dataset={metadata}
+                              onDownload={handleDownload}
+                              isDownloading={downloadingIds.has(layerId)}
+                            />
+                          ),
+                        )}
                       </Flex>
                     </Box>
                   )}
 
                   {groupedDatasets.raster.length > 0 && (
                     <Box>
-                      <Text fontWeight="600" mb={2} fontSize="sm" color="gray.700">
+                      <Text
+                        fontWeight="600"
+                        mb={2}
+                        fontSize="sm"
+                        color="gray.700"
+                      >
                         Raster Datasets
                       </Text>
                       <Flex direction="column" gap={2}>
@@ -181,7 +181,12 @@ export const DownloadDataDialog = ({
 
                   {groupedDatasets.vector.length > 0 && (
                     <Box>
-                      <Text fontWeight="600" mb={2} fontSize="sm" color="gray.700">
+                      <Text
+                        fontWeight="600"
+                        mb={2}
+                        fontSize="sm"
+                        color="gray.700"
+                      >
                         Vector Datasets
                       </Text>
                       <Flex direction="column" gap={2}>
@@ -232,16 +237,12 @@ const DatasetRow = ({
   onDownload,
   isDownloading,
 }: DatasetRowProps) => {
+  const { year } = useDateStore();
   // Determine file format based on dataset type
   const getFileFormat = () => {
     if (dataset.dataType === "tabular") return "XLSX";
     if (dataset.dataType === "vector") return "GeoJSON";
-    // Raster files - extract extension from file URL if available
-    if (dataset.dataType === "raster" && dataset.file) {
-      const extension = dataset.file.split(".").pop()?.toUpperCase();
-      return extension || "File";
-    }
-    return "File"; // raster without file URL
+    if (dataset.dataType === "raster") return "VRT";
   };
 
   return (
@@ -259,22 +260,39 @@ const DatasetRow = ({
           {dataset.name}
         </Text>
         <Text fontSize="xs" color="gray.600">
-          {dataset.type.replace(/_/g, " ").replace(/\b\w/g, (char, index) =>
-            index === 0 ? char.toUpperCase() : char.toLowerCase()
-          )} • {getFileFormat()}
+          {dataset.type
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, (char, index) =>
+              index === 0 ? char.toUpperCase() : char.toLowerCase(),
+            )}{" "}
+          • {getFileFormat()}
         </Text>
       </Box>
-      <Button
-        size="sm"
-        colorPalette="blue"
-        variant="outline"
-        onClick={() => onDownload(layerId, dataset)}
-        disabled={isDownloading}
-        loading={isDownloading}
-      >
-        <LuDownload />
-        Download
-      </Button>
+      {dataset.dataType === "raster" ? (
+        // Raster datasets have an external download link
+        <Link
+          colorPalette="blue"
+          variant="plain"
+          href={getRasterFileUrl(dataset.filename_id as string, year || "2024")}
+        >
+          <Button size="sm" colorPalette="blue" variant="outline">
+            <LuExternalLink />
+            Download
+          </Button>
+        </Link>
+      ) : (
+        <Button
+          size="sm"
+          colorPalette="blue"
+          variant="outline"
+          onClick={() => onDownload(layerId, dataset)}
+          disabled={isDownloading}
+          loading={isDownloading}
+        >
+          <LuDownload />
+          Download
+        </Button>
+      )}
     </Flex>
   );
 };

@@ -2,16 +2,18 @@ import * as HTTP from "./http";
 import {
   Dataset,
   BaseDataset,
-  RawTabularDataset,
-  RawRasterDataset,
-  RawVectorDataset,
+  TabularDataset,
+  RasterDataset,
+  VectorDataset,
   IListApiResponse,
   ClusterDatasets,
   PaginatedVectorData,
   TabularData,
 } from "@/types/api";
 
-async function fetchAllDatasets<T extends BaseDataset>(url: string): Promise<T[]> {
+async function fetchAllDatasets<T extends BaseDataset>(
+  url: string,
+): Promise<BaseDataset[]> {
   const allResults: T[] = [];
   let currentUrl: string | null = url;
 
@@ -34,15 +36,21 @@ async function fetchAllDatasets<T extends BaseDataset>(url: string): Promise<T[]
 export async function getDatasets(cluster: string): Promise<ClusterDatasets[]> {
   // Fetch all pages for both tabular and raster datasets in parallel
   const [tabularData, rasterData, vectorData] = await Promise.all([
-    fetchAllDatasets<RawTabularDataset>(`/api/v1/tabular/?cluster=${encodeURIComponent(cluster)}`),
-    fetchAllDatasets<RawRasterDataset>(`/api/v1/raster/?cluster=${encodeURIComponent(cluster)}`),
-    fetchAllDatasets<RawVectorDataset>(`/api/v1/vector/?cluster=${encodeURIComponent(cluster)}`),
+    fetchAllDatasets<TabularDataset>(
+      `/api/v1/tabular/?cluster=${encodeURIComponent(cluster)}`,
+    ),
+    fetchAllDatasets<RasterDataset>(
+      `/api/v1/raster/?cluster=${encodeURIComponent(cluster)}`,
+    ),
+    fetchAllDatasets<VectorDataset>(
+      `/api/v1/vector/?cluster=${encodeURIComponent(cluster)}`,
+    ),
   ]);
 
   // Add dataType discriminator
   const allDatasets: Dataset[] = [
     ...tabularData.map((d) => ({ ...d, dataType: "tabular" as const })),
-    ...rasterData.map((d) => ({ ...d, dataType: "raster" as const, file: d.file })),
+    ...rasterData.map((d) => ({ ...d, dataType: "raster" as const })),
     ...vectorData.map((d) => ({ ...d, dataType: "vector" as const })),
   ];
   const groupedByType: ClusterDatasets[] = allDatasets.reduce(

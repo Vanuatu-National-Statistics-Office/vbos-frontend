@@ -18,3 +18,7 @@ export function downloadFile(blob: Blob, filename: string): void {
 export function sanitizeFilename(name: string): string {
   return name.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9_-]/g, "");
 }
+
+export function getRasterFileUrl(filename_id: string, year: number | string) {
+  return `https://syd1.digitaloceanspaces.com/mis-geotiff-storage/production/raster/${filename_id}_${year}.vrt`;
+}
