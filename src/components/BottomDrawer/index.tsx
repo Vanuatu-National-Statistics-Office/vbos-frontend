@@ -27,6 +27,7 @@ import { formatYAxisLabel } from "@/utils/formatCharts";
 import { useAreaStore } from "@/store/area-store";
 import { useUiStore } from "@/store/ui-store";
 import { chartColors } from "../colors";
+import { abbreviateUnit } from "@/utils/abbreviateUnit";
 
 const BottomDrawer = () => {
   const { layers, tabularLayerData, getLayerMetadata } = useLayerStore();
@@ -36,7 +37,10 @@ const BottomDrawer = () => {
   const layerMetadata: Dataset | undefined = tabularLayerId
     ? getLayerMetadata(tabularLayerId)
     : undefined;
-
+  const formattedUnit =
+    layerMetadata?.unit === "number"
+      ? undefined
+      : abbreviateUnit(layerMetadata?.unit);
   // Check if data has monthly variation
   const hasMonthlyData = hasMonthlyVariation(tabularLayerData);
 
@@ -58,11 +62,13 @@ const BottomDrawer = () => {
   // Get time series data - tabularLayerData is already filtered by selected area
   const timeSeriesData = consolidateTimeSeries(
     tabularLayerData,
-    showMonthlyView,
+    showMonthlyView
   );
   const series = getAttributes(tabularLayerData).map((i, index) => ({
     name: i,
-    color: `${index < chartColors.length ? chartColors[index] : "yellow"}.solid`,
+    color: `${
+      index < chartColors.length ? chartColors[index] : "yellow"
+    }.solid`,
   }));
 
   const chart = useChart({
@@ -165,7 +171,19 @@ const BottomDrawer = () => {
                       tickLine={false}
                       tickMargin={10}
                       type="number"
-                      tickFormatter={(value: number) => formatYAxisLabel(value)}
+                      allowDecimals={true}
+                      tickFormatter={(value: number) =>
+                        String(formatYAxisLabel(value))}
+                      label={
+                        layerMetadata?.unit
+                          ? {
+                            value: formattedUnit,
+                            angle: -90,
+                            position: "insideLeft",
+                            offset: 10,
+                          }
+                          : undefined
+                      }
                       stroke={chart.color("border")}
                     />
                     <Tooltip

@@ -22,6 +22,7 @@ import { getAttributes, getAttributeValueSum } from "@/utils/getAttributes";
 import { StatsChart } from "./StatsChart";
 import { StatsTable } from "./StatsTable";
 import { Tooltip } from "../ui";
+import { abbreviateUnit } from "@/utils/abbreviateUnit";
 
 export function Stats() {
   const [visMode, setVisMode] = useState<"chart" | "table">("chart");
@@ -35,6 +36,11 @@ export function Stats() {
     ? getLayerMetadata(tabularLayerId)
     : undefined;
   const attributes = getAttributes(filteredData);
+  const unit = layerMetadata
+    ? layerMetadata?.unit === "number"
+      ? undefined
+      : abbreviateUnit(layerMetadata?.unit)
+    : undefined;
 
   // Sort attributes by their total values (highest to lowest)
   const sortedAttributes = attributes
@@ -190,14 +196,30 @@ export function Stats() {
                     fontSize="md"
                     lineHeight={1.2}
                     fontWeight="500"
+                    display="inline-flex"
+                    alignItems="baseline"
                   >
                     {getAttributeValueSum(filteredData, attr).toLocaleString()}
+                    {unit && (
+                      <Box
+                        as="span"
+                        fontWeight="400"
+                        fontSize="sm"
+                        color="fg.muted"
+                      >
+                        {`${unit}`}
+                      </Box>
+                    )}
                   </Stat.ValueText>
                 </Stat.Root>
               ))}
             </HStack>
-            {visMode === "chart" && <StatsChart stats={filteredData} />}
-            {visMode === "table" && <StatsTable stats={filteredData} />}
+            {visMode === "chart" && (
+              <StatsChart stats={filteredData} unit={unit} />
+            )}
+            {visMode === "table" && (
+              <StatsTable stats={filteredData} unit={unit} />
+            )}
           </Box>
         )}
       </Box>

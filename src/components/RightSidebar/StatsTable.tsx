@@ -2,13 +2,14 @@ import { useAreaStore } from "@/store/area-store";
 import { TabularData } from "@/types/api";
 import { consolidateStats } from "@/utils/consolidateStats";
 import { getAttributes, getAttributeValueSum } from "@/utils/getAttributes";
-import { Table } from "@chakra-ui/react";
+import { Table, Text } from "@chakra-ui/react";
 
 type StatsTableProps = {
   stats: TabularData[];
+  unit?: string | null;
 };
 
-export function StatsTable({ stats }: StatsTableProps) {
+export function StatsTable({ stats, unit }: StatsTableProps) {
   const { province } = useAreaStore();
   const rows = consolidateStats(stats, province ? "area_council" : "province");
   const columns = getAttributes(stats);
@@ -53,12 +54,27 @@ export function StatsTable({ stats }: StatsTableProps) {
       >
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeader data-sticky="end" minW="max-content" left="0" borderBottomColor="fg">
+            <Table.ColumnHeader
+              data-sticky="end"
+              minW="max-content"
+              left="0"
+              borderBottomColor="fg"
+            >
               {province ? "Area Council" : "Province"}
             </Table.ColumnHeader>
             {columns.map((col) => (
-              <Table.ColumnHeader textAlign="right" textTransform="capitalize" borderBottomColor="fg">
+              <Table.ColumnHeader
+                textAlign="right"
+                textTransform="capitalize"
+                borderBottomColor="fg"
+              >
                 {col}
+                {unit && (
+                  <Text as="span" fontSize="xs" opacity="0.5">
+                    {" "}
+                    ({unit})
+                  </Text>
+                )}
               </Table.ColumnHeader>
             ))}
           </Table.Row>
@@ -66,7 +82,9 @@ export function StatsTable({ stats }: StatsTableProps) {
         <Table.Body color="fg.muted">
           {rows.map((row) => (
             <Table.Row key={row.place}>
-              <Table.Cell data-sticky="end" left="0">{row.place}</Table.Cell>
+              <Table.Cell data-sticky="end" left="0">
+                {row.place}
+              </Table.Cell>
               {columns.map((col) => (
                 <Table.Cell textAlign="right">
                   {row[col].toLocaleString()}
@@ -75,7 +93,9 @@ export function StatsTable({ stats }: StatsTableProps) {
             </Table.Row>
           ))}
           <Table.Row borderTopWidth="2px" borderTopColor="border.emphasized">
-            <Table.Cell data-sticky="end" left="0" fontWeight="600">Total</Table.Cell>
+            <Table.Cell data-sticky="end" left="0" fontWeight="600">
+              Total
+            </Table.Cell>
             {columns.map((col) => (
               <Table.Cell key={col} textAlign="right" fontWeight="600">
                 {getAttributeValueSum(stats, col).toLocaleString()}

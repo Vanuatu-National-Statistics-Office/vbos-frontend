@@ -26,6 +26,7 @@ import type {
   RasterLegendLayer,
 } from "./types";
 import { mapColors } from "../../colors";
+import { abbreviateUnit } from "@/utils/abbreviateUnit";
 
 /**
  * Props for the LayerEntry component.
@@ -130,7 +131,7 @@ export function LayerEntry(props: LayerEntryProps) {
  */
 function TabularEntry(props: TabularLegendLayer) {
   const { unit, dataRange, isPending, hasData } = props;
-
+  const formattedUnit = unit === "number" ? undefined : abbreviateUnit(unit);
   return (
     <VStack align="stretch" gap={2} w="100%">
       {dataRange && dataRange.max > 0 ? (
@@ -149,11 +150,11 @@ function TabularEntry(props: TabularLegendLayer) {
           <HStack justify="space-between" fontSize="xs" color="fg.muted">
             <Text>
               {dataRange.min.toLocaleString()}
-              {unit || ""}
+              {formattedUnit || ""}
             </Text>
             <Text textAlign="right">
               {dataRange.max.toLocaleString()}
-              {unit || ""}
+              {formattedUnit || ""}
             </Text>
           </HStack>
         </VStack>
@@ -175,7 +176,7 @@ function TabularEntry(props: TabularLegendLayer) {
 
       {!dataRange && unit && (
         <Text fontSize="xs" color="fg.muted">
-          Unit: {unit}
+          {formattedUnit}
         </Text>
       )}
     </VStack>
@@ -190,6 +191,7 @@ function VectorEntry(props: VectorLegendLayer) {
   const { name, geometryType, color, unit } = props;
   const isPoint = geometryType.includes("Point");
   const isLine = geometryType.includes("Line");
+  const formattedUnit = unit === "number" ? undefined : abbreviateUnit(unit);
 
   return (
     <VStack align="stretch" gap={2} w="100%">
@@ -231,7 +233,7 @@ function VectorEntry(props: VectorLegendLayer) {
 
       {unit && (
         <Text fontSize="xs" color="fg.muted">
-          Unit: {unit}
+          {formattedUnit}
         </Text>
       )}
     </VStack>
@@ -243,12 +245,13 @@ function VectorEntry(props: VectorLegendLayer) {
  */
 function RasterEntry(props: RasterLegendLayer) {
   const { unit, opacity } = props;
+  const formattedUnit = unit === "number" ? undefined : abbreviateUnit(unit);
 
   return (
     <VStack align="stretch" gap={1}>
       {unit && (
         <Text fontSize="xs" color="fg.muted" pl={6}>
-          Unit: {unit}
+          {formattedUnit}
         </Text>
       )}
       {opacity !== undefined && (

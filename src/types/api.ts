@@ -57,6 +57,8 @@ export interface TabularData {
   value: number;
   province?: string;
   area_council?: string;
+  Unit?: string;
+  [key: string]: string | number | undefined; // Allow other API fields
 }
 
 export interface PaginatedVectorData {
