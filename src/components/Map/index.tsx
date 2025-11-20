@@ -26,6 +26,7 @@ import { VectorLayers } from "./VectorLayers";
 import { TabularLayers } from "./TabularLayer";
 import { Legend } from "./Legend";
 import { MapPopup } from "./MapPopup";
+import { RasterLayers } from "./RasterLayer";
 
 export interface PopupInfo extends PopupProps {
   properties: Record<string, unknown>;
@@ -138,6 +139,7 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
       <AdminAreaMapLayers fitBounds={map?.fitBounds} />
       <VectorLayers />
       <TabularLayers />
+      <RasterLayers />
       <Legend />
       {popupInfo && <MapPopup {...popupInfo} />}
       {props.children}
