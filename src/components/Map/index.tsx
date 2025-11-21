@@ -31,6 +31,7 @@ import { RasterLayers } from "./RasterLayer";
 export interface PopupInfo extends PopupProps {
   properties: Record<string, unknown>;
   datasetName?: string;
+  datasetId: string;
 }
 
 function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
@@ -40,6 +41,10 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
   const { ac, acGeoJSON } = useAreaStore();
   const { layers, getLayerMetadata } = useLayerStore();
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
+
+  useEffect(() => {
+    if (popupInfo && !layers.includes(popupInfo.datasetId)) setPopupInfo(null);
+  }, [popupInfo, layers]);
 
   useImperativeHandle(ref, () => {
     if (map) {
@@ -75,6 +80,7 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
             longitude: evt.lngLat.lng,
             latitude: evt.lngLat.lat,
             datasetName: metadata?.name,
+            datasetId: tabularLayers[0],
           });
           return;
         }
@@ -92,6 +98,7 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
             longitude: evt.lngLat.lng,
             latitude: evt.lngLat.lat,
             datasetName: metadata?.name,
+            datasetId: source,
           });
           return;
         }
