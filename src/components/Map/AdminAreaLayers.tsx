@@ -99,11 +99,11 @@ export function AdminAreaMapLayers({ fitBounds }: AdminAreaMapLayers) {
         </Source>
       )}
       {adminAreaStatsGeojson.features.length &&
-        (maxValue !== 0 || minValue !== 0) && (
-          <Source id="stats" type="geojson" data={adminAreaStatsGeojson}>
-            <Layer {...fillStyle} beforeId="area-councils" id="stats" />
-          </Source>
-        )}
+      (maxValue !== 0 || minValue !== 0) && (
+        <Source id="stats" type="geojson" data={adminAreaStatsGeojson}>
+          <Layer {...fillStyle} beforeId="area-councils" id="stats" />
+        </Source>
+      )}
     </>
   );
 }
