@@ -29,14 +29,14 @@ function RasterMapLayer({ id }: RasterMapLayerProps) {
   const { year } = useDateStore();
   const { getLayerMetadata } = useLayerStore();
   const metadata = getLayerMetadata(layerId);
-  const dataset_url_id = metadata?.filename_id || "";
+  const datasetUrlId = metadata?.filename_id || "";
 
   // Get opacity from store (0-100) and convert to 0-1 for MapLibre
   const { getOpacity } = useOpacityStore();
   const opacity = getOpacity(layerId) / 100;
 
   // Check if there is a raster layer for the selected year
-  const { error } = useCheckRasterLayer(dataset_url_id, year || "2024");
+  const { error } = useCheckRasterLayer(datasetUrlId, year || "2024");
   if (error) return null;
 
   const layerStyle: LayerProps = {
@@ -52,7 +52,7 @@ function RasterMapLayer({ id }: RasterMapLayerProps) {
       type="raster"
       tileSize={256}
       tiles={[
-        `${import.meta.env.VITE_TITILER_API}/dataset/${dataset_url_id}/years/${year || "2024"}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?rescale=-0.3,0.3`,
+        `${import.meta.env.VITE_TITILER_API}/dataset/${datasetUrlId}/years/${year || "2024"}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?rescale=-0.3,0.3`,
       ]}
     >
       <Layer id={layerId} source={layerId} {...layerStyle} />
