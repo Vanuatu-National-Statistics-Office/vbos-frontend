@@ -102,7 +102,7 @@ export function LayerEntry(props: LayerEntryProps) {
             </Tooltip>
           </HStack>
         </HStack>
-        <Box flex={1} minW={0} w="full">
+        <Box flex={1} minW={0} w="full" css={{ "&:empty": { display: "none"}}}>
           {dataType === "tabular" && (
             <TabularEntry {...(props as TabularLegendLayer)} />
           )}
@@ -244,19 +244,14 @@ function VectorEntry(props: VectorLegendLayer) {
  * Renders legend information for a raster layer.
  */
 function RasterEntry(props: RasterLegendLayer) {
-  const { unit, opacity } = props;
+  const { unit } = props;
   const formattedUnit = unit === "number" ? undefined : abbreviateUnit(unit);
-
+  if (!unit) return null;
   return (
     <VStack align="stretch" gap={1}>
       {unit && (
         <Text fontSize="xs" color="fg.muted" pl={6}>
           {formattedUnit}
-        </Text>
-      )}
-      {opacity !== undefined && (
-        <Text fontSize="xs" color="fg.muted" pl={6}>
-          Opacity: {Math.round(opacity * 100)}%
         </Text>
       )}
     </VStack>
