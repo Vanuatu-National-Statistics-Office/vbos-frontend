@@ -102,7 +102,12 @@ export function LayerEntry(props: LayerEntryProps) {
             </Tooltip>
           </HStack>
         </HStack>
-        <Box flex={1} minW={0} w="full" css={{ "&:empty": { display: "none"}}}>
+        <Box
+          flex={1}
+          minW={0}
+          w="full"
+          css={{ "&:empty": { display: "none" } }}
+        >
           {dataType === "tabular" && (
             <TabularEntry {...(props as TabularLegendLayer)} />
           )}
@@ -134,7 +139,7 @@ function TabularEntry(props: TabularLegendLayer) {
   const formattedUnit = unit === "number" ? undefined : abbreviateUnit(unit);
   return (
     <VStack align="stretch" gap={2} w="100%">
-      {dataRange && dataRange.max > 0 ? (
+      {dataRange && (dataRange.max !== 0 || dataRange.min !== 0) ? (
         <VStack align="stretch" gap={1} w="100%">
           {/* Color ramp bar */}
           <Box
