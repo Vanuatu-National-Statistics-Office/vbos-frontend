@@ -30,6 +30,9 @@ function RasterMapLayer({ id }: RasterMapLayerProps) {
   const { getLayerMetadata } = useLayerStore();
   const metadata = getLayerMetadata(layerId);
   const datasetUrlId = metadata?.filename_id || "";
+  const urlParams = metadata?.titiler_url_params
+    ? `?${metadata.titiler_url_params}`
+    : "";
 
   // Get opacity from store (0-100) and convert to 0-1 for MapLibre
   const { getOpacity } = useOpacityStore();
@@ -52,7 +55,7 @@ function RasterMapLayer({ id }: RasterMapLayerProps) {
       type="raster"
       tileSize={256}
       tiles={[
-        `${import.meta.env.VITE_TITILER_API}/dataset/${datasetUrlId}/years/${year || "2024"}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?rescale=-0.3,0.3`,
+        `${import.meta.env.VITE_TITILER_API}/dataset/${datasetUrlId}/years/${year || "2024"}/tiles/WebMercatorQuad/{z}/{x}/{y}.png${urlParams}`,
       ]}
     >
       <Layer id={layerId} source={layerId} {...layerStyle} />
