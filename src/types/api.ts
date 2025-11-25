@@ -16,6 +16,7 @@ export interface ICluster {
 export interface BaseDataset {
   id: number;
   name: string;
+  description: string;
   created: string;
   updated: string;
   cluster: string; // Cluster name, not ID
@@ -23,6 +24,7 @@ export interface BaseDataset {
   source: string | null;
   unit?: string | null;
   filename_id?: string;
+  titiler_url_params?: string;
 }
 
 export interface TabularDataset extends BaseDataset {
