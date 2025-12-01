@@ -15,6 +15,8 @@ import ReactMapGl, {
   LngLatLike,
   PopupProps,
 } from "react-map-gl/maplibre";
+import * as maplibregl from "maplibre-gl";
+import * as pmtiles from "pmtiles";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { bbox } from "@turf/bbox";
 import { featureCollection } from "@turf/helpers";
@@ -27,6 +29,7 @@ import { TabularLayers } from "./TabularLayer";
 import { Legend } from "./Legend";
 import { MapPopup } from "./MapPopup";
 import { RasterLayers } from "./RasterLayer";
+import { PMTilesLayers } from "./PMTilesLayers";
 
 export interface PopupInfo extends PopupProps {
   properties: Record<string, unknown>;
@@ -41,6 +44,15 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
   const { ac, acGeoJSON } = useAreaStore();
   const { layers, getLayerMetadata } = useLayerStore();
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
+
+  useEffect(() => {
+    const protocol = new pmtiles.Protocol();
+    maplibregl.addProtocol("pmtiles", protocol.tile);
+
+    return () => {
+      maplibregl.removeProtocol("pmtiles");
+    };
+  }, []);
 
   useEffect(() => {
     if (popupInfo && !layers.includes(popupInfo.datasetId)) setPopupInfo(null);
@@ -147,6 +159,7 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
       <VectorLayers />
       <TabularLayers />
       <RasterLayers />
+      <PMTilesLayers />
       <Legend />
       {popupInfo && <MapPopup {...popupInfo} />}
       {props.children}

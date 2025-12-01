@@ -127,6 +127,12 @@ export function useLegendLayers(): LegendLayer[] {
           ...dataset,
           opacity: 1.0,
         });
+      } else if (dataset.dataType === "pmtiles") {
+        legendLayers.push({
+          ...dataset,
+          geometryType: "LineString",
+          color: mapColors.red,
+        });
       }
     }
   });
