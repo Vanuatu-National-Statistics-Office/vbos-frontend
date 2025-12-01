@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 export function useCheckRasterLayer(datasetUrlId: string, year: string) {
   const [isLoading, setIsloading] = useState(false);
   const [error, setError] = useState(false);
-  const url = `${import.meta.env.VITE_TITILER_API}/dataset/${datasetUrlId}/years/${year || "2024"}/tiles?f=json`;
+  const url = `${import.meta.env.VITE_TITILER_API}/dataset/${datasetUrlId}/years/${year}/tiles?f=json`;
 
   useEffect(() => {
     setIsloading(true);

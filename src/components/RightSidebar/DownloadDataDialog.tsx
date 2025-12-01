@@ -273,7 +273,7 @@ const DatasetRow = ({
         <Link
           colorPalette="blue"
           variant="plain"
-          href={getRasterFileUrl(dataset.filename_id as string, year || "2024")}
+          href={getRasterFileUrl(dataset.filename_id as string, year)}
         >
           <Button size="sm" colorPalette="blue" variant="outline">
             <LuExternalLink />

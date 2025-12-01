@@ -39,7 +39,7 @@ function RasterMapLayer({ id }: RasterMapLayerProps) {
   const opacity = getOpacity(layerId) / 100;
 
   // Check if there is a raster layer for the selected year
-  const { error } = useCheckRasterLayer(datasetUrlId, year || "2024");
+  const { error } = useCheckRasterLayer(datasetUrlId, year);
   if (error) return null;
 
   const layerStyle: LayerProps = {
@@ -55,7 +55,7 @@ function RasterMapLayer({ id }: RasterMapLayerProps) {
       type="raster"
       tileSize={256}
       tiles={[
-        `${import.meta.env.VITE_TITILER_API}/dataset/${datasetUrlId}/years/${year || "2024"}/tiles/WebMercatorQuad/{z}/{x}/{y}.png${urlParams}`,
+        `${import.meta.env.VITE_TITILER_API}/dataset/${datasetUrlId}/years/${year}/tiles/WebMercatorQuad/{z}/{x}/{y}.png${urlParams}`,
       ]}
     >
       <Layer id={layerId} source={layerId} {...layerStyle} />
