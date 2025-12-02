@@ -26,6 +26,7 @@ export interface BaseDataset {
   filename_id?: string;
   titiler_url_params?: string;
   url?: string;
+  source_layer?: string;
 }
 
 export interface TabularDataset extends BaseDataset {

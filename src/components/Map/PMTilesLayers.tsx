@@ -43,7 +43,7 @@ function PMTilesMapLayer({ id }: PMTilesMapLayerProps) {
       "line-opacity": opacity,
     },
     source: layerId,
-    "source-layer": "shorelines_annual",
+    "source-layer": metadata?.source_layer || "",
     filter: ["==", "year", Number(year)],
   };
 
