@@ -27,6 +27,7 @@ import type {
 } from "./types";
 import { mapColors } from "../../colors";
 import { abbreviateUnit } from "@/utils/abbreviateUnit";
+import { useDateStore } from "@/store/date-store";
 
 /**
  * Props for the LayerEntry component.
@@ -49,6 +50,7 @@ export function LayerEntry(props: LayerEntryProps) {
   } = props;
   const [infoOpen, setInfoOpen] = useState(false);
   const [opacity, setOpacity] = useState(100);
+  const { year } = useDateStore();
 
   const layerId = `${dataType.charAt(0)}${id}`;
 
@@ -66,7 +68,7 @@ export function LayerEntry(props: LayerEntryProps) {
       <VStack w="100%" align="flex-start" gap={2}>
         <HStack w="full">
           <Text fontWeight="medium" fontSize="sm" lineClamp={1} mr="auto">
-            {name}
+            {name} <Text as="span" fontWeight="normal">({year})</Text>
           </Text>
           {/* Control buttons */}
           <HStack gap={0} flexShrink={0}>
