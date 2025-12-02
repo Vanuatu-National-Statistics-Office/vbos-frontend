@@ -39,7 +39,6 @@ function PMTilesMapLayer({ id }: PMTilesMapLayerProps) {
     type: "line",
     paint: {
       "line-width": 2,
-      "line-dasharray": [4, 1],
       "line-color": mapColors.red,
       "line-opacity": opacity,
     },
