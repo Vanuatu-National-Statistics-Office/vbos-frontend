@@ -3,6 +3,7 @@ const mapColors = {
   blue: "#3d4aff",
   purple: "#8856a7",
   orange: "#f09000",
+  red: "#e34a33",
 };
 
 const chartColors = [

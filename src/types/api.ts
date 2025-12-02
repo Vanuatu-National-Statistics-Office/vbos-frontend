@@ -25,6 +25,7 @@ export interface BaseDataset {
   unit?: string | null;
   filename_id?: string;
   titiler_url_params?: string;
+  url?: string;
 }
 
 export interface TabularDataset extends BaseDataset {
@@ -39,7 +40,15 @@ export interface VectorDataset extends BaseDataset {
   dataType: "vector";
 }
 
-export type Dataset = TabularDataset | RasterDataset | VectorDataset;
+export interface PMTilesDataset extends BaseDataset {
+  dataType: "pmtiles";
+}
+
+export type Dataset =
+  | TabularDataset
+  | RasterDataset
+  | VectorDataset
+  | PMTilesDataset;
 
 export interface ClusterDatasets {
   type: DatasetType;

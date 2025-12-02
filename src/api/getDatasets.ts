@@ -9,6 +9,7 @@ import {
   ClusterDatasets,
   PaginatedVectorData,
   TabularData,
+  PMTilesDataset,
 } from "@/types/api";
 
 async function fetchAllDatasets<T extends BaseDataset>(
@@ -33,6 +34,22 @@ async function fetchAllDatasets<T extends BaseDataset>(
   return allResults;
 }
 
+// As we only have one PMTiles layer, the easier solution is to hardcode it
+const PMTILES_DATASETS: PMTilesDataset[] = [
+  {
+    id: 1,
+    name: "Coastlines",
+    description: "DEP Coastlines.",
+    created: "2025-11-17T17:43:06+0000",
+    updated: "2025-11-25T11:55:16+0000",
+    cluster: "Environmental",
+    type: "baseline",
+    source: "Digital Earth Pacific",
+    url: "https://s3.us-west-2.amazonaws.com/dep-public-data/dep_ls_coastlines/dep_ls_coastlines_0-7-0-55.pmtiles",
+    dataType: "pmtiles",
+  },
+];
+
 export async function getDatasets(cluster: string): Promise<ClusterDatasets[]> {
   // Fetch all pages for both tabular and raster datasets in parallel
   const [tabularData, rasterData, vectorData] = await Promise.all([
@@ -52,6 +69,7 @@ export async function getDatasets(cluster: string): Promise<ClusterDatasets[]> {
     ...tabularData.map((d) => ({ ...d, dataType: "tabular" as const })),
     ...rasterData.map((d) => ({ ...d, dataType: "raster" as const })),
     ...vectorData.map((d) => ({ ...d, dataType: "vector" as const })),
+    ...PMTILES_DATASETS,
   ];
   const groupedByType: ClusterDatasets[] = allDatasets.reduce(
     (acc: ClusterDatasets[], item: Dataset) => {

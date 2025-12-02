@@ -111,7 +111,7 @@ export function LayerEntry(props: LayerEntryProps) {
           {dataType === "tabular" && (
             <TabularEntry {...(props as TabularLegendLayer)} />
           )}
-          {dataType === "vector" && (
+          {["vector", "pmtiles"].includes(dataType) && (
             <VectorEntry {...(props as VectorLegendLayer)} />
           )}
           {dataType === "raster" && (
