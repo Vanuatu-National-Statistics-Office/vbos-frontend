@@ -67,7 +67,7 @@ export function LayerEntry(props: LayerEntryProps) {
     <>
       <VStack w="100%" align="flex-start" gap={2}>
         <HStack w="full">
-          <Text fontWeight="medium" fontSize="sm" lineClamp={1} mr="auto">
+          <Text fontWeight="medium" fontSize="xs" lineClamp={1} mr="auto">
             {name}
             <Text as="span" fontWeight="normal">{dataType !== "vector" && ` | ${year}`}</Text>
           </Text>
