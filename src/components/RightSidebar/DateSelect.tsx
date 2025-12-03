@@ -1,10 +1,12 @@
 import { useDateStore } from "@/store/date-store";
 import { Flex, Slider } from "@chakra-ui/react";
+import { useAvailableYears } from "@/hooks/useAvailableYears";
 
 export const DateSelect = () => {
   const minYear = 2004;
   const maxYear = new Date().getFullYear();
   const { year, setYear } = useDateStore();
+  const availableYears = useAvailableYears();
 
   // Get initial year from URL params if available
   const getInitialYear = () => {
@@ -14,8 +16,14 @@ export const DateSelect = () => {
     return urlYear ? Number(urlYear) : maxYear - 1;
   };
 
+  // Generate marks for the slider
+  // Always show min/max year labels, plus dots for years with data
   const marks = [
     { value: minYear, label: minYear.toString() },
+    // Add marks for intermediate years with data (no labels, just visual indicators)
+    ...availableYears
+      .filter((y) => y > minYear && y < maxYear)
+      .map((y) => ({ value: y, label: "" })),
     { value: maxYear, label: maxYear.toString() },
   ];
 
@@ -56,7 +64,14 @@ export const DateSelect = () => {
             <Slider.ValueText />
           </Slider.DraggingIndicator>
         </Slider.Thumb>
-        <Slider.Marks marks={marks} />
+        <Slider.Marks
+          marks={marks}
+          css={{
+            "& [data-part='marker'] > .chakra-slider__markerIndicator": {
+              bg: "blue.500"
+            }
+          }}
+        />
       </Slider.Control>
     </Slider.Root>
   );
