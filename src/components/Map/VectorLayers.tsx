@@ -76,6 +76,10 @@ function VectorMapLayer({ id }: VectorMapLayerProps) {
     paint: {
       "circle-color": layerColor,
       "circle-opacity": opacity,
+      "circle-radius": ["interpolate", ["linear"], ["zoom"], 5, 2, 15, 8],
+      "circle-stroke-color": "#ffffff",
+      "circle-stroke-width": 1,
+      "circle-stroke-opacity": opacity * 0.7,
     },
     source: layerId,
     filter: ["==", ["geometry-type"], "Point"],
