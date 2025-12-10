@@ -24,6 +24,7 @@ import type {
 } from "@/components/Map/Legend/types";
 import type { PaginatedVectorData } from "@/types/api";
 import { mapColors } from "../../../colors";
+import { getVectorLayerColor } from "@/utils/getVectorLayerColor";
 
 /**
  * Hook that provides legend layer data for all currently active map layers.
@@ -120,7 +121,7 @@ export function useLegendLayers(): LegendLayer[] {
         legendLayers.push({
           ...dataset,
           geometryType,
-          color: geometryType === "Point" ? mapColors.blue : mapColors.orange,
+          color: getVectorLayerColor(dataset.id),
         });
       } else if (dataset.dataType === "raster") {
         legendLayers.push({

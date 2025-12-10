@@ -5,7 +5,7 @@ import { useDataset } from "@/hooks/useDataset";
 import { PaginatedVectorData } from "@/types/api";
 import { Box, Spinner, Text } from "@chakra-ui/react";
 import { useAreaStore } from "@/store/area-store";
-import { mapColors } from "../colors";
+import { getVectorLayerColor } from "@/utils/getVectorLayerColor";
 
 export function VectorLayers() {
   const { layers } = useLayerStore();
@@ -60,10 +60,13 @@ function VectorMapLayer({ id }: VectorMapLayerProps) {
   // Get opacity from store (0-100) and convert to 0-1 for MapLibre
   const opacity = getOpacity(layerId) / 100;
 
+  // Get consistent color for this layer based on ID
+  const layerColor = getVectorLayerColor(id);
+
   const lineStyle: LayerProps = {
     type: "line",
     paint: {
-      "line-color": mapColors.orange,
+      "line-color": layerColor,
       "line-opacity": opacity,
     },
     source: layerId,
@@ -71,8 +74,12 @@ function VectorMapLayer({ id }: VectorMapLayerProps) {
   const pointStyle: LayerProps = {
     type: "circle",
     paint: {
-      "circle-color": mapColors.blue,
+      "circle-color": layerColor,
       "circle-opacity": opacity,
+      "circle-radius": ["interpolate", ["linear"], ["zoom"], 5, 2, 15, 8],
+      "circle-stroke-color": "#ffffff",
+      "circle-stroke-width": 1,
+      "circle-stroke-opacity": opacity * 0.7,
     },
     source: layerId,
     filter: ["==", ["geometry-type"], "Point"],
