@@ -120,7 +120,13 @@ export function Stats() {
             <Text display="block" fontSize="xs" color="gray.600">
               {layerMetadata.cluster} | {DATASET_TYPES[layerMetadata.type]}
             </Text>
-            <Text display="block">{layerMetadata.name}</Text>
+            <Text display="block">
+              {layerMetadata.name}
+              <Text as="span" fontWeight="normal">
+                {" "}
+                | {year}
+              </Text>
+            </Text>
           </Box>
           <Box display="flex" flexDirection="row">
             <Tooltip content="View time series">
