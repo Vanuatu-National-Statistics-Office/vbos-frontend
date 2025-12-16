@@ -17,6 +17,8 @@ export const DateSelect = () => {
     return urlYear ? Number(urlYear) : maxYear - 1;
   };
 
+  const currentYear = Number(year) || getInitialYear();
+
   // Generate marks for the slider
   // Always show min/max year labels, plus dots for years with data
   const marks = [
@@ -27,8 +29,6 @@ export const DateSelect = () => {
       .map((y) => ({ value: y, label: "" })),
     { value: maxYear, label: maxYear.toString() },
   ];
-
-  const currentYear = Number(year) || getInitialYear();
 
   const handleDecrement = () => {
     if (currentYear > minYear) {
@@ -44,11 +44,12 @@ export const DateSelect = () => {
 
   return (
     <Slider.Root
+      key={currentYear}
       width="100%"
       min={minYear}
       max={maxYear}
-      value={[currentYear]}
-      onValueChange={(e) => setYear(String(e.value[0]))}
+      defaultValue={[currentYear]}
+      onValueChangeEnd={(e) => setYear(String(e.value[0]))}
       colorPalette="blue"
       variant="solid"
     >
