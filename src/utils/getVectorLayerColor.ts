@@ -12,18 +12,18 @@ const vectorColorPalette = [
   mapColors.blue,
   mapColors.orange,
   mapColors.green,
+  mapColors.violet,
+  mapColors.red,
   mapColors.teal,
   mapColors.gray,
+  mapColors.blueLight,
   mapColors.yellow,
-  mapColors.mint,
-  mapColors.violet,
   mapColors.indigo,
+  mapColors.mint,
   mapColors.brown,
   mapColors.black,
   mapColors.pink,
   mapColors.purple,
-  mapColors.red,
-  mapColors.blueLight,
 ];
 
 /**
