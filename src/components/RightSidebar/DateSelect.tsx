@@ -67,7 +67,7 @@ export const DateSelect = () => {
           <LuChevronLeft />
         </IconButton>
         <Slider.Control flex={1} mb={0}>
-          <Slider.Track />
+          <Slider.Track left="2px" />
           <Slider.Thumb
             index={0}
             width={2}
@@ -93,7 +93,14 @@ export const DateSelect = () => {
             marks={marks}
             css={{
               "& [data-part='marker'] > .chakra-slider__markerIndicator": {
-                bg: "blue.500"
+                position: "relative",
+                left: "2px"
+              },
+              "& [data-part='marker']:has(> .chakra-slider__marker-label:empty) > .chakra-slider__markerIndicator": {
+                bg: "blue.500",
+              },
+              "& [data-part='marker']:not(:has(> .chakra-slider__marker-label:empty)) > .chakra-slider__markerIndicator": {
+                bg: "white",
               }
             }}
           />
