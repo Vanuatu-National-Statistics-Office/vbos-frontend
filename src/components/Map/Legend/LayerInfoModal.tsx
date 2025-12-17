@@ -75,6 +75,16 @@ export function LayerInfoModal(props: LayerInfoModalProps) {
                 <Heading size="md">{layer.name}</Heading>
               </Stack>
 
+              {/* Layer Description */}
+              {layer.description && (
+                <Stack gap={1}>
+                  <Text fontSize="sm" fontWeight="medium" color="fg.muted">
+                    Description
+                  </Text>
+                  <Text>{layer.description}</Text>
+                </Stack>
+              )}
+
               {/* Layer Type */}
               <Stack gap={1} alignItems="start">
                 <Text fontSize="sm" fontWeight="medium" color="fg.muted">

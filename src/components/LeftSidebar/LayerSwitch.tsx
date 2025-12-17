@@ -4,7 +4,7 @@ import { useLayerStore } from "@/store/layer-store";
 type LayerSwitchProps = {
   title: string;
   id: number;
-  dataType: "raster" | "vector" | "tabular";
+  dataType: "raster" | "vector" | "tabular" | "pmtiles";
 };
 
 const LayerSwitch = ({ title, id, dataType }: LayerSwitchProps) => {

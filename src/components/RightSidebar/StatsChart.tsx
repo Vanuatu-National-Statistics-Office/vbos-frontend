@@ -9,9 +9,10 @@ import { chartColors } from "../colors";
 
 type StatsChartType = {
   stats: TabularData[];
+  unit?: string | null;
 };
 
-export function StatsChart({ stats }: StatsChartType) {
+export function StatsChart({ stats, unit }: StatsChartType) {
   const { province, ac } = useAreaStore();
   const isAreaCouncilLevel = Boolean(ac);
 
@@ -42,7 +43,9 @@ export function StatsChart({ stats }: StatsChartType) {
           axisLine={false}
           tickLine={false}
           type="number"
+          allowDecimals={true}
           tickFormatter={(value: number) => String(formatYAxisLabel(value))}
+          label={unit ? { value: unit, angle: -90, position: "insideLeft" } : undefined}
         />
         <Tooltip
           cursor={false}

@@ -26,6 +26,8 @@ import type {
   RasterLegendLayer,
 } from "./types";
 import { mapColors } from "../../colors";
+import { abbreviateUnit } from "@/utils/abbreviateUnit";
+import { useDateStore } from "@/store/date-store";
 
 /**
  * Props for the LayerEntry component.
@@ -48,6 +50,7 @@ export function LayerEntry(props: LayerEntryProps) {
   } = props;
   const [infoOpen, setInfoOpen] = useState(false);
   const [opacity, setOpacity] = useState(100);
+  const { year } = useDateStore();
 
   const layerId = `${dataType.charAt(0)}${id}`;
 
@@ -64,8 +67,9 @@ export function LayerEntry(props: LayerEntryProps) {
     <>
       <VStack w="100%" align="flex-start" gap={2}>
         <HStack w="full">
-          <Text fontWeight="medium" fontSize="sm" lineClamp={1} mr="auto">
+          <Text fontWeight="medium" fontSize="xs" lineClamp={1} mr="auto">
             {name}
+            <Text as="span" fontWeight="normal">{dataType !== "vector" && ` | ${year}`}</Text>
           </Text>
           {/* Control buttons */}
           <HStack gap={0} flexShrink={0}>
@@ -101,11 +105,16 @@ export function LayerEntry(props: LayerEntryProps) {
             </Tooltip>
           </HStack>
         </HStack>
-        <Box flex={1} minW={0} w="full">
+        <Box
+          flex={1}
+          minW={0}
+          w="full"
+          css={{ "&:empty": { display: "none" } }}
+        >
           {dataType === "tabular" && (
             <TabularEntry {...(props as TabularLegendLayer)} />
           )}
-          {dataType === "vector" && (
+          {["vector", "pmtiles"].includes(dataType) && (
             <VectorEntry {...(props as VectorLegendLayer)} />
           )}
           {dataType === "raster" && (
@@ -130,10 +139,10 @@ export function LayerEntry(props: LayerEntryProps) {
  */
 function TabularEntry(props: TabularLegendLayer) {
   const { unit, dataRange, isPending, hasData } = props;
-
+  const formattedUnit = unit === "number" ? undefined : abbreviateUnit(unit);
   return (
     <VStack align="stretch" gap={2} w="100%">
-      {dataRange && dataRange.max > 0 ? (
+      {dataRange && (dataRange.max !== 0 || dataRange.min !== 0) ? (
         <VStack align="stretch" gap={1} w="100%">
           {/* Color ramp bar */}
           <Box
@@ -149,11 +158,11 @@ function TabularEntry(props: TabularLegendLayer) {
           <HStack justify="space-between" fontSize="xs" color="fg.muted">
             <Text>
               {dataRange.min.toLocaleString()}
-              {unit || ""}
+              {formattedUnit || ""}
             </Text>
             <Text textAlign="right">
               {dataRange.max.toLocaleString()}
-              {unit || ""}
+              {formattedUnit || ""}
             </Text>
           </HStack>
         </VStack>
@@ -175,7 +184,7 @@ function TabularEntry(props: TabularLegendLayer) {
 
       {!dataRange && unit && (
         <Text fontSize="xs" color="fg.muted">
-          Unit: {unit}
+          {formattedUnit}
         </Text>
       )}
     </VStack>
@@ -190,6 +199,7 @@ function VectorEntry(props: VectorLegendLayer) {
   const { name, geometryType, color, unit } = props;
   const isPoint = geometryType.includes("Point");
   const isLine = geometryType.includes("Line");
+  const formattedUnit = unit === "number" ? undefined : abbreviateUnit(unit);
 
   return (
     <VStack align="stretch" gap={2} w="100%">
@@ -231,7 +241,7 @@ function VectorEntry(props: VectorLegendLayer) {
 
       {unit && (
         <Text fontSize="xs" color="fg.muted">
-          Unit: {unit}
+          {formattedUnit}
         </Text>
       )}
     </VStack>
@@ -242,18 +252,14 @@ function VectorEntry(props: VectorLegendLayer) {
  * Renders legend information for a raster layer.
  */
 function RasterEntry(props: RasterLegendLayer) {
-  const { unit, opacity } = props;
-
+  const { unit } = props;
+  const formattedUnit = unit === "number" ? undefined : abbreviateUnit(unit);
+  if (!unit) return null;
   return (
     <VStack align="stretch" gap={1}>
       {unit && (
         <Text fontSize="xs" color="fg.muted" pl={6}>
-          Unit: {unit}
-        </Text>
-      )}
-      {opacity !== undefined && (
-        <Text fontSize="xs" color="fg.muted" pl={6}>
-          Opacity: {Math.round(opacity * 100)}%
+          {formattedUnit}
         </Text>
       )}
     </VStack>

@@ -7,7 +7,7 @@ interface DateState {
 }
 
 export const useDateStore = create<DateState>((set) => ({
-  year: "",
+  year: "2024",
 
   setYear: (year: string) => {
     set({ year });

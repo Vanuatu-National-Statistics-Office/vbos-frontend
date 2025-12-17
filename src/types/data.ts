@@ -17,3 +17,9 @@ export type AreaCouncilGeoJSON = FeatureCollection<
   Geometry,
   AreaCouncilFeature
 >;
+
+export type BlobType = {
+  blob: Blob;
+  extension: string;
+  mimeType: string;
+};

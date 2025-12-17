@@ -31,7 +31,7 @@ export type TabularLegendLayer = Dataset & {
  * Vector layers display points, lines, or polygons loaded from GeoJSON.
  */
 export type VectorLegendLayer = Dataset & {
-  dataType: "vector";
+  dataType: "vector" | "pmtiles";
   /** Primary geometry type in this layer */
   geometryType:
     | "Point"
