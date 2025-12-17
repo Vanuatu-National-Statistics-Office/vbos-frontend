@@ -39,8 +39,7 @@ export interface PopupInfo extends PopupProps {
 
 function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
   const [map, setMap] = useState<MapRef>();
-  const setMapRef = (m: MapRef) => setMap(m);
-  const { viewState, setViewState } = useMapStore();
+  const { viewState, setViewState, setMapRef: setMapRefInStore } = useMapStore();
   const { ac, acGeoJSON } = useAreaStore();
   const { layers, getLayerMetadata } = useLayerStore();
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
@@ -57,6 +56,11 @@ function Map(props: MapProps, ref: Ref<MapRef | undefined>) {
   useEffect(() => {
     if (popupInfo && !layers.includes(popupInfo.datasetId)) setPopupInfo(null);
   }, [popupInfo, layers]);
+
+  const setMapRef = useCallback((m: MapRef) => {
+    setMap(m);
+    setMapRefInStore(m);
+  }, [setMapRefInStore]);
 
   useImperativeHandle(ref, () => {
     if (map) {
