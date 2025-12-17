@@ -19,10 +19,6 @@ export const DateSelect = () => {
 
   const currentYear = Number(year) || getInitialYear();
 
-  // Generate marks for the slider
-  // Create a Set for quick lookup
-  const yearsWithData = new Set(availableYears);
-
   // Always show min/max year labels, plus dots for years with data
   const marks = [
     { value: minYear, label: minYear.toString() },
@@ -103,10 +99,10 @@ export const DateSelect = () => {
               },
               // Make markers blue for years with data
               ...Object.fromEntries(
-                Array.from(yearsWithData).map((year) => [
+                availableYears.map((year) => [
                   `& [data-part='marker'][data-value='${year}'] > .chakra-slider__markerIndicator`,
                   { bg: "blue.500" },
-                ])
+                ]),
               ),
             }}
           />
